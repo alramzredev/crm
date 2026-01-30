@@ -10,13 +10,24 @@ import TrashedMessage from '@/Shared/TrashedMessage';
 import Icon from '@/Shared/Icon';
 
 const Edit = () => {
-  const { project } = usePage().props;
+  const { project, owners = [], cities = [], projectTypes = [], projectOwnerships = [], projectStatuses = [], countries = [] } = usePage().props;
   const { data, setData, errors, put, processing } = useForm({
+    project_code: project.project_code || '',
     name: project.name || '',
+    owner_id: project.owner?.id || project.owner_id || '',
+    city_id: project.city?.id || project.city_id || '',
+    project_type_id: project.project_type?.id || project.project_type_id || '',
+    project_ownership_id: project.project_ownership?.id || project.project_ownership_id || '',
+    status_id: project.status?.id || project.status_id || '',
+    neighborhood: project.neighborhood || '',
+    location: project.location || '',
+    budget: project.budget || '',
+    no_of_floors: project.no_of_floors || '',
+    number_of_units: project.number_of_units || '',
+    warranty: project.warranty || false,
     email: project.email || '',
     phone: project.phone || '',
     address: project.address || '',
-    city: project.city || '',
     region: project.region || '',
     country: project.country || '',
     postal_code: project.postal_code || ''
@@ -66,78 +77,114 @@ const Edit = () => {
         <form onSubmit={handleSubmit}>
           <div className="flex flex-wrap p-8 -mb-8 -mr-6">
             <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
+              className="w-full pb-8 pr-6"
+              label="Project Code"
+              name="project_code"
+              errors={errors.project_code}
+              value={data.project_code}
+              onChange={e => setData('project_code', e.target.value)}
+            />
+            <TextInput
+              className="w-full pb-8 pr-6"
               label="Name"
               name="name"
               errors={errors.name}
               value={data.name}
               onChange={e => setData('name', e.target.value)}
             />
-            <TextInput
+
+            <SelectInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Email"
-              name="email"
-              type="email"
-              errors={errors.email}
-              value={data.email}
-              onChange={e => setData('email', e.target.value)}
+              label="Owner"
+              name="owner_id"
+              errors={errors.owner_id}
+              value={data.owner_id}
+              onChange={e => setData('owner_id', e.target.value)}
+            >
+              <option value=""></option>
+              {owners.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+            </SelectInput>
+
+            <SelectInput
+              className="w-full pb-8 pr-6 lg:w-1/2"
+              label="City"
+              name="city_id"
+              errors={errors.city_id}
+              value={data.city_id}
+              onChange={e => setData('city_id', e.target.value)}
+            >
+              <option value=""></option>
+              {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </SelectInput>
+
+            <SelectInput
+              className="w-full pb-8 pr-6 lg:w-1/3"
+              label="Type"
+              name="project_type_id"
+              errors={errors.project_type_id}
+              value={data.project_type_id}
+              onChange={e => setData('project_type_id', e.target.value)}
+            >
+              <option value=""></option>
+              {projectTypes.map(pt => <option key={pt.id} value={pt.id}>{pt.name}</option>)}
+            </SelectInput>
+
+            <SelectInput
+              className="w-full pb-8 pr-6 lg:w-1/3"
+              label="Ownership"
+              name="project_ownership_id"
+              errors={errors.project_ownership_id}
+              value={data.project_ownership_id}
+              onChange={e => setData('project_ownership_id', e.target.value)}
+            >
+              <option value=""></option>
+              {projectOwnerships.map(po => <option key={po.id} value={po.id}>{po.name}</option>)}
+            </SelectInput>
+
+            <SelectInput
+              className="w-full pb-8 pr-6 lg:w-1/3"
+              label="Status"
+              name="status_id"
+              errors={errors.status_id}
+              value={data.status_id}
+              onChange={e => setData('status_id', e.target.value)}
+            >
+              <option value=""></option>
+              {projectStatuses.map(ps => <option key={ps.id} value={ps.id}>{ps.name}</option>)}
+            </SelectInput>
+
+            <TextInput
+              className="w-full pb-8 pr-6 lg:w-1/3"
+              label="Budget"
+              name="budget"
+              errors={errors.budget}
+              value={data.budget}
+              onChange={e => setData('budget', e.target.value)}
             />
             <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Phone"
-              name="phone"
-              type="text"
-              errors={errors.phone}
-              value={data.phone}
-              onChange={e => setData('phone', e.target.value)}
+              className="w-full pb-8 pr-6 lg:w-1/3"
+              label="Floors"
+              name="no_of_floors"
+              errors={errors.no_of_floors}
+              value={data.no_of_floors}
+              onChange={e => setData('no_of_floors', e.target.value)}
             />
             <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
+              className="w-full pb-8 pr-6 lg:w-1/3"
+              label="Units"
+              name="number_of_units"
+              errors={errors.number_of_units}
+              value={data.number_of_units}
+              onChange={e => setData('number_of_units', e.target.value)}
+            />
+
+            <TextInput
+              className="w-full pb-8 pr-6"
               label="Address"
               name="address"
-              type="text"
               errors={errors.address}
               value={data.address}
               onChange={e => setData('address', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="City"
-              name="city"
-              type="text"
-              errors={errors.city}
-              value={data.city}
-              onChange={e => setData('city', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Province/State"
-              name="region"
-              type="text"
-              errors={errors.region}
-              value={data.region}
-              onChange={e => setData('region', e.target.value)}
-            />
-            <SelectInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Country"
-              name="country"
-              errors={errors.country}
-              value={data.country}
-              onChange={e => setData('country', e.target.value)}
-            >
-              <option value=""></option>
-              <option value="CA">Canada</option>
-              <option value="US">United States</option>
-            </SelectInput>
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Postal Code"
-              name="postal_code"
-              type="text"
-              errors={errors.postal_code}
-              value={data.postal_code}
-              onChange={e => setData('postal_code', e.target.value)}
             />
           </div>
           <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">

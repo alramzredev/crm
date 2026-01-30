@@ -41,8 +41,6 @@ Route::get('projects')->name('projects')->uses('ProjectsController@index')->midd
 Route::get('projects/create')->name('projects.create')->uses('ProjectsController@create')->middleware('auth');
 Route::post('projects')->name('projects.store')->uses('ProjectsController@store')->middleware('auth');
 Route::get('projects/{project}', function (Project $project) {
-    abort_unless($project->account_id === Auth::user()->account_id, 403);
-
     $project->load('contacts');
 
     return Inertia::render('Projects/Show', [
@@ -53,6 +51,15 @@ Route::get('projects/{project}/edit')->name('projects.edit')->uses('ProjectsCont
 Route::put('projects/{project}')->name('projects.update')->uses('ProjectsController@update')->middleware('auth');
 Route::delete('projects/{project}')->name('projects.destroy')->uses('ProjectsController@destroy')->middleware('auth');
 Route::put('projects/{project}/restore')->name('projects.restore')->uses('ProjectsController@restore')->middleware('auth');
+
+// Owners (basic CRUD routes so Ziggy has 'owners' route names)
+Route::get('owners')->name('owners')->uses('OwnersController@index')->middleware('remember', 'auth');
+Route::get('owners/create')->name('owners.create')->uses('OwnersController@create')->middleware('auth');
+Route::post('owners')->name('owners.store')->uses('OwnersController@store')->middleware('auth');
+Route::get('owners/{owner}/edit')->name('owners.edit')->uses('OwnersController@edit')->middleware('auth');
+Route::put('owners/{owner}')->name('owners.update')->uses('OwnersController@update')->middleware('auth');
+Route::delete('owners/{owner}')->name('owners.destroy')->uses('OwnersController@destroy')->middleware('auth');
+Route::put('owners/{owner}/restore')->name('owners.restore')->uses('OwnersController@restore')->middleware('auth');
 
 // Contacts
 Route::get('contacts')->name('contacts')->uses('ContactsController@index')->middleware('remember', 'auth');

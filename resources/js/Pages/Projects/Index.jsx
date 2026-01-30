@@ -35,26 +35,33 @@ const Index = () => {
         <table className="w-full whitespace-nowrap">
           <thead>
             <tr className="font-bold text-left">
+              <th className="px-6 pt-5 pb-4">Code</th>
               <th className="px-6 pt-5 pb-4">Name</th>
+              <th className="px-6 pt-5 pb-4">Owner</th>
               <th className="px-6 pt-5 pb-4">City</th>
+              <th className="px-6 pt-5 pb-4">Status</th>
               <th className="px-6 pt-5 pb-4">Phone</th>
               <th className="px-6 pt-5 pb-4">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {data.map(({ id, name, city, phone, deleted_at }) => {
+            {data.map(p => {
+              const ownerName = p.owner?.name || p.owner || '';
+              const statusName = p.status?.name || p.status || '';
+              const cityName = p.city?.name || p.city || '';
               return (
                 <tr
-                  key={id}
+                  key={p.id}
                   className="hover:bg-gray-100 focus-within:bg-gray-100"
                 >
+                  <td className="border-t px-6 py-4">{p.project_code || '—'}</td>
                   <td className="border-t">
                     <Link
-                      href={route('projects.edit', id)}
+                      href={route('projects.edit', p.id)}
                       className="flex items-center px-6 py-4 focus:text-indigo-700 focus:outline-none"
                     >
-                      {name}
-                      {deleted_at && (
+                      {p.name}
+                      {p.deleted_at && (
                         <Icon
                           name="trash"
                           className="flex-shrink-0 w-3 h-3 ml-2 text-gray-400 fill-current"
@@ -62,35 +69,21 @@ const Index = () => {
                       )}
                     </Link>
                   </td>
-                  <td className="border-t">
-                    <Link
-                      tabIndex="-1"
-                      href={route('projects.edit', id)}
-                      className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                    >
-                      {city}
-                    </Link>
-                  </td>
-                  <td className="border-t">
-                    <Link
-                      tabIndex="-1"
-                      href={route('projects.edit', id)}
-                      className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                    >
-                      {phone}
-                    </Link>
-                  </td>
+                  <td className="border-t px-6 py-4">{ownerName}</td>
+                  <td className="border-t px-6 py-4">{cityName}</td>
+                  <td className="border-t px-6 py-4">{statusName}</td>
+                  <td className="border-t px-6 py-4">{p.phone}</td>
                   <td className="border-t px-6 py-4">
                     <Link
-                      href={route('projects.edit', id)}
+                      href={route('projects.edit', p.id)}
                       className="text-indigo-600 hover:text-indigo-800 mr-4"
                     >
                       Edit
                     </Link>
-                    {!deleted_at && (
+                    {!p.deleted_at && (
                       <button
                         type="button"
-                        onClick={() => destroy(id)}
+                        onClick={() => destroy(p.id)}
                         className="text-red-600 hover:text-red-800 mr-4"
                       >
                         Delete
@@ -98,7 +91,7 @@ const Index = () => {
                     )}
                     <Link
                       tabIndex="-1"
-                      href={route('projects.show', id)}
+                      href={route('projects.show', p.id)}
                       className="text-indigo-600 hover:text-indigo-800 mr-4"
                     >
                       Show
@@ -109,7 +102,7 @@ const Index = () => {
             })}
             {data.length === 0 && (
               <tr>
-                <td className="px-6 py-4 border-t" colSpan="4">
+                <td className="px-6 py-4 border-t" colSpan="7">
                   No projects found.
                 </td>
               </tr>

@@ -19,8 +19,7 @@ class ProjectsController extends Controller
         return Inertia::render('Projects/Index', [
             'filters' => Request::all('search', 'trashed'),
             'projects' => new ProjectCollection(
-                Auth::user()->account->projects()
-                    ->orderBy('name')
+                Project::orderBy('name')
                     ->filter(Request::only('search', 'trashed'))
                     ->paginate()
                     ->appends(Request::all())
@@ -35,7 +34,8 @@ class ProjectsController extends Controller
 
     public function store(ProjectStoreRequest $request)
     {
-        Auth::user()->account->projects()->create(
+        // account_id removed from projects schema — create project directly
+        Project::create(
             $request->validated()
         );
 

@@ -7,6 +7,12 @@ import TrashedMessage from '@/Shared/TrashedMessage';
 const Show = () => {
   const { project } = usePage().props;
 
+  const ownerLabel = project.owner?.name || project.owner || '';
+  const statusLabel = project.status?.name || project.status || '';
+  const typeLabel = project.project_type?.name || project.project_type || '';
+  const ownershipLabel = project.project_ownership?.name || project.project_ownership || '';
+  const cityLabel = project.city?.name || project.city || '';
+
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
@@ -33,25 +39,47 @@ const Show = () => {
         <div className="p-8">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <div className="text-sm font-semibold text-gray-600">Email</div>
-              <div className="mt-1">{project.email || '—'}</div>
+              <div className="text-sm font-semibold text-gray-600">Project Code</div>
+              <div className="mt-1">{project.project_code || '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Owner</div>
+              <div className="mt-1">{ownerLabel || '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Type</div>
+              <div className="mt-1">{typeLabel || '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Ownership</div>
+              <div className="mt-1">{ownershipLabel || '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Status</div>
+              <div className="mt-1">{statusLabel || '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Budget</div>
+              <div className="mt-1">{project.budget ? `$${project.budget}` : '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">City</div>
+              <div className="mt-1">{cityLabel || '—'}</div>
             </div>
             <div>
               <div className="text-sm font-semibold text-gray-600">Phone</div>
               <div className="mt-1">{project.phone || '—'}</div>
             </div>
             <div>
+              <div className="text-sm font-semibold text-gray-600">Email</div>
+              <div className="mt-1">{project.email || '—'}</div>
+            </div>
+            <div>
               <div className="text-sm font-semibold text-gray-600">Address</div>
               <div className="mt-1">{project.address || '—'}</div>
             </div>
             <div>
-              <div className="text-sm font-semibold text-gray-600">City</div>
-              <div className="mt-1">{project.city || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">
-                Province/State
-              </div>
+              <div className="text-sm font-semibold text-gray-600">Province/State</div>
               <div className="mt-1">{project.region || '—'}</div>
             </div>
             <div>
@@ -59,9 +87,7 @@ const Show = () => {
               <div className="mt-1">{project.country || '—'}</div>
             </div>
             <div>
-              <div className="text-sm font-semibold text-gray-600">
-                Postal Code
-              </div>
+              <div className="text-sm font-semibold text-gray-600">Postal Code</div>
               <div className="mt-1">{project.postal_code || '—'}</div>
             </div>
           </div>
