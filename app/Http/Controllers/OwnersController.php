@@ -39,8 +39,9 @@ class OwnersController extends Controller
     {
         $data = $request->validate([
             'name'  => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255'],
+            'type'  => ['required', 'in:individual,company,government,partnership'],
             'phone' => ['nullable', 'string', 'max:50'],
+            'email' => ['nullable', 'email', 'max:255'],
         ]);
 
         Owner::create($data);
@@ -59,8 +60,9 @@ class OwnersController extends Controller
     {
         $data = $request->validate([
             'name'  => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255'],
+            'type'  => ['required', 'in:individual,company,government,partnership'],
             'phone' => ['nullable', 'string', 'max:50'],
+            'email' => ['nullable', 'email', 'max:255'],
         ]);
 
         $owner->update($data);
@@ -82,3 +84,4 @@ class OwnersController extends Controller
         return Redirect::back()->with('success', 'Owner restored.');
     }
 }
+

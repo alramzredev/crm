@@ -18,8 +18,8 @@ class Account extends Model
         return $this->hasMany(Project::class);
     }
 
-    public function contacts()
+    public function leads()
     {
-        return $this->hasMany(Contact::class);
+        return $this->hasMany(Lead::class);
     }
 }

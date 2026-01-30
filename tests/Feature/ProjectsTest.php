@@ -14,7 +14,7 @@ class ProjectsTest extends TestCase
     {
         parent::setUp();
 
-        $account = Account::create(['name' => 'Acme Corporation']);
+        $account = Account::create(['name' => 'Alramz Corporation']);
 
         $this->user = User::factory()->make([
             'account_id' => $account->id,

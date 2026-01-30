@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
-import Icon from '@/Shared/Icon';
 import TrashedMessage from '@/Shared/TrashedMessage';
+import ProjectTabs from '@/Shared/ProjectTabs';
 
 const Show = () => {
   const { project } = usePage().props;
+  const [activeTab, setActiveTab] = useState('overview');
 
   const ownerLabel = project.owner?.name || project.owner || '';
   const statusLabel = project.status?.name || project.status || '';
@@ -35,141 +36,72 @@ const Show = () => {
         <TrashedMessage>This project has been deleted.</TrashedMessage>
       )}
 
-      <div className="max-w-3xl overflow-hidden bg-white rounded shadow">
-        <div className="p-8">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Project Code</div>
-              <div className="mt-1">{project.project_code || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Owner</div>
-              <div className="mt-1">{ownerLabel || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Type</div>
-              <div className="mt-1">{typeLabel || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Ownership</div>
-              <div className="mt-1">{ownershipLabel || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Status</div>
-              <div className="mt-1">{statusLabel || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Budget</div>
-              <div className="mt-1">{project.budget ? `$${project.budget}` : '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">City</div>
-              <div className="mt-1">{cityLabel || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Phone</div>
-              <div className="mt-1">{project.phone || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Email</div>
-              <div className="mt-1">{project.email || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Address</div>
-              <div className="mt-1">{project.address || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Province/State</div>
-              <div className="mt-1">{project.region || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Country</div>
-              <div className="mt-1">{project.country || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Postal Code</div>
-              <div className="mt-1">{project.postal_code || '—'}</div>
+      <ProjectTabs activeTab={activeTab} onChange={setActiveTab} />
+
+      {activeTab === 'overview' && (
+        <>
+          <div className="max-w-3xl overflow-hidden bg-white rounded shadow">
+            <div className="p-8">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div>
+                  <div className="text-sm font-semibold text-gray-600">Project Code</div>
+                  <div className="mt-1">{project.project_code || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-gray-600">Owner</div>
+                  <div className="mt-1">{ownerLabel || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-gray-600">Type</div>
+                  <div className="mt-1">{typeLabel || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-gray-600">Ownership</div>
+                  <div className="mt-1">{ownershipLabel || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-gray-600">Status</div>
+                  <div className="mt-1">{statusLabel || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-gray-600">Budget</div>
+                  <div className="mt-1">{project.budget ? `$${project.budget}` : '—'}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-gray-600">City</div>
+                  <div className="mt-1">{cityLabel || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-gray-600">Neighborhood</div>
+                  <div className="mt-1">{project.neighborhood || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-gray-600">Location</div>
+                  <div className="mt-1">{project.location || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-gray-600">Floors</div>
+                  <div className="mt-1">{project.no_of_floors || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-gray-600">Units</div>
+                  <div className="mt-1">{project.number_of_units || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-gray-600">Warranty</div>
+                  <div className="mt-1">{project.warranty ? 'Yes' : 'No'}</div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
 
-      <h2 className="mt-12 text-2xl font-bold">Contacts</h2>
-      <div className="mt-6 overflow-x-auto bg-white rounded shadow">
-        <table className="w-full whitespace-nowrap">
-          <thead>
-            <tr className="font-bold text-left">
-              <th className="px-6 pt-5 pb-4">Name</th>
-              <th className="px-6 pt-5 pb-4">City</th>
-              <th className="px-6 pt-5 pb-4" colSpan="2">
-                Phone
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {project.contacts.map(
-              ({ id, name, phone, city, deleted_at }) => (
-                <tr
-                  key={id}
-                  className="hover:bg-gray-100 focus-within:bg-gray-100"
-                >
-                  <td className="border-t">
-                    <Link
-                      href={route('contacts.edit', id)}
-                      className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                    >
-                      {name}
-                      {deleted_at && (
-                        <Icon
-                          name="trash"
-                          className="flex-shrink-0 w-3 h-3 ml-2 text-gray-400 fill-current"
-                        />
-                      )}
-                    </Link>
-                  </td>
-                  <td className="border-t">
-                    <Link
-                      tabIndex="-1"
-                      href={route('contacts.edit', id)}
-                      className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                    >
-                      {city}
-                    </Link>
-                  </td>
-                  <td className="border-t">
-                    <Link
-                      tabIndex="-1"
-                      href={route('contacts.edit', id)}
-                      className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                    >
-                      {phone}
-                    </Link>
-                  </td>
-                  <td className="w-px border-t">
-                    <Link
-                      tabIndex="-1"
-                      href={route('contacts.edit', id)}
-                      className="flex items-center px-4"
-                    >
-                      <Icon
-                        name="cheveron-right"
-                        className="block w-6 h-6 text-gray-400 fill-current"
-                      />
-                    </Link>
-                  </td>
-                </tr>
-              )
-            )}
-            {project.contacts.length === 0 && (
-              <tr>
-                <td className="px-6 py-4 border-t" colSpan="4">
-                  No contacts found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      {activeTab === 'properties' && (
+        <div className="max-w-3xl p-8 bg-white rounded shadow">
+          <div className="text-sm text-gray-600">No properties to display.</div>
+        </div>
+      )}
     </div>
   );
 };

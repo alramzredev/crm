@@ -6,7 +6,7 @@ import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
 
 const Create = () => {
-  const { owners = [], cities = [], projectTypes = [], projectOwnerships = [], projectStatuses = [], countries = [] } = usePage().props;
+  const { owners = [], cities = [], projectTypes = [], projectOwnerships = [], projectStatuses = [] } = usePage().props;
   const { data, setData, errors, post, processing } = useForm({
     project_code: '',
     name: '',
@@ -20,13 +20,13 @@ const Create = () => {
     budget: '',
     no_of_floors: '',
     number_of_units: '',
-    warranty: false,
-    email: '',
-    phone: '',
-    address: '',
-    region: '',
-    country: '',
-    postal_code: ''
+    warranty: '0',
+    status_reason: '',
+    land_area: '',
+    built_up_area: '',
+    selling_space: '',
+    sellable_area_factor: '',
+    floor_area_ratio: '',
   });
 
   function handleSubmit(e) {
@@ -145,21 +145,9 @@ const Create = () => {
               onChange={e => setData('number_of_units', e.target.value)}
             />
 
-            <SelectInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Country"
-              name="country"
-              errors={errors.country}
-              value={data.country}
-              onChange={e => setData('country', e.target.value)}
-            >
-              <option value=""></option>
-              {countries.map(c => <option key={c.id} value={c.iso_code}>{c.name}</option>)}
-            </SelectInput>
-
             <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Neighborhood / Location"
+              className="w-full pb-8 pr-6"
+              label="Neighborhood"
               name="neighborhood"
               errors={errors.neighborhood}
               value={data.neighborhood}
@@ -167,11 +155,32 @@ const Create = () => {
             />
             <TextInput
               className="w-full pb-8 pr-6"
-              label="Address"
-              name="address"
-              errors={errors.address}
-              value={data.address}
-              onChange={e => setData('address', e.target.value)}
+              label="Location"
+              name="location"
+              errors={errors.location}
+              value={data.location}
+              onChange={e => setData('location', e.target.value)}
+            />
+
+            <SelectInput
+              className="w-full pb-8 pr-6 lg:w-1/2"
+              label="Warranty"
+              name="warranty"
+              errors={errors.warranty}
+              value={data.warranty}
+              onChange={e => setData('warranty', e.target.value)}
+            >
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </SelectInput>
+
+            <TextInput
+              className="w-full pb-8 pr-6 lg:w-1/2"
+              label="Status Reason"
+              name="status_reason"
+              errors={errors.status_reason}
+              value={data.status_reason}
+              onChange={e => setData('status_reason', e.target.value)}
             />
           </div>
           <div className="flex items-center justify-end px-8 py-4 bg-gray-100 border-t border-gray-200">

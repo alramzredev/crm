@@ -7,10 +7,9 @@ import LoadingButton from '@/Shared/LoadingButton';
 import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
 import TrashedMessage from '@/Shared/TrashedMessage';
-import Icon from '@/Shared/Icon';
 
 const Edit = () => {
-  const { project, owners = [], cities = [], projectTypes = [], projectOwnerships = [], projectStatuses = [], countries = [] } = usePage().props;
+  const { project = {}, owners = [], cities = [], projectTypes = [], projectOwnerships = [], projectStatuses = [] } = usePage().props;
   const { data, setData, errors, put, processing } = useForm({
     project_code: project.project_code || '',
     name: project.name || '',
@@ -24,13 +23,13 @@ const Edit = () => {
     budget: project.budget || '',
     no_of_floors: project.no_of_floors || '',
     number_of_units: project.number_of_units || '',
-    warranty: project.warranty || false,
-    email: project.email || '',
-    phone: project.phone || '',
-    address: project.address || '',
-    region: project.region || '',
-    country: project.country || '',
-    postal_code: project.postal_code || ''
+    warranty: project.warranty ? '1' : '0',
+    status_reason: project.status_reason || '',
+    land_area: project.land_area || '',
+    built_up_area: project.built_up_area || '',
+    selling_space: project.selling_space || '',
+    sellable_area_factor: project.sellable_area_factor || '',
+    floor_area_ratio: project.floor_area_ratio || '',
   });
 
   function handleSubmit(e) {
@@ -180,11 +179,40 @@ const Edit = () => {
 
             <TextInput
               className="w-full pb-8 pr-6"
-              label="Address"
-              name="address"
-              errors={errors.address}
-              value={data.address}
-              onChange={e => setData('address', e.target.value)}
+              label="Neighborhood"
+              name="neighborhood"
+              errors={errors.neighborhood}
+              value={data.neighborhood}
+              onChange={e => setData('neighborhood', e.target.value)}
+            />
+            <TextInput
+              className="w-full pb-8 pr-6"
+              label="Location"
+              name="location"
+              errors={errors.location}
+              value={data.location}
+              onChange={e => setData('location', e.target.value)}
+            />
+
+            <SelectInput
+              className="w-full pb-8 pr-6 lg:w-1/2"
+              label="Warranty"
+              name="warranty"
+              errors={errors.warranty}
+              value={data.warranty}
+              onChange={e => setData('warranty', e.target.value)}
+            >
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </SelectInput>
+
+            <TextInput
+              className="w-full pb-8 pr-6 lg:w-1/2"
+              label="Status Reason"
+              name="status_reason"
+              errors={errors.status_reason}
+              value={data.status_reason}
+              onChange={e => setData('status_reason', e.target.value)}
             />
           </div>
           <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
@@ -202,84 +230,6 @@ const Edit = () => {
             </LoadingButton>
           </div>
         </form>
-      </div>
-      <h2 className="mt-12 text-2xl font-bold">Contacts</h2>
-      <div className="mt-6 overflow-x-auto bg-white rounded shadow">
-        <table className="w-full whitespace-nowrap">
-          <thead>
-            <tr className="font-bold text-left">
-              <th className="px-6 pt-5 pb-4">Name</th>
-              <th className="px-6 pt-5 pb-4">City</th>
-              <th className="px-6 pt-5 pb-4" colSpan="2">
-                Phone
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {project.contacts.map(
-              ({ id, name, phone, city, deleted_at }) => {
-                return (
-                  <tr
-                    key={id}
-                    className="hover:bg-gray-100 focus-within:bg-gray-100"
-                  >
-                    <td className="bordeßr-t">
-                      <Link
-                        href={route('contacts.edit', id)}
-                        className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                      >
-                        {name}
-                        {deleted_at && (
-                          <Icon
-                            name="trash"
-                            className="flex-shrink-0 w-3 h-3 ml-2 text-gray-400 fill-current"
-                          />
-                        )}
-                      </Link>
-                    </td>
-                    <td className="border-t">
-                      <Link
-                        tabIndex="-1"
-                        href={route('contacts.edit', id)}
-                        className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                      >
-                        {city}
-                      </Link>
-                    </td>
-                    <td className="border-t">
-                      <Link
-                        tabIndex="-1"
-                        href={route('contacts.edit', id)}
-                        className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
-                      >
-                        {phone}
-                      </Link>
-                    </td>
-                    <td className="w-px border-t">
-                      <Link
-                        tabIndex="-1"
-                        href={route('contacts.edit', id)}
-                        className="flex items-center px-4"
-                      >
-                        <Icon
-                          name="cheveron-right"
-                          className="block w-6 h-6 text-gray-400 fill-current"
-                        />
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              }
-            )}
-            {project.contacts.length === 0 && (
-              <tr>
-                <td className="px-6 py-4 border-t" colSpan="4">
-                  No contacts found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
       </div>
     </div>
   );

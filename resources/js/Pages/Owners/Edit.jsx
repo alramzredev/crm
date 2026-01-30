@@ -9,17 +9,16 @@ import TrashedMessage from '@/Shared/TrashedMessage';
 
 const Edit = () => {
   const { owner } = usePage().props;
-  const { data, setData, errors, post, processing } = useForm({
+  const { data, setData, errors, put, processing } = useForm({
     name: owner.name || '',
     type: owner.type || 'individual',
     phone: owner.phone || '',
-    email: owner.email || '',
-    _method: 'PUT'
+    email: owner.email || ''
   });
 
   function submit(e) {
     e.preventDefault();
-    post(route('owners.update', owner.id));
+    put(route('owners.update', owner.id));
   }
 
   function destroy() {

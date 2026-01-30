@@ -105,11 +105,6 @@ class Project extends Model
         return $this->hasMany(ProjectAudit::class);
     }
 
-    public function contacts()
-    {
-        return $this->hasMany(Contact::class);
-    }
-
     // Filtering scope
     public function scopeFilter($query, array $filters)
     {

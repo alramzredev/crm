@@ -21,7 +21,6 @@ class ProjectResource extends JsonResource
             'name' => $this->name,
             'owner' => $this->owner ? $this->owner->only('id', 'name', 'phone', 'email') : null,
             'city' => $this->city ? $this->city->only('id', 'name') : null,
-            'country' => $this->city && $this->city->country ? $this->city->country->only('id', 'name', 'iso_code') : null,
             'neighborhood' => $this->neighborhood,
             'location' => $this->location,
             'project_type' => $this->projectType ? $this->projectType->only('id', 'name') : null,
@@ -46,16 +45,6 @@ class ProjectResource extends JsonResource
             'legal' => $this->whenLoaded('legal', $this->legal ? $this->legal->only('id', 'title_deed_status', 'construction_license_status', 'soil_test_report_status') : null),
             'assets' => $this->whenLoaded('assets', $this->assets ? $this->assets->only('id', 'renders_high_quality', 'free_maintenance', 'timetable') : null),
             'audits' => $this->whenLoaded('audits', $this->audits->map->only('id', 'row_checksum', 'source_modified_on')),
-            // contacts compatible with frontend expectations
-            'contacts' => $this->contacts()->orderBy('first_name')->get()->map(function ($c) {
-                return [
-                    'id' => $c->id,
-                    'name' => trim($c->first_name . ' ' . $c->last_name),
-                    'city' => $c->city,
-                    'phone' => $c->phone,
-                    'deleted_at' => $c->deleted_at,
-                ];
-            }),
         ];
     }
 }

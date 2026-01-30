@@ -41,8 +41,7 @@ Route::get('projects')->name('projects')->uses('ProjectsController@index')->midd
 Route::get('projects/create')->name('projects.create')->uses('ProjectsController@create')->middleware('auth');
 Route::post('projects')->name('projects.store')->uses('ProjectsController@store')->middleware('auth');
 Route::get('projects/{project}', function (Project $project) {
-    $project->load('contacts');
-
+    $project->load(['owner', 'city', 'projectType', 'ownership', 'status']);
     return Inertia::render('Projects/Show', [
         'project' => $project,
     ]);
@@ -61,14 +60,14 @@ Route::put('owners/{owner}')->name('owners.update')->uses('OwnersController@upda
 Route::delete('owners/{owner}')->name('owners.destroy')->uses('OwnersController@destroy')->middleware('auth');
 Route::put('owners/{owner}/restore')->name('owners.restore')->uses('OwnersController@restore')->middleware('auth');
 
-// Contacts
-Route::get('contacts')->name('contacts')->uses('ContactsController@index')->middleware('remember', 'auth');
-Route::get('contacts/create')->name('contacts.create')->uses('ContactsController@create')->middleware('auth');
-Route::post('contacts')->name('contacts.store')->uses('ContactsController@store')->middleware('auth');
-Route::get('contacts/{contact}/edit')->name('contacts.edit')->uses('ContactsController@edit')->middleware('auth');
-Route::put('contacts/{contact}')->name('contacts.update')->uses('ContactsController@update')->middleware('auth');
-Route::delete('contacts/{contact}')->name('contacts.destroy')->uses('ContactsController@destroy')->middleware('auth');
-Route::put('contacts/{contact}/restore')->name('contacts.restore')->uses('ContactsController@restore')->middleware('auth');
+// Leads (renamed from Contacts)
+Route::get('leads')->name('leads')->uses('LeadsController@index')->middleware('remember', 'auth');
+Route::get('leads/create')->name('leads.create')->uses('LeadsController@create')->middleware('auth');
+Route::post('leads')->name('leads.store')->uses('LeadsController@store')->middleware('auth');
+Route::get('leads/{lead}/edit')->name('leads.edit')->uses('LeadsController@edit')->middleware('auth');
+Route::put('leads/{lead}')->name('leads.update')->uses('LeadsController@update')->middleware('auth');
+Route::delete('leads/{lead}')->name('leads.destroy')->uses('LeadsController@destroy')->middleware('auth');
+Route::put('leads/{lead}/restore')->name('leads.restore')->uses('LeadsController@restore')->middleware('auth');
 
 // Reports
 Route::get('reports')->name('reports')->uses('ReportsController')->middleware('auth');
