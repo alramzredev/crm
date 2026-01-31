@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class PropertyStoreRequest extends FormRequest
+{
+    public function authorize()
+    {
+        return true;
+    }
+
+    public function rules()
+    {
+        return [
+            'property_code' => ['required', 'string', 'max:50', 'unique:properties,property_code'],
+            'property_no' => ['nullable', 'integer'],
+            'project_id' => ['required', 'integer', 'exists:projects,id'],
+            'owner_id' => ['required', 'integer', 'exists:owners,id'],
+            'neighborhood_id' => ['nullable', 'integer', 'exists:neighborhoods,id'],
+            'status_id' => ['nullable', 'integer', 'exists:property_statuses,id'],
+            'property_type_id' => ['nullable', 'integer', 'exists:property_types,id'],
+            'property_class_id' => ['nullable', 'integer', 'exists:property_classes,id'],
+            'property_class' => ['nullable', 'string', 'max:50'],
+            'diagram_number' => ['nullable', 'string', 'max:100'],
+            'instrument_no' => ['nullable', 'string', 'max:100'],
+            'license_no' => ['nullable', 'string', 'max:100'],
+            'lot_no' => ['nullable', 'string', 'max:100'],
+            'total_square_meter' => ['nullable', 'numeric'],
+            'total_units' => ['nullable', 'integer'],
+            'count_available' => ['nullable', 'integer'],
+            'notes' => ['nullable', 'string'],
+        ];
+    }
+}

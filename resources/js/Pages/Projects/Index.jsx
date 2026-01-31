@@ -4,6 +4,7 @@ import Layout from '@/Shared/Layout';
 import Icon from '@/Shared/Icon';
 import SearchFilter from '@/Shared/SearchFilter';
 import Pagination from '@/Shared/Pagination';
+import PropertyList from '@/Shared/PropertyList';
 
 const Index = () => {
   const { projects } = usePage().props;

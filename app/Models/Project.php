@@ -102,7 +102,12 @@ class Project extends Model
 
     public function audits()
     {
-        return $this->hasMany(ProjectAudit::class);
+        return $this->morphMany(Audit::class, 'auditable');
+    }
+
+    public function properties()
+    {
+        return $this->hasMany(Property::class);
     }
 
     // Filtering scope

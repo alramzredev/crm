@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Http\Controllers\PropertiesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,12 +41,11 @@ Route::get('/img/{path}', 'ImagesController@show')->where('path', '.*');
 Route::get('projects')->name('projects')->uses('ProjectsController@index')->middleware('remember', 'auth');
 Route::get('projects/create')->name('projects.create')->uses('ProjectsController@create')->middleware('auth');
 Route::post('projects')->name('projects.store')->uses('ProjectsController@store')->middleware('auth');
-Route::get('projects/{project}', function (Project $project) {
-    $project->load(['owner', 'city', 'projectType', 'ownership', 'status']);
-    return Inertia::render('Projects/Show', [
-        'project' => $project,
-    ]);
-})->name('projects.show')->middleware('auth');
+Route::get('projects/{project}')
+    ->name('projects.show')
+    ->uses('ProjectsController@show')
+    ->middleware('auth');
+    
 Route::get('projects/{project}/edit')->name('projects.edit')->uses('ProjectsController@edit')->middleware('auth');
 Route::put('projects/{project}')->name('projects.update')->uses('ProjectsController@update')->middleware('auth');
 Route::delete('projects/{project}')->name('projects.destroy')->uses('ProjectsController@destroy')->middleware('auth');
@@ -71,6 +71,16 @@ Route::put('leads/{lead}/restore')->name('leads.restore')->uses('LeadsController
 
 // Reports
 Route::get('reports')->name('reports')->uses('ReportsController')->middleware('auth');
+
+// Properties
+Route::get('properties')->name('properties')->uses('PropertiesController@index')->middleware('remember', 'auth');
+Route::get('properties/create')->name('properties.create')->uses('PropertiesController@create')->middleware('auth');
+Route::post('properties')->name('properties.store')->uses('PropertiesController@store')->middleware('auth');
+Route::get('properties/{property}')->name('properties.show')->uses('PropertiesController@show')->middleware('auth');
+Route::get('properties/{property}/edit')->name('properties.edit')->uses('PropertiesController@edit')->middleware('auth');
+Route::put('properties/{property}')->name('properties.update')->uses('PropertiesController@update')->middleware('auth');
+Route::delete('properties/{property}')->name('properties.destroy')->uses('PropertiesController@destroy')->middleware('auth');
+Route::put('properties/{property}/restore')->name('properties.restore')->uses('PropertiesController@restore')->middleware('auth');
 
 // 500 error
 Route::get('500', function () {

@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
             ProjectOwnershipSeeder::class,
             ProjectStatusSeeder::class,
             ProjectTypeSeeder::class,
+            PropertyStatusSeeder::class,
+            PropertyClassSeeder::class,
         ]);
     }
 }

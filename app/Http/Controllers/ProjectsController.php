@@ -103,8 +103,23 @@ class ProjectsController extends Controller
 
     public function show(Project $project)
     {
-        return Inertia::render('Projects/Show', [
-            'project' => $project->load('owner', 'city', 'projectType', 'ownership', 'status'),
+      
+         return Inertia::render('Projects/Show', [
+            'project' => new ProjectResource(
+                $project->load([
+                    'owner',
+                    'city',
+                    'projectType',
+                    'ownership',
+                    'status',
+                    'properties',
+                    'properties.owner',
+                    'properties.status',
+                    'properties.propertyType',
+                    'properties.propertyClass',
+                    'properties.neighborhood'
+                ])
+            ),
         ]);
     }
 }

@@ -3,6 +3,7 @@ import { Link, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import TrashedMessage from '@/Shared/TrashedMessage';
 import ProjectTabs from '@/Shared/ProjectTabs';
+import PropertyList from '@/Shared/PropertyList';
 
 const Show = () => {
   const { project } = usePage().props;
@@ -98,8 +99,19 @@ const Show = () => {
       )}
 
       {activeTab === 'properties' && (
-        <div className="max-w-3xl p-8 bg-white rounded shadow">
-          <div className="text-sm text-gray-600">No properties to display.</div>
+        <div className="max-w-4xl bg-white rounded shadow">
+          <div className="p-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold">Properties</h2>
+              <Link
+                className="btn-indigo"
+                href={route('properties.create', { project_id: project.id })}
+              >
+                Add Property
+              </Link>
+            </div>
+            <PropertyList properties={project.properties} showButton={true} />
+          </div>
         </div>
       )}
     </div>
