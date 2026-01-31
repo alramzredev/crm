@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import TrashedMessage from '@/Shared/TrashedMessage';
@@ -7,7 +7,27 @@ import PropertyList from '@/Shared/PropertyList';
 
 const Show = () => {
   const { project } = usePage().props;
-  const [activeTab, setActiveTab] = useState('overview');
+
+  const allowedTabs = new Set(['overview', 'properties']);
+  const initialTab = (() => {
+    if (typeof window === 'undefined') return 'overview';
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    return allowedTabs.has(tab) ? tab : 'overview';
+  })();
+
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('tab') !== activeTab) {
+      params.set('tab', activeTab);
+      const query = params.toString();
+      const newUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, [activeTab]);
 
   const ownerLabel = project.owner?.name || project.owner || '';
   const statusLabel = project.status?.name || project.status || '';
