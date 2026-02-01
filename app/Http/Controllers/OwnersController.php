@@ -6,23 +6,21 @@ use App\Models\Owner;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Http\Request as HttpRequest;
+use App\Repositories\OwnerRepository;
+use App\Http\Requests\OwnerRequest;
 
 class OwnersController extends Controller
 {
+    protected $repo;
+
+    public function __construct()
+    {
+        $this->repo = new OwnerRepository();
+    }
+
     public function index()
     {
-        $query = Owner::query();
-
-        if ($search = Request::get('search')) {
-            $query->where('name', 'like', "%{$search}%");
-        }
-
-        if (Request::get('trashed')) {
-            $query->onlyTrashed();
-        }
-
-        $owners = $query->orderBy('name')->paginate()->appends(Request::all());
+        $owners = $this->repo->getPaginatedOwners(Request::only('search', 'trashed'));
 
         return Inertia::render('Owners/Index', [
             'filters' => Request::all('search', 'trashed'),
@@ -35,16 +33,9 @@ class OwnersController extends Controller
         return Inertia::render('Owners/Create');
     }
 
-    public function store(HttpRequest $request)
+    public function store(OwnerRequest $request)
     {
-        $data = $request->validate([
-            'name'  => ['required', 'string', 'max:255'],
-            'type'  => ['required', 'in:individual,company,government,partnership'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'email' => ['nullable', 'email', 'max:255'],
-        ]);
-
-        Owner::create($data);
+        Owner::create($request->validated());
 
         return Redirect::route('owners')->with('success', 'Owner created.');
     }
@@ -56,16 +47,9 @@ class OwnersController extends Controller
         ]);
     }
 
-    public function update(Owner $owner, HttpRequest $request)
+    public function update(Owner $owner, OwnerRequest $request)
     {
-        $data = $request->validate([
-            'name'  => ['required', 'string', 'max:255'],
-            'type'  => ['required', 'in:individual,company,government,partnership'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'email' => ['nullable', 'email', 'max:255'],
-        ]);
-
-        $owner->update($data);
+        $owner->update($request->validated());
 
         return Redirect::back()->with('success', 'Owner updated.');
     }

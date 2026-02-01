@@ -6,7 +6,7 @@ use App\Http\Requests\ContactStoreRequest;
 use App\Http\Requests\ContactUpdateRequest;
 use App\Http\Resources\ContactCollection;
 use App\Http\Resources\ContactResource;
-use App\Http\Resources\UserProjectCollection;
+use App\Repositories\ContactRepository;
 use App\Models\Contact;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
@@ -16,17 +16,19 @@ use Illuminate\Support\Facades\Redirect;
 
 class ContactsController extends Controller
 {
+    protected $repo;
+
+    public function __construct()
+    {
+        $this->repo = new ContactRepository();
+    }
+
     public function index()
     {
         return Inertia::render('Contacts/Index', [
             'filters' => Request::all('search', 'trashed'),
             'contacts' => new ContactCollection(
-                Auth::user()->account->contacts()
-                    ->with('project')
-                    ->orderByName()
-                    ->filter(Request::only('search', 'trashed'))
-                    ->paginate()
-                    ->appends(Request::all())
+                $this->repo->getPaginatedContacts(Auth::user()->account, Request::only('search', 'trashed'))
             ),
         ]);
     }
@@ -34,11 +36,7 @@ class ContactsController extends Controller
     public function create()
     {
         return Inertia::render('Contacts/Create', [
-            'projects' => new UserProjectCollection(
-                Auth::user()->account->projects()
-                    ->orderBy('name')
-                    ->get()
-            ),
+            'projects' => $this->repo->getUserProjects(Auth::user()->account),
         ]);
     }
 
@@ -55,11 +53,7 @@ class ContactsController extends Controller
     {
         return Inertia::render('Contacts/Edit', [
             'contact' => new ContactResource($contact),
-            'projects' => new UserProjectCollection(
-                Auth::user()->account->projects()
-                    ->orderBy('name')
-                    ->get()
-            ),
+            'projects' => $this->repo->getUserProjects(Auth::user()->account),
         ]);
     }
 

@@ -17,40 +17,30 @@ use App\Models\ProjectType;
 use App\Models\ProjectOwnership;
 use App\Models\ProjectStatus;
 use App\Models\Country;
+use App\Repositories\ProjectRepository;
 
 class ProjectsController extends Controller
 {
+    protected $repo;
+
+    public function __construct()
+    {
+        $this->repo = new ProjectRepository();
+    }
+
     public function index()
     {
         return Inertia::render('Projects/Index', [
             'filters' => Request::all('search', 'trashed'),
             'projects' => new ProjectCollection(
-                Project::with('owner', 'city', 'projectType', 'ownership', 'status')
-                    ->orderBy('name')
-                    ->filter(Request::only('search', 'trashed'))
-                    ->paginate()
-                    ->appends(Request::all())
+                $this->repo->getPaginatedProjects(Request::only('search', 'trashed'))
             ),
         ]);
     }
 
     public function create()
     {
-        $owners = Owner::orderBy('name')->get();
-        $cities = City::orderBy('name')->get();
-        $projectTypes = ProjectType::orderBy('name')->get();
-        $projectOwnerships = ProjectOwnership::orderBy('name')->get();
-        $projectStatuses = ProjectStatus::orderBy('name')->get();
-        $countries = Country::orderBy('name')->get();
-
-        return Inertia::render('Projects/Create', [
-            'owners' => $owners,
-            'cities' => $cities,
-            'projectTypes' => $projectTypes,
-            'projectOwnerships' => $projectOwnerships,
-            'projectStatuses' => $projectStatuses,
-            'countries' => $countries,
-        ]);
+        return Inertia::render('Projects/Create', $this->repo->getCreateData());
     }
 
     public function store(ProjectStoreRequest $request)
@@ -62,22 +52,7 @@ class ProjectsController extends Controller
 
     public function edit(Project $project)
     {
-        $owners = Owner::orderBy('name')->get();
-        $cities = City::orderBy('name')->get();
-        $projectTypes = ProjectType::orderBy('name')->get();
-        $projectOwnerships = ProjectOwnership::orderBy('name')->get();
-        $projectStatuses = ProjectStatus::orderBy('name')->get();
-        $countries = Country::orderBy('name')->get();
-
-        return Inertia::render('Projects/Edit', [
-            'project' => $project->load('owner', 'city', 'projectType', 'ownership', 'status'),
-            'owners' => $owners,
-            'cities' => $cities,
-            'projectTypes' => $projectTypes,
-            'projectOwnerships' => $projectOwnerships,
-            'projectStatuses' => $projectStatuses,
-            'countries' => $countries,
-        ]);
+        return Inertia::render('Projects/Edit', $this->repo->getEditData($project));
     }
 
     public function update(Project $project, ProjectUpdateRequest $request)
@@ -103,23 +78,8 @@ class ProjectsController extends Controller
 
     public function show(Project $project)
     {
-      
-         return Inertia::render('Projects/Show', [
-            'project' => new ProjectResource(
-                $project->load([
-                    'owner',
-                    'city',
-                    'projectType',
-                    'ownership',
-                    'status',
-                    'properties',
-                    'properties.owner',
-                    'properties.status',
-                    'properties.propertyType',
-                    'properties.propertyClass',
-                    'properties.neighborhood'
-                ])
-            ),
+        return Inertia::render('Projects/Show', [
+            'project' => $this->repo->getShowResource($project),
         ]);
     }
 }

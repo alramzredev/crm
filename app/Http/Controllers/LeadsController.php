@@ -7,26 +7,21 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request as HttpRequest;
+use App\Repositories\LeadRepository;
+use App\Http\Requests\LeadRequest;
 
 class LeadsController extends Controller
 {
+    protected $repo;
+
+    public function __construct()
+    {
+        $this->repo = new LeadRepository();
+    }
+
     public function index()
     {
-        $query = Lead::query();
-
-        if ($search = Request::get('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        if (Request::get('trashed')) {
-            $query->onlyTrashed();
-        }
-
-        $leads = $query->orderBy('last_name')->orderBy('first_name')->paginate()->appends(Request::all());
+        $leads = $this->repo->getPaginatedLeads(Request::only('search', 'trashed'));
 
         return Inertia::render('Leads/Index', [
             'filters' => Request::all('search', 'trashed'),
@@ -39,21 +34,9 @@ class LeadsController extends Controller
         return Inertia::render('Leads/Create');
     }
 
-    public function store(HttpRequest $request)
+    public function store(LeadRequest $request)
     {
-        $data = $request->validate([
-            'first_name' => ['required', 'string', 'max:25'],
-            'last_name' => ['required', 'string', 'max:25'],
-            'email' => ['nullable', 'email', 'max:50'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'address' => ['nullable', 'string', 'max:150'],
-            'city' => ['nullable', 'string', 'max:50'],
-            'region' => ['nullable', 'string', 'max:50'],
-            'country' => ['nullable', 'string', 'max:2'],
-            'postal_code' => ['nullable', 'string', 'max:25'],
-        ]);
-
-        Lead::create($data);
+        Lead::create($request->validated());
 
         return Redirect::route('leads')->with('success', 'Lead created.');
     }
@@ -65,21 +48,9 @@ class LeadsController extends Controller
         ]);
     }
 
-    public function update(Lead $lead, HttpRequest $request)
+    public function update(Lead $lead, LeadRequest $request)
     {
-        $data = $request->validate([
-            'first_name' => ['required', 'string', 'max:25'],
-            'last_name' => ['required', 'string', 'max:25'],
-            'email' => ['nullable', 'email', 'max:50'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'address' => ['nullable', 'string', 'max:150'],
-            'city' => ['nullable', 'string', 'max:50'],
-            'region' => ['nullable', 'string', 'max:50'],
-            'country' => ['nullable', 'string', 'max:2'],
-            'postal_code' => ['nullable', 'string', 'max:25'],
-        ]);
-
-        $lead->update($data);
+        $lead->update($request->validated());
 
         return Redirect::back()->with('success', 'Lead updated.');
     }
