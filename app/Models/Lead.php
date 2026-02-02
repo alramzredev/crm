@@ -4,10 +4,32 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Model;
 
 class Lead extends Model
 {
     use SoftDeletes, HasFactory;
+
+    // add fillable so 'title' (and other fields) can be mass-assigned
+    protected $fillable = [
+        'title',
+        'first_name',
+        'last_name',
+        'national_id',
+        'email',
+        'phone',
+        'lead_source_id',
+        'broker_id',
+        'national_address_file',
+        'national_id_file',
+        'created_by',
+        'address',
+        'city',
+        'region',
+        'country',
+        'postal_code',
+        'project_id',
+    ];
 
     public function getNameAttribute()
     {
@@ -37,5 +59,15 @@ class Lead extends Model
                 $query->onlyTrashed();
             }
         });
+    }
+
+    public function leadSource()
+    {
+        return $this->belongsTo(LeadSource::class, 'lead_source_id');
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
     }
 }

@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lead;
+use App\Models\LeadSource;
+use App\Models\Project;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Http\Request as HttpRequest;
 use App\Repositories\LeadRepository;
 use App\Http\Requests\LeadRequest;
 
@@ -31,7 +32,10 @@ class LeadsController extends Controller
 
     public function create()
     {
-        return Inertia::render('Leads/Create');
+        return Inertia::render('Leads/Create', [
+            'leadSources' => LeadSource::orderBy('name')->get(),
+            'projects' => Project::orderBy('name')->get(),
+        ]);
     }
 
     public function store(LeadRequest $request)
@@ -45,6 +49,8 @@ class LeadsController extends Controller
     {
         return Inertia::render('Leads/Edit', [
             'lead' => $lead,
+            'leadSources' => LeadSource::orderBy('name')->get(),
+            'projects' => Project::orderBy('name')->get(),
         ]);
     }
 

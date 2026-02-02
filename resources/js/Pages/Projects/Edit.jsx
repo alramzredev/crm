@@ -185,14 +185,6 @@ const Edit = () => {
               value={data.neighborhood}
               onChange={e => setData('neighborhood', e.target.value)}
             />
-            <TextInput
-              className="w-full pb-8 pr-6"
-              label="Location"
-              name="location"
-              errors={errors.location}
-              value={data.location}
-              onChange={e => setData('location', e.target.value)}
-            />
 
             <SelectInput
               className="w-full pb-8 pr-6 lg:w-1/2"

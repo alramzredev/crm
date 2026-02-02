@@ -28,14 +28,15 @@ const Index = () => {
           <thead>
             <tr className="font-bold text-left">
               <th className="px-6 pt-5 pb-4">Name</th>
-              <th className="px-6 pt-5 pb-4">City</th>
+              <th className="px-6 pt-5 pb-4">Project</th>
+              <th className="px-6 pt-5 pb-4">Email</th>
               <th className="px-6 pt-5 pb-4" colSpan="2">
                 Phone
               </th>
             </tr>
           </thead>
           <tbody>
-            {data.map(({ id, first_name, last_name, city, phone, deleted_at }) => (
+            {data.map(({ id, first_name, last_name, project, email, phone, deleted_at }) => (
               <tr
                 key={id}
                 className="hover:bg-gray-100 focus-within:bg-gray-100"
@@ -60,7 +61,16 @@ const Index = () => {
                     href={route('leads.edit', id)}
                     className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
                   >
-                    {city}
+                    {project ? project.name : '—'}
+                  </Link>
+                </td>
+                <td className="border-t">
+                  <Link
+                    tabIndex="-1"
+                    href={route('leads.edit', id)}
+                    className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
+                  >
+                    {email}
                   </Link>
                 </td>
                 <td className="border-t">
@@ -88,7 +98,7 @@ const Index = () => {
             ))}
             {data.length === 0 && (
               <tr>
-                <td className="px-6 py-4 border-t" colSpan="4">
+                <td className="px-6 py-4 border-t" colSpan="5">
                   No leads found.
                 </td>
               </tr>

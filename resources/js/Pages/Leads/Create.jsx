@@ -1,20 +1,25 @@
 import React from 'react';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import LoadingButton from '@/Shared/LoadingButton';
 import TextInput from '@/Shared/TextInput';
+import SelectInput from '@/Shared/SelectInput';
+import FileInput from '@/Shared/FileInput';
 
 const Create = () => {
+  const { projects, leadSources = [], brokers = [] } = usePage().props;
   const { data, setData, errors, post, processing } = useForm({
+    title: '',
     first_name: '',
     last_name: '',
+    national_id: '',
+    project_id: '',
+    lead_source_id: '',
+    broker_id: '',
     email: '',
     phone: '',
-    address: '',
-    city: '',
-    region: '',
-    country: '',
-    postal_code: ''
+    national_address_file: '',
+    national_id_file: '',
   });
 
   function handleSubmit(e) {
@@ -35,9 +40,63 @@ const Create = () => {
       </h1>
       <div className="max-w-3xl overflow-hidden bg-white rounded shadow">
         <form onSubmit={handleSubmit}>
-          <div className="flex flex-wrap p-8 -mb-8 -mr-6">
+          {/* Identifiers */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 border-b">
             <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
+              className="w-full"
+              label="Title"
+              name="title"
+              errors={errors.title}
+              value={data.title}
+              onChange={e => setData('title', e.target.value)}
+            />
+            <TextInput
+              className="w-full"
+              label="National ID"
+              name="national_id"
+              errors={errors.national_id}
+              value={data.national_id}
+              onChange={e => setData('national_id', e.target.value)}
+            />
+            <SelectInput
+              className="w-full"
+              label="Project"
+              name="project_id"
+              errors={errors.project_id}
+              value={data.project_id}
+              onChange={e => setData('project_id', e.target.value)}
+            >
+              <option value=""></option>
+              {projects?.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+            </SelectInput>
+            <SelectInput
+              className="w-full"
+              label="Lead Source"
+              name="lead_source_id"
+              errors={errors.lead_source_id}
+              value={data.lead_source_id}
+              onChange={e => setData('lead_source_id', e.target.value)}
+            >
+              <option value=""></option>
+              {leadSources.map(ls => <option key={ls.id} value={ls.id}>{ls.name}</option>)}
+            </SelectInput>
+            <SelectInput
+              className="w-full"
+              label="Broker"
+              name="broker_id"
+              errors={errors.broker_id}
+              value={data.broker_id}
+              onChange={e => setData('broker_id', e.target.value)}
+            >
+              <option value=""></option>
+              {brokers.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+            </SelectInput>
+          </div>
+
+          {/* Personal */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 border-b">
+            <TextInput
+              className="w-full"
               label="First Name"
               name="first_name"
               errors={errors.first_name}
@@ -45,7 +104,7 @@ const Create = () => {
               onChange={e => setData('first_name', e.target.value)}
             />
             <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
+              className="w-full"
               label="Last Name"
               name="last_name"
               errors={errors.last_name}
@@ -53,7 +112,7 @@ const Create = () => {
               onChange={e => setData('last_name', e.target.value)}
             />
             <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
+              className="w-full"
               label="Email"
               name="email"
               type="email"
@@ -62,55 +121,41 @@ const Create = () => {
               onChange={e => setData('email', e.target.value)}
             />
             <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
+              className="w-full"
               label="Phone"
               name="phone"
+              type="text"
               errors={errors.phone}
               value={data.phone}
               onChange={e => setData('phone', e.target.value)}
             />
-            <TextInput
-              className="w-full pb-8 pr-6"
-              label="Address"
-              name="address"
-              errors={errors.address}
-              value={data.address}
-              onChange={e => setData('address', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="City"
-              name="city"
-              errors={errors.city}
-              value={data.city}
-              onChange={e => setData('city', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Province/State"
-              name="region"
-              errors={errors.region}
-              value={data.region}
-              onChange={e => setData('region', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Country"
-              name="country"
-              errors={errors.country}
-              value={data.country}
-              onChange={e => setData('country', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Postal Code"
-              name="postal_code"
-              errors={errors.postal_code}
-              value={data.postal_code}
-              onChange={e => setData('postal_code', e.target.value)}
-            />
           </div>
-          <div className="flex items-center justify-end px-8 py-4 bg-gray-100 border-t border-gray-200">
+
+          {/* Files */}
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FileInput
+                className="w-full"
+                label="National Address File"
+                name="national_address_file"
+                accept="image/*,application/pdf"
+                errors={errors.national_address_file}
+                value={data.national_address_file}
+                onChange={file => setData('national_address_file', file)}
+              />
+              <FileInput
+                className="w-full"
+                label="National ID File"
+                name="national_id_file"
+                accept="image/*,application/pdf"
+                errors={errors.national_id_file}
+                value={data.national_id_file}
+                onChange={file => setData('national_id_file', file)}
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end px-6 py-4 bg-gray-100 border-t">
             <LoadingButton
               loading={processing}
               type="submit"

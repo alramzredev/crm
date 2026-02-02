@@ -5,15 +5,24 @@ import Layout from '@/Shared/Layout';
 import DeleteButton from '@/Shared/DeleteButton';
 import LoadingButton from '@/Shared/LoadingButton';
 import TextInput from '@/Shared/TextInput';
+import SelectInput from '@/Shared/SelectInput';
 import TrashedMessage from '@/Shared/TrashedMessage';
+import FileInput from '@/Shared/FileInput';
 
 const Edit = () => {
-  const { lead } = usePage().props;
+  const { lead, leadSources = [], brokers = [], projects = [] } = usePage().props;
   const { data, setData, errors, put, processing } = useForm({
+    title: lead.title || '',
     first_name: lead.first_name || '',
     last_name: lead.last_name || '',
+    national_id: lead.national_id || '',
+    project_id: lead.project_id || '',
+    lead_source_id: lead.lead_source_id || '',
+    broker_id: lead.broker_id || '',
     email: lead.email || '',
     phone: lead.phone || '',
+    national_address_file: '',
+    national_id_file: '',
     address: lead.address || '',
     city: lead.city || '',
     region: lead.region || '',
@@ -42,108 +51,56 @@ const Edit = () => {
     <div>
       <Helmet title={`${data.first_name} ${data.last_name}`} />
       <h1 className="mb-8 text-3xl font-bold">
-        <Link
-          href={route('leads')}
-          className="text-indigo-600 hover:text-indigo-700"
-        >
-          Leads
-        </Link>
+        <Link href={route('leads')} className="text-indigo-600 hover:text-indigo-700">Leads</Link>
         <span className="mx-2 font-medium text-indigo-600">/</span>
         {data.first_name} {data.last_name}
       </h1>
+
       {lead.deleted_at && (
         <TrashedMessage onRestore={restore}>
           This lead has been deleted.
         </TrashedMessage>
       )}
+
       <div className="max-w-3xl overflow-hidden bg-white rounded shadow">
         <form onSubmit={handleSubmit}>
-          <div className="flex flex-wrap p-8 -mb-8 -mr-6">
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="First Name"
-              name="first_name"
-              errors={errors.first_name}
-              value={data.first_name}
-              onChange={e => setData('first_name', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Last Name"
-              name="last_name"
-              errors={errors.last_name}
-              value={data.last_name}
-              onChange={e => setData('last_name', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Email"
-              name="email"
-              type="email"
-              errors={errors.email}
-              value={data.email}
-              onChange={e => setData('email', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Phone"
-              name="phone"
-              errors={errors.phone}
-              value={data.phone}
-              onChange={e => setData('phone', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6"
-              label="Address"
-              name="address"
-              errors={errors.address}
-              value={data.address}
-              onChange={e => setData('address', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="City"
-              name="city"
-              errors={errors.city}
-              value={data.city}
-              onChange={e => setData('city', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Province/State"
-              name="region"
-              errors={errors.region}
-              value={data.region}
-              onChange={e => setData('region', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Country"
-              name="country"
-              errors={errors.country}
-              value={data.country}
-              onChange={e => setData('country', e.target.value)}
-            />
-            <TextInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Postal Code"
-              name="postal_code"
-              errors={errors.postal_code}
-              value={data.postal_code}
-              onChange={e => setData('postal_code', e.target.value)}
-            />
+          {/* Identifiers */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 border-b">
+            <TextInput className="w-full" label="Title" name="title" errors={errors.title} value={data.title} onChange={e => setData('title', e.target.value)} />
+            <TextInput className="w-full" label="National ID" name="national_id" errors={errors.national_id} value={data.national_id} onChange={e => setData('national_id', e.target.value)} />
+            <SelectInput className="w-full" label="Project" name="project_id" errors={errors.project_id} value={data.project_id} onChange={e => setData('project_id', e.target.value)}>
+              <option value=""></option>
+              {projects?.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+            </SelectInput>
+            <SelectInput className="w-full" label="Lead Source" name="lead_source_id" errors={errors.lead_source_id} value={data.lead_source_id} onChange={e => setData('lead_source_id', e.target.value)}>
+              <option value=""></option>
+              {leadSources.map(ls => <option key={ls.id} value={ls.id}>{ls.name}</option>)}
+            </SelectInput>
+            <SelectInput className="w-full" label="Broker" name="broker_id" errors={errors.broker_id} value={data.broker_id} onChange={e => setData('broker_id', e.target.value)}>
+              <option value=""></option>
+              {brokers.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+            </SelectInput>
           </div>
-          <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
-            {!lead.deleted_at && (
-              <DeleteButton onDelete={destroy}>Delete Lead</DeleteButton>
-            )}
-            <LoadingButton
-              loading={processing}
-              type="submit"
-              className="ml-auto btn-indigo"
-            >
-              Update Lead
-            </LoadingButton>
+
+          {/* Personal */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 border-b">
+            <TextInput className="w-full" label="First Name" name="first_name" errors={errors.first_name} value={data.first_name} onChange={e => setData('first_name', e.target.value)} />
+            <TextInput className="w-full" label="Last Name" name="last_name" errors={errors.last_name} value={data.last_name} onChange={e => setData('last_name', e.target.value)} />
+            <TextInput className="w-full" label="Email" name="email" type="email" errors={errors.email} value={data.email} onChange={e => setData('email', e.target.value)} />
+            <TextInput className="w-full" label="Phone" name="phone" type="text" errors={errors.phone} value={data.phone} onChange={e => setData('phone', e.target.value)} />
+          </div>
+
+          {/* Files */}
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FileInput className="w-full" label="National Address File" name="national_address_file" accept="image/*,application/pdf" errors={errors.national_address_file} value={data.national_address_file} onChange={file => setData('national_address_file', file)} />
+              <FileInput className="w-full" label="National ID File" name="national_id_file" accept="image/*,application/pdf" errors={errors.national_id_file} value={data.national_id_file} onChange={file => setData('national_id_file', file)} />
+            </div>
+          </div>
+
+          <div className="flex items-center px-6 py-4 bg-gray-100 border-t">
+            {!lead.deleted_at && <DeleteButton onDelete={destroy}>Delete Lead</DeleteButton>}
+            <LoadingButton loading={processing} type="submit" className="ml-auto btn-indigo">Update Lead</LoadingButton>
           </div>
         </form>
       </div>
