@@ -4,14 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PropertyStatus extends Model
+class UnitStatus extends Model
 {
     protected $fillable = ['name', 'reason'];
-
-    public function properties()
-    {
-        return $this->hasMany(Property::class, 'status_id');
-    }
 
     public function units()
     {

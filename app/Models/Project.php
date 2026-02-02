@@ -110,6 +110,11 @@ class Project extends Model
         return $this->hasMany(Property::class);
     }
 
+    public function units()
+    {
+        return $this->hasMany(Unit::class);
+    }
+
     // Filtering scope
     public function scopeFilter($query, array $filters)
     {

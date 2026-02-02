@@ -1,10 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import TrashedMessage from '@/Shared/TrashedMessage';
+import PropertyTabs from '@/Shared/PropertyTabs';
+import UnitList from '@/Shared/UnitList';
 
 const Show = () => {
   const { property } = usePage().props;
+
+  const allowedTabs = new Set(['overview', 'units']);
+  const initialTab = (() => {
+    if (typeof window === 'undefined') return 'overview';
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    return allowedTabs.has(tab) ? tab : 'overview';
+  })();
+
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('tab') !== activeTab) {
+      params.set('tab', activeTab);
+      const query = params.toString();
+      const newUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, [activeTab]);
 
   return (
     <div>
@@ -21,52 +44,75 @@ const Show = () => {
         <TrashedMessage>This property has been deleted.</TrashedMessage>
       )}
 
-      <div className="max-w-4xl overflow-hidden bg-white rounded shadow">
-        <div className="p-8">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Project</div>
-              <div className="mt-1">{property.project?.name || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Owner</div>
-              <div className="mt-1">{property.owner?.name || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Status</div>
-              <div className="mt-1">{property.status?.name || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Neighborhood</div>
-              <div className="mt-1">{property.neighborhood?.name || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Type</div>
-              <div className="mt-1">{property.propertyType?.name || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Class</div>
-              <div className="mt-1">{property.propertyClass?.name || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Total Sq. Meter</div>
-              <div className="mt-1">{property.total_square_meter || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Total Units</div>
-              <div className="mt-1">{property.total_units || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Available Count</div>
-              <div className="mt-1">{property.count_available ?? '—'}</div>
-            </div>
-            <div className="sm:col-span-2">
-              <div className="text-sm font-semibold text-gray-600">Notes</div>
-              <div className="mt-1">{property.notes || '—'}</div>
+      <PropertyTabs activeTab={activeTab} onChange={setActiveTab} />
+
+      {activeTab === 'overview' && (
+        <div className="max-w-4xl overflow-hidden bg-white rounded shadow">
+          <div className="p-8">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <div className="text-sm font-semibold text-gray-600">Project</div>
+                <div className="mt-1">{property.project?.name || '—'}</div>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-gray-600">Owner</div>
+                <div className="mt-1">{property.owner?.name || '—'}</div>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-gray-600">Status</div>
+                <div className="mt-1">{property.status?.name || '—'}</div>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-gray-600">Neighborhood</div>
+                <div className="mt-1">{property.neighborhood?.name || '—'}</div>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-gray-600">Type</div>
+                <div className="mt-1">{property.propertyType?.name || '—'}</div>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-gray-600">Class</div>
+                <div className="mt-1">{property.propertyClass?.name || '—'}</div>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-gray-600">Total Sq. Meter</div>
+                <div className="mt-1">{property.total_square_meter || '—'}</div>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-gray-600">Total Units</div>
+                <div className="mt-1">{property.total_units || '—'}</div>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-gray-600">Available Count</div>
+                <div className="mt-1">{property.count_available ?? '—'}</div>
+              </div>
+              {property.notes && (
+                <div className="sm:col-span-2">
+                  <div className="text-sm font-semibold text-gray-600">Notes</div>
+                  <div className="mt-1">{property.notes}</div>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {activeTab === 'units' && (
+        <div className="max-w-4xl bg-white rounded shadow">
+          <div className="p-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold">Units</h2>
+              <Link
+                className="btn-indigo"
+                href={route('units.create', { property_id: property.id, project_id: property.project_id })}
+              >
+                Add Unit
+              </Link>
+            </div>
+            <UnitList units={property.units} showButton={true} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

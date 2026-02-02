@@ -82,6 +82,16 @@ Route::put('properties/{property}')->name('properties.update')->uses('Properties
 Route::delete('properties/{property}')->name('properties.destroy')->uses('PropertiesController@destroy')->middleware('auth');
 Route::put('properties/{property}/restore')->name('properties.restore')->uses('PropertiesController@restore')->middleware('auth');
 
+// Units
+Route::get('units')->name('units')->uses('UnitsController@index')->middleware('remember', 'auth');
+Route::get('units/create')->name('units.create')->uses('UnitsController@create')->middleware('auth');
+Route::post('units')->name('units.store')->uses('UnitsController@store')->middleware('auth');
+Route::get('units/{unit}')->name('units.show')->uses('UnitsController@show')->middleware('auth');
+Route::get('units/{unit}/edit')->name('units.edit')->uses('UnitsController@edit')->middleware('auth');
+Route::put('units/{unit}')->name('units.update')->uses('UnitsController@update')->middleware('auth');
+Route::delete('units/{unit}')->name('units.destroy')->uses('UnitsController@destroy')->middleware('auth');
+Route::put('units/{unit}/restore')->name('units.restore')->uses('UnitsController@restore')->middleware('auth');
+
 // 500 error
 Route::get('500', function () {
     //echo $fail;

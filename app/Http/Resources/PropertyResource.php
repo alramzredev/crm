@@ -34,6 +34,7 @@ class PropertyResource extends JsonResource
             'count_available' => $this->count_available,
             'notes' => $this->notes,
             'deleted_at' => $this->deleted_at,
+            'units' => new UnitCollection($this->whenLoaded('units')),
         ];
     }
 }

@@ -78,4 +78,9 @@ class Property extends Model
     {
         return $this->belongsTo(Neighborhood::class);
     }
+
+    public function units()
+    {
+        return $this->hasMany(Unit::class);
+    }
 }

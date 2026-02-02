@@ -70,7 +70,7 @@ class PropertyRepository
     public function getShowResource(Property $property)
     {
         return new PropertyResource(
-            $property->load(['project', 'owner', 'status', 'neighborhood.municipality.city'])
+            $property->load(['project', 'owner', 'status', 'neighborhood.municipality.city', 'units.status', 'units.propertyType'])
         );
     }
 }
