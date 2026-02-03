@@ -160,6 +160,27 @@ const UnitForm = ({
         />
 
         <TextInput
+          className="w-full pb-8 pr-6 lg:w-1/2"
+          label="Price"
+          name="price"
+          type="number"
+          step="0.01"
+          errors={errors.price}
+          value={data.price}
+          onChange={e => setData('price', e.target.value)}
+        />
+        <TextInput
+          className="w-full pb-8 pr-6 lg:w-1/2"
+          label="Price Base"
+          name="price_base"
+          type="number"
+          step="0.01"
+          errors={errors.price_base}
+          value={data.price_base}
+          onChange={e => setData('price_base', e.target.value)}
+        />
+
+        <TextInput
           className="w-full pb-8 pr-6"
           label="Status Reason"
           name="status_reason"

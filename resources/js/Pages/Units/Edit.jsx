@@ -24,6 +24,8 @@ const Edit = () => {
     housh_area: unit.housh_area || '',
     rooms: unit.rooms || '',
     wc_number: unit.wc_number || '',
+    price: unit.price || '',
+    price_base: unit.price_base || '',
   });
 
   function handleSubmit(e) {

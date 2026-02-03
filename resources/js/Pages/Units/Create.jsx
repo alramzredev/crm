@@ -21,6 +21,8 @@ const Create = () => {
     housh_area: '',
     rooms: '',
     wc_number: '',
+    price: '',
+    price_base: '',
   });
 
   function handleSubmit(e) {

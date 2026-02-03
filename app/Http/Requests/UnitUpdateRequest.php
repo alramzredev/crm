@@ -31,6 +31,8 @@ class UnitUpdateRequest extends FormRequest
             'housh_area' => ['nullable', 'numeric'],
             'rooms' => ['nullable', 'integer'],
             'wc_number' => ['nullable', 'integer'],
+            'price' => ['nullable', 'numeric', 'min:0'],
+            'price_base' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 }

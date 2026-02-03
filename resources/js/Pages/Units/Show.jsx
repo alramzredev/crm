@@ -101,6 +101,14 @@ const Show = () => {
               <div className="text-sm font-semibold text-gray-600">WC Number</div>
               <div className="mt-1">{unit.wc_number || '—'}</div>
             </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Price</div>
+              <div className="mt-1">{unit.price ? `SAR ${parseFloat(unit.price).toFixed(2)}` : '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Price Base</div>
+              <div className="mt-1">{unit.price_base ? `SAR ${parseFloat(unit.price_base).toFixed(2)}` : '—'}</div>
+            </div>
             {unit.status_reason && (
               <div className="sm:col-span-2">
                 <div className="text-sm font-semibold text-gray-600">Status Reason</div>

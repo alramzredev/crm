@@ -28,6 +28,8 @@ class Unit extends Model
         'housh_area',
         'rooms',
         'wc_number',
+        'price',
+        'price_base',
         'created_by',
         'modified_by',
     ];
@@ -36,6 +38,8 @@ class Unit extends Model
         'area' => 'decimal:2',
         'building_surface_area' => 'decimal:2',
         'housh_area' => 'decimal:2',
+        'price' => 'decimal:2',
+        'price_base' => 'decimal:2',
     ];
 
     protected static function booted()

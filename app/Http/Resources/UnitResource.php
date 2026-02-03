@@ -26,6 +26,8 @@ class UnitResource extends JsonResource
             'housh_area' => $this->housh_area,
             'rooms' => $this->rooms,
             'wc_number' => $this->wc_number,
+            'price' => $this->price,
+            'price_base' => $this->price_base,
             'deleted_at' => $this->deleted_at,
         ];
     }
