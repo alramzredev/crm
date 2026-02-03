@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\User;
-use App\Models\Account;
 use App\Models\Contact;
 use Inertia\Testing\Assert;
 
@@ -14,10 +13,7 @@ class ContactsTest extends TestCase
     {
         parent::setUp();
 
-        $account = Account::create(['name' => 'Alramz Corporation']);
-
         $this->user = User::factory()->make([
-            'account_id' => $account->id,
             'first_name' => 'John',
             'last_name' => 'Doe',
             'email' => 'johndoe@example.com',
@@ -27,9 +23,7 @@ class ContactsTest extends TestCase
 
     public function test_can_view_contacts()
     {
-        $this->user->account->contacts()->saveMany(
-            Contact::factory()->count(5)->make()
-        );
+        Contact::factory()->count(5)->create();
 
         $this->actingAs($this->user)
             ->get('/contacts')
@@ -44,9 +38,8 @@ class ContactsTest extends TestCase
 
     public function test_can_search_for_contacts()
     {
-        $this->user->account->contacts()->saveMany(
-            Contact::factory()->count(5)->make()
-        )->first()->update([
+        Contact::factory()->count(5)->create();
+        Contact::first()->update([
             'first_name' => 'Greg',
             'last_name' => 'Andersson'
         ]);
@@ -64,9 +57,8 @@ class ContactsTest extends TestCase
 
     public function test_cannot_view_deleted_contacts()
     {
-        $this->user->account->contacts()->saveMany(
-            Contact::factory()->count(5)->make()
-        )->first()->delete();
+        Contact::factory()->count(5)->create();
+        Contact::first()->delete();
 
         $this->actingAs($this->user)
             ->get('/contacts')
@@ -78,9 +70,8 @@ class ContactsTest extends TestCase
 
     public function test_can_filter_to_view_deleted_contacts()
     {
-        $this->user->account->contacts()->saveMany(
-            Contact::factory()->count(5)->make()
-        )->first()->delete();
+        Contact::factory()->count(5)->create();
+        Contact::first()->delete();
 
         $this->actingAs($this->user)
             ->get('/contacts?trashed=with')

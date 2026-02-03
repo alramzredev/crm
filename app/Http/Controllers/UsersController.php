@@ -9,7 +9,6 @@ use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
 
@@ -20,8 +19,7 @@ class UsersController extends Controller
         return Inertia::render('Users/Index', [
             'filters' => Request::all('search', 'role', 'trashed'),
             'users' => new UserCollection(
-                Auth::user()->account->users()
-                    ->orderByName()
+                User::orderByName()
                     ->filter(Request::only('search', 'role', 'trashed'))
                     ->paginate()
                     ->appends(Request::all())
@@ -36,9 +34,7 @@ class UsersController extends Controller
 
     public function store(UserStoreRequest $request)
     {
-        Auth::user()->account->users()->create(
-            $request->validated()
-        );
+        User::create($request->validated());
 
         return Redirect::route('users')->with('success', 'User created.');
     }

@@ -10,7 +10,6 @@ class Lead extends Model
 {
     use SoftDeletes, HasFactory;
 
-    // add fillable so 'title' (and other fields) can be mass-assigned
     protected $fillable = [
         'title',
         'first_name',

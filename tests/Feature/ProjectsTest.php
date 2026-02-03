@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\User;
-use App\Models\Account;
 use App\Models\Project;
 use Inertia\Testing\Assert;
 
@@ -14,10 +13,7 @@ class ProjectsTest extends TestCase
     {
         parent::setUp();
 
-        $account = Account::create(['name' => 'Alramz Corporation']);
-
         $this->user = User::factory()->make([
-            'account_id' => $account->id,
             'first_name' => 'John',
             'last_name' => 'Doe',
             'email' => 'johndoe@example.com',
@@ -27,9 +23,7 @@ class ProjectsTest extends TestCase
 
     public function test_can_view_projects()
     {
-        $this->user->account->projects()->saveMany(
-            Project::factory()->count(5)->make()
-        );
+        Project::factory()->count(5)->create();
 
         $this->actingAs($this->user)
             ->get('/projects')
@@ -44,9 +38,8 @@ class ProjectsTest extends TestCase
 
     public function test_can_search_for_projects()
     {
-        $this->user->account->projects()->saveMany(
-            Project::factory()->count(5)->make()
-        )->first()->update(['name' => 'Some Big Fancy Company Name']);
+        Project::factory()->count(5)->create();
+        Project::first()->update(['name' => 'Some Big Fancy Company Name']);
 
         $this->actingAs($this->user)
             ->get('/projects?search=Some Big Fancy Company Name')
@@ -61,9 +54,8 @@ class ProjectsTest extends TestCase
 
     public function test_cannot_view_deleted_projects()
     {
-        $this->user->account->projects()->saveMany(
-            Project::factory()->count(5)->make()
-        )->first()->delete();
+        Project::factory()->count(5)->create();
+        Project::first()->delete();
 
         $this->actingAs($this->user)
             ->get('/projects')
@@ -75,9 +67,8 @@ class ProjectsTest extends TestCase
 
     public function test_can_filter_to_view_deleted_projects()
     {
-        $this->user->account->projects()->saveMany(
-            Project::factory()->count(5)->make()
-        )->first()->delete();
+        Project::factory()->count(5)->create();
+        Project::first()->delete();
 
         $this->actingAs($this->user)
             ->get('/projects?trashed=with')
@@ -90,9 +81,7 @@ class ProjectsTest extends TestCase
 
     public function test_can_delete_project()
     {
-        $project = $this->user->account->projects()->save(
-            Project::factory()->make()
-        );
+        $project = Project::factory()->create();
 
         $this->actingAs($this->user)
             ->delete("/projects/{$project->id}")

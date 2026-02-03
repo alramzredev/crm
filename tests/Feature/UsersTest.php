@@ -14,10 +14,7 @@ class UsersTest extends TestCase
     {
         parent::setUp();
 
-        $account = Account::create(['name' => 'Alramz Corporation']);
-
         $this->user = User::factory()->make([
-            'account_id' => $account->id,
             'first_name' => 'John',
             'last_name' => 'Doe',
             'email' => 'johndoe@example.com',
@@ -27,7 +24,7 @@ class UsersTest extends TestCase
 
     public function test_can_view_users()
     {
-        User::factory()->count(5)->create(['account_id' => 1]);
+        User::factory()->count(5)->create();
 
         $this->actingAs($this->user)
             ->get('/users')
@@ -42,7 +39,7 @@ class UsersTest extends TestCase
 
     public function test_can_search_for_users()
     {
-        User::factory()->count(5)->create(['account_id' => 1]);
+        User::factory()->count(5)->create();
 
         User::first()->update([
             'first_name' => 'Greg',
@@ -62,7 +59,7 @@ class UsersTest extends TestCase
 
     public function test_cannot_view_deleted_users()
     {
-        User::factory()->count(5)->create(['account_id' => 1]);
+        User::factory()->count(5)->create();
         User::first()->delete();
 
         $this->actingAs($this->user)
@@ -75,7 +72,7 @@ class UsersTest extends TestCase
 
     public function test_can_filter_to_view_deleted_users()
     {
-        User::factory()->count(5)->create(['account_id' => 1]);
+        User::factory()->count(5)->create();
         User::first()->delete();
 
         $this->actingAs($this->user)
