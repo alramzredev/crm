@@ -92,6 +92,12 @@ Route::put('units/{unit}')->name('units.update')->uses('UnitsController@update')
 Route::delete('units/{unit}')->name('units.destroy')->uses('UnitsController@destroy')->middleware('auth');
 Route::put('units/{unit}/restore')->name('units.restore')->uses('UnitsController@restore')->middleware('auth');
 
+// Reservations
+Route::middleware('auth')->group(function () {
+    Route::get('/reservations/create', [\App\Http\Controllers\ReservationController::class, 'create'])->name('reservations.create');
+    Route::post('/reservations', [\App\Http\Controllers\ReservationController::class, 'store'])->name('reservations.store');
+});
+
 // 500 error
 Route::get('500', function () {
     //echo $fail;

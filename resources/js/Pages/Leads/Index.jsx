@@ -30,9 +30,8 @@ const Index = () => {
               <th className="px-6 pt-5 pb-4">Name</th>
               <th className="px-6 pt-5 pb-4">Project</th>
               <th className="px-6 pt-5 pb-4">Email</th>
-              <th className="px-6 pt-5 pb-4" colSpan="2">
-                Phone
-              </th>
+              <th className="px-6 pt-5 pb-4 w-32">Phone</th>
+              <th className="px-6 pt-5 pb-4">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -82,17 +81,23 @@ const Index = () => {
                     {phone}
                   </Link>
                 </td>
-                <td className="w-px border-t">
-                  <Link
-                    tabIndex="-1"
-                    href={route('leads.edit', id)}
-                    className="flex items-center px-4 focus:outline-none"
-                  >
-                    <Icon
-                      name="cheveron-right"
-                      className="block w-6 h-6 text-gray-400 fill-current"
-                    />
-                  </Link>
+                <td className="border-t px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <Link
+                      href={route('leads.edit', id)}
+                      className="text-indigo-600 hover:text-indigo-800 text-sm"
+                    >
+                      Edit
+                    </Link>
+                    {!deleted_at && (
+                      <Link
+                        href={route('reservations.create', { lead_id: id })}
+                        className="text-green-600 hover:text-green-800 text-sm"
+                      >
+                        Reserve
+                      </Link>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

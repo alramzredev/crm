@@ -61,27 +61,25 @@ const Edit = () => {
         </TrashedMessage>
       )}
       <div className="max-w-4xl overflow-hidden bg-white rounded shadow">
-        <form onSubmit={handleSubmit}>
-          <UnitForm
-            data={data}
-            setData={setData}
-            errors={errors}
-            processing={processing}
-            onSubmit={handleSubmit}
-            submitLabel="Update Unit"
-            projects={projects}
-            properties={properties}
-            propertyTypes={propertyTypes}
-            propertyStatuses={propertyStatuses}
-          />
-          <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
-            {!unit.deleted_at && (
-              <DeleteButton onDelete={destroy}>
-                Delete Unit
-              </DeleteButton>
-            )}
-          </div>
-        </form>
+        <UnitForm
+          data={data}
+          setData={setData}
+          errors={errors}
+          processing={processing}
+          onSubmit={handleSubmit}
+          submitLabel="Update Unit"
+          projects={projects}
+          properties={properties}
+          propertyTypes={propertyTypes}
+          propertyStatuses={propertyStatuses}
+        />
+        <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
+          {!unit.deleted_at && (
+            <DeleteButton onDelete={destroy}>
+              Delete Unit
+            </DeleteButton>
+          )}
+        </div>
       </div>
     </div>
   );
