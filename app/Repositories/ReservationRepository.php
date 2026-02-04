@@ -7,7 +7,10 @@ use App\Models\Unit;
 use App\Models\Project;
 use App\Models\Property;
 use App\Models\Reservation;
-use Illuminate\Http\Request;
+use App\Models\Customer;
+use App\Http\Resources\ReservationResource;
+use App\Http\Requests\ReservationStoreRequest;
+use Illuminate\Support\Facades\Request;
 
 class ReservationRepository
 {
@@ -21,7 +24,7 @@ class ReservationRepository
         return compact('lead', 'projects', 'properties', 'units');
     }
 
-    public function createReservation(array $validated, array $leadData, Request $request): Reservation
+    public function createReservation(array $validated, array $leadData, ReservationStoreRequest $request): Reservation
     {
         $lead = Lead::findOrFail($validated['lead_id']);
         $lead->update($leadData);
@@ -46,6 +49,7 @@ class ReservationRepository
         $reservation = new Reservation();
         $reservation->lead_id = $validated['lead_id'];
         $reservation->unit_id = $validated['unit_id'];
+        $reservation->customer_id = $validated['customer_id'];
         $reservation->status = $validated['status'] ?? 'draft';
         $reservation->payment_method = $validated['payment_method'] ?? null;
         $reservation->payment_plan = $validated['payment_plan'] ?? null;
@@ -61,5 +65,29 @@ class ReservationRepository
         $reservation->save();
 
         return $reservation;
+    }
+
+    public function getPaginatedReservations(array $filters = [])
+    {
+        return ReservationResource::collection(
+            Reservation::with(['lead', 'unit', 'customer'])
+                ->orderByDesc('created_at')
+                ->paginate()
+                ->appends(Request::all())
+        );
+    }
+
+    public function getShowData(Reservation $reservation): ReservationResource
+    {
+        return new ReservationResource(
+            $reservation->load(['lead', 'unit', 'customer', 'payments'])
+        );
+    }
+
+    public function getEditData(Reservation $reservation): ReservationResource
+    {
+        return new ReservationResource(
+            $reservation->load(['lead', 'unit', 'customer'])
+        );
     }
 }

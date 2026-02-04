@@ -10,11 +10,11 @@ class UnitStatusSeeder extends Seeder
     public function run()
     {
         $statuses = [
-            ['name' => 'Available'],
-            ['name' => 'Reserved'],
-            ['name' => 'Sold'],
-            ['name' => 'Under Construction'],
-            ['name' => 'Completed'],
+            ['name' => 'Available', 'description' => 'Unit is available for purchase'],
+            ['name' => 'Reserved', 'description' => 'Unit is reserved and awaiting completion'],
+            ['name' => 'Sold', 'description' => 'Unit has been sold'],
+            ['name' => 'Under Construction', 'description' => 'Unit is currently under construction'],
+            ['name' => 'Completed', 'description' => 'Unit construction is completed'],
         ];
 
         DB::table('unit_statuses')->insert($statuses);

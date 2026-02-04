@@ -38,6 +38,7 @@ const Edit = () => {
 
   const isSalesEmployee = selectedRole?.name === 'sales_employee';
   const isSalesSupervisor = selectedRole?.name === 'sales_supervisor';
+  const isProjectManager = selectedRole?.name === 'project_manager';
 
   function handleSupervisorChange(supervisorId) {
     setData('supervisor_ids', 
@@ -153,6 +154,7 @@ const Edit = () => {
               onChange={photo => setData('photo', photo)}
             />
 
+            {/* Sales Employee: Assign Supervisors */}
             {isSalesEmployee && (
               <div className="w-full pb-8 pr-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
@@ -183,7 +185,39 @@ const Edit = () => {
               </div>
             )}
 
+            {/* Sales Supervisor: Assign Projects */}
             {isSalesSupervisor && (
+              <div className="w-full pb-8 pr-6">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Assign Projects
+                </label>
+                {errors.project_ids && (
+                  <div className="text-sm text-red-500 mb-3">{errors.project_ids}</div>
+                )}
+                <div className="space-y-2 bg-gray-50 p-4 rounded border border-gray-200 max-h-60 overflow-y-auto">
+                  {projects.length === 0 ? (
+                    <p className="text-sm text-gray-500">No projects available</p>
+                  ) : (
+                    projects.map(project => (
+                      <label key={project.id} className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={data.project_ids.includes(project.id)}
+                          onChange={() => handleProjectChange(project.id)}
+                          className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500"
+                        />
+                        <span className="ml-2 text-sm text-gray-700">
+                          {project.name} <span className="text-gray-400">({project.project_code})</span>
+                        </span>
+                      </label>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Project Manager: Assign Projects */}
+            {isProjectManager && (
               <div className="w-full pb-8 pr-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Assign Projects

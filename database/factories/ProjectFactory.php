@@ -23,7 +23,7 @@ class ProjectFactory extends Factory
     public function definition()
     {
         return [
-            'project_id' => (string) Str::uuid(),
+            'uuid' => (string) Str::uuid(),
             'project_code' => 'PRJ-' . strtoupper(Str::random(6)),
             'name' => $this->faker->company,
             'owner_id' => null, // set or override when seeding if owners exist

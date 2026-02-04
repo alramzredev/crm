@@ -69,6 +69,14 @@ export default ({ className }) => {
           />
         )}
 
+        {can('reservations.view') && (
+          <MainMenuItem
+            text="Reservations"
+            link="reservations"
+            icon="office"
+          />
+        )}
+
         {can('reports.view') && (
           <MainMenuItem
             text="Reports"

@@ -166,7 +166,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function salesManagedProjects()
     {
         return $this->projects()
-            ->wherePivot('role_in_project', 'sales_manager')
+            ->wherePivot('role_in_project', 'sales_supervisor')
             ->wherePivot('is_active', true);
     }
 

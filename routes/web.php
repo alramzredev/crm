@@ -99,8 +99,12 @@ Route::middleware('auth')->group(function () {
 
 // Reservations
 Route::middleware('auth')->group(function () {
-    Route::get('/reservations/create')->uses('ReservationController@create')->name('reservations.create');
-    Route::post('/reservations')->uses('ReservationController@store')->name('reservations.store');
+    Route::get('reservations')->uses('ReservationController@index')->name('reservations');
+    Route::get('reservations/create')->uses('ReservationController@create')->name('reservations.create');
+    Route::post('reservations')->uses('ReservationController@store')->name('reservations.store');
+    Route::get('reservations/{reservation}')->uses('ReservationController@show')->name('reservations.show');
+    Route::get('reservations/{reservation}/edit')->uses('ReservationController@edit')->name('reservations.edit');
+    Route::put('reservations/{reservation}')->uses('ReservationController@update')->name('reservations.update');
 });
 
 // Reports

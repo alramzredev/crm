@@ -14,7 +14,7 @@ class Project extends Model
     protected $table = 'projects';
 
     protected $fillable = [
-        'project_id',
+        'uuid',
         'project_code',
         'name',
         'owner_id',
@@ -50,8 +50,8 @@ class Project extends Model
     protected static function booted()
     {
         static::creating(function ($project) {
-            if (empty($project->project_id)) {
-                $project->project_id = (string) Str::uuid();
+            if (empty($project->uuid)) {
+                $project->uuid = (string) Str::uuid();
             }
             if (empty($project->project_code)) {
                 $project->project_code = 'PRJ-' . strtoupper(Str::random(6));
@@ -133,6 +133,7 @@ class Project extends Model
 
     /**
      * Project → users (many-to-many with role)
+     * Used to determine project visibility
      */
     public function users()
     {
@@ -216,4 +217,29 @@ class Project extends Model
             $q->where('owner_id', $owner);
         });
     }
+
+    /* ===========================
+       VISIBILITY RULES
+       =========================== 
+       
+       Projects are visible by ROLE + ASSIGNMENT:
+       
+       1️⃣ Super Admin
+          Sees: ALL projects
+          SQL: No filter
+       
+       2️⃣ Project Manager
+          Sees: Projects where assigned as project_manager
+          SQL: JOIN project_user WHERE role_in_project = 'project_manager'
+       
+       3️⃣ Sales Supervisor
+          Sees: Projects where assigned as sales_supervisor
+          SQL: JOIN project_user WHERE role_in_project = 'sales_supervisor'
+       
+       4️⃣ Sales Employee
+          Sees: Projects where assigned as sales_employee
+          SQL: JOIN project_user WHERE role_in_project = 'sales_employee'
+          Note: Only for context (leads, reservations)
+       
+       === */
 }

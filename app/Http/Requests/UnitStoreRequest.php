@@ -20,7 +20,7 @@ class UnitStoreRequest extends FormRequest
             'project_id' => ['required', 'integer', 'exists:projects,id'],
             'property_id' => ['required', 'integer', 'exists:properties,id'],
             'property_type_id' => ['nullable', 'integer', 'exists:property_types,id'],
-            'status_id' => ['nullable', 'integer', 'exists:property_statuses,id'],
+            'status_id' => ['nullable', 'integer', 'exists:unit_statuses,id'],
             'neighborhood' => ['nullable', 'string', 'max:150'],
             'status_reason' => ['nullable', 'string', 'max:255'],
             'floor' => ['nullable', 'string', 'max:50'],

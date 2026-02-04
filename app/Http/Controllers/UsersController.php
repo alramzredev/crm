@@ -51,12 +51,19 @@ class UsersController extends Controller
             $role = Role::findById($request->input('role'));
             $user->assignRole($role);
             
+            // Sales Employee: Assign supervisors
             if ($role->name === 'sales_employee' && $request->filled('supervisor_ids')) {
                 $user->supervisor()->attach($request->input('supervisor_ids'));
             }
             
+            // Sales Supervisor: Assign projects
             if ($role->name === 'sales_supervisor' && $request->filled('project_ids')) {
                 $this->repo->attachProjectsWithRole($user, $request->input('project_ids'), 'sales_supervisor');
+            }
+
+            // Project Manager: Assign projects
+            if ($role->name === 'project_manager' && $request->filled('project_ids')) {
+                $this->repo->attachProjectsWithRole($user, $request->input('project_ids'), 'project_manager');
             }
         }
 
@@ -94,7 +101,11 @@ class UsersController extends Controller
             else if ($role->name === 'sales_supervisor') {
                 $user->supervisor()->detach();
                 $this->repo->syncProjectsWithRole($user, $request->input('project_ids') ?? [], 'sales_supervisor');
-            } 
+            }
+            else if ($role->name === 'project_manager') {
+                $user->supervisor()->detach();
+                $this->repo->syncProjectsWithRole($user, $request->input('project_ids') ?? [], 'project_manager');
+            }
             else {
                 $user->supervisor()->detach();
                 $user->projects()->detach();

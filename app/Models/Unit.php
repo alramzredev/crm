@@ -68,7 +68,17 @@ class Unit extends Model
 
     public function status()
     {
-        return $this->belongsTo(PropertyStatus::class);
+        return $this->belongsTo(UnitStatus::class);
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function contracts()
+    {
+        return $this->hasMany(Contract::class);
     }
 
     /**

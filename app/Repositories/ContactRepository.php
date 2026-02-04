@@ -1,27 +1,26 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Http\Resources;
 
-use App\Models\Contact;
-use App\Http\Resources\UserProjectCollection;
 use App\Models\Project;
 use Illuminate\Support\Facades\Request;
 
-class ContactRepository
+class UserProjectCollection
 {
-    public function getPaginatedContacts(array $filters = [])
+    public function __construct($projects)
     {
-        return Contact::with('project')
-            ->orderByName()
-            ->filter($filters)
-            ->paginate()
-            ->appends(Request::all());
+        $this->projects = $projects;
     }
 
-    public function getUserProjects()
+    public function toArray($request)
     {
-        return new UserProjectCollection(
-            Project::orderBy('name')->get()
-        );
+        return [
+            'data' => $this->projects->map(function ($project) {
+                return [
+                    'id' => $project->id,
+                    'name' => $project->name,
+                ];
+            }),
+        ];
     }
 }

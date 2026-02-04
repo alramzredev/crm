@@ -6,7 +6,7 @@ use App\Models\Unit;
 use App\Models\Project;
 use App\Models\Property;
 use App\Models\PropertyType;
-use App\Models\PropertyStatus;
+use App\Models\UnitStatus;
 use App\Http\Resources\UnitResource;
 use Illuminate\Support\Facades\Request;
 
@@ -28,7 +28,7 @@ class UnitRepository
             'projects' => Project::orderBy('name')->get(),
             'properties' => Property::orderBy('property_code')->get(),
             'propertyTypes' => PropertyType::orderBy('name')->get(),
-            'propertyStatuses' => PropertyStatus::orderBy('name')->get(),
+            'propertyStatuses' => UnitStatus::orderBy('name')->get(),
             'defaults' => [
                 'project_id' => Request::get('project_id'),
                 'property_id' => Request::get('property_id'),
@@ -46,7 +46,7 @@ class UnitRepository
             'projects' => Project::orderBy('name')->get(),
             'properties' => Property::orderBy('property_code')->get(),
             'propertyTypes' => PropertyType::orderBy('name')->get(),
-            'propertyStatuses' => PropertyStatus::orderBy('name')->get(),
+            'propertyStatuses' => UnitStatus::orderBy('name')->get(),
             'defaults' => [
                 'project_id' => $unit->project_id,
                 'property_id' => $unit->property_id,
