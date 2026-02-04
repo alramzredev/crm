@@ -1,16 +1,82 @@
 import React from 'react';
+import { usePage } from '@inertiajs/react';
 import MainMenuItem from '@/Shared/MainMenuItem';
 
 export default ({ className }) => {
+  const { auth } = usePage().props;
+
+  const can = (permission) => {
+    if (!auth.user || !auth.user.permissions) return false;
+    return auth.user.permissions.includes(permission);
+  };
+
   return (
-    <div className={className}>
-      <MainMenuItem text="Dashboard" link="dashboard" icon="dashboard" />
-      <MainMenuItem text="Projects" link="projects" icon="office" />
-      <MainMenuItem text="Properties" link="properties" icon="office" />
-      <MainMenuItem text="Units" link="units" icon="office" />
-      <MainMenuItem text="Leads" link="leads" icon="users" />
-      <MainMenuItem text="Owners" link="owners" icon="users" />
-      <MainMenuItem text="Reports" link="reports" icon="printer" />
-    </div>
+    <nav className={className}>
+      <div className="mb-12 flex flex-col">
+        {can('dashboard.view') && (
+          <MainMenuItem
+            text="Dashboard"
+            link="dashboard"
+            icon="dashboard"
+          />
+        )}
+
+        {can('users.view') && (
+          <MainMenuItem
+            text="Users"
+            link="users"
+            icon="users"
+          />
+        )}
+
+        {can('projects.view') && (
+          <MainMenuItem
+            text="Projects"
+            link="projects"
+            icon="office"
+          />
+        )}
+
+        {can('properties.view') && (
+          <MainMenuItem
+            text="Properties"
+            link="properties"
+            icon="office"
+          />
+        )}
+
+        {can('units.view') && (
+          <MainMenuItem
+            text="Units"
+            link="units"
+            icon="office"
+          />
+        )}
+
+        {can('owners.view') && (
+          <MainMenuItem
+            text="Owners"
+            link="owners"
+            icon="users"
+          />
+        )}
+
+        {can('leads.view') && (
+          <MainMenuItem
+            text="Leads"
+            link="leads"
+            icon="users"
+          />
+        )}
+
+        {can('reports.view') && (
+          <MainMenuItem
+            text="Reports"
+            link="reports"
+            icon="book"
+          />
+        )}
+      </div>
+    </nav>
   );
 };

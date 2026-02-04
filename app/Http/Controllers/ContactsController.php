@@ -28,7 +28,7 @@ class ContactsController extends Controller
         return Inertia::render('Contacts/Index', [
             'filters' => Request::all('search', 'trashed'),
             'contacts' => new ContactCollection(
-                $this->repo->getPaginatedContacts(Auth::user()->account, Request::only('search', 'trashed'))
+                $this->repo->getPaginatedContacts(Request::only('search', 'trashed'))
             ),
         ]);
     }
@@ -36,7 +36,7 @@ class ContactsController extends Controller
     public function create()
     {
         return Inertia::render('Contacts/Create', [
-            'projects' => $this->repo->getUserProjects(Auth::user()->account),
+            'projects' => $this->repo->getUserProjects(),
         ]);
     }
 

@@ -70,4 +70,20 @@ class Unit extends Model
     {
         return $this->belongsTo(PropertyStatus::class);
     }
+
+    /**
+     * Get the user who created this unit.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the user who last modified this unit.
+     */
+    public function modifier()
+    {
+        return $this->belongsTo(User::class, 'modified_by');
+    }
 }

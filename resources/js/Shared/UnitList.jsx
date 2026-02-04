@@ -1,7 +1,13 @@
 import React from 'react';
-import { Link, router } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 
 const UnitList = ({ units, showButton = true }) => {
+  const { auth } = usePage().props;
+
+  const can = (permission) => {
+    return auth.user?.permissions?.includes(permission) || false;
+  };
+
   if (!units || units.length === 0) {
     return <p>No units found.</p>;
   }
@@ -38,12 +44,20 @@ const UnitList = ({ units, showButton = true }) => {
               <td className="border-t px-6 py-4">{u.rooms || '—'}</td>
               <td className="border-t px-6 py-4">{u.status?.name || '—'}</td>
               <td className="border-t px-6 py-4">
-                <Link href={route('units.edit', u.id)} className="text-indigo-600 hover:text-indigo-800 mr-4">Edit</Link>
-                {!u.deleted_at && (
-                  <button type="button" onClick={() => destroy(u.id)} className="text-red-600 hover:text-red-800 mr-4">Delete</button>
+                {can('units.edit') && (
+                  <Link href={route('units.edit', u.id)} className="text-indigo-600 hover:text-indigo-800 mr-4">
+                    Edit
+                  </Link>
                 )}
-                {showButton && (
-                  <Link href={route('units.show', u.id)} className="text-indigo-600 hover:text-indigo-800">Show</Link>
+                {!u.deleted_at && can('units.delete') && (
+                  <button type="button" onClick={() => destroy(u.id)} className="text-red-600 hover:text-red-800 mr-4">
+                    Delete
+                  </button>
+                )}
+                {showButton && can('units.view') && (
+                  <Link href={route('units.show', u.id)} className="text-indigo-600 hover:text-indigo-800">
+                    Show
+                  </Link>
                 )}
               </td>
             </tr>

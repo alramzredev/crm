@@ -123,37 +123,24 @@ class PermissionSeeder extends Seeder
         // PROJECT MANAGER
         // ============================================
         $projectManager->syncPermissions([
-            // Dashboard
             'dashboard.view',
-
-            // Project Management - Full CRUD
             'projects.view',
             'projects.create',
             'projects.edit',
             'projects.delete',
             'projects.restore',
-
-            // Property Management - Full CRUD
             'properties.view',
             'properties.create',
             'properties.edit',
             'properties.delete',
             'properties.restore',
-
-            // Unit Management - Full CRUD
             'units.view',
             'units.create',
             'units.edit',
             'units.delete',
             'units.restore',
-
-            // Lead Management - View only
             'leads.view',
-
-            // Reservation Management - View only
             'reservations.view',
-
-            // Owner Management - View only
             'owners.view',
         ]);
 
@@ -161,34 +148,21 @@ class PermissionSeeder extends Seeder
         // SALES SUPERVISOR
         // ============================================
         $salesSupervisor->syncPermissions([
-            // Dashboard
             'dashboard.view',
-
-            // Lead Management - Full CRUD
             'leads.view',
             'leads.create',
             'leads.edit',
             'leads.delete',
             'leads.restore',
-
-            // Reservation Management - Full CRUD
             'reservations.view',
             'reservations.create',
             'reservations.edit',
             'reservations.delete',
             'reservations.restore',
-
-            // Reports - View and export
             'reports.view',
             'reports.export',
-
-            // Projects - View only (to see project details)
             'projects.view',
-
-            // Properties - View only (to see property details)
             'properties.view',
-
-            // Units - View only (to see unit details)
             'units.view',
         ]);
 
@@ -196,25 +170,14 @@ class PermissionSeeder extends Seeder
         // SALES EMPLOYEE
         // ============================================
         $salesEmployee->syncPermissions([
-            // Dashboard
             'dashboard.view',
-
-            // Lead Management - Create & View only
             'leads.view',
             'leads.create',
-            'leads.edit', // Can edit their own leads
-
-            // Reservation Management - Create & View only
+            'leads.edit',
             'reservations.view',
             'reservations.create',
-
-            // Projects - View only
             'projects.view',
-
-            // Properties - View only
             'properties.view',
-
-            // Units - View only
             'units.view',
         ]);
     }

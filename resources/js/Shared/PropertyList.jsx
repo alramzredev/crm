@@ -1,7 +1,13 @@
 import React from 'react';
-import { Link, router } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 
 const PropertyList = ({ properties, showButton = true }) => {
+  const { auth } = usePage().props;
+
+  const can = (permission) => {
+    return auth.user?.permissions?.includes(permission) || false;
+  };
+
   if (!properties || properties.length === 0) {
     return <p>No properties found.</p>;
   }
@@ -32,21 +38,24 @@ const PropertyList = ({ properties, showButton = true }) => {
               <td className="border-t px-6 py-4">{p.owner?.name || '—'}</td>
               <td className="border-t px-6 py-4">{p.status?.name || '—'}</td>
               <td className="border-t px-6 py-4">
-                <Link href={route('properties.edit', p.id)} className="text-indigo-600 hover:text-indigo-800 mr-4">Edit</Link>
-                {!p.deleted_at && (
-                  <button type="button" onClick={() => destroy(p.id)} className="text-red-600 hover:text-red-800 mr-4">Delete</button>
+                {can('properties.edit') && (
+                  <Link href={route('properties.edit', p.id)} className="text-indigo-600 hover:text-indigo-800 mr-4">
+                    Edit
+                  </Link>
                 )}
-                {showButton && (
-                  <Link href={route('properties.show', p.id)} className="text-indigo-600 hover:text-indigo-800">Show</Link>
+                {!p.deleted_at && can('properties.delete') && (
+                  <button type="button" onClick={() => destroy(p.id)} className="text-red-600 hover:text-red-800 mr-4">
+                    Delete
+                  </button>
+                )}
+                {showButton && can('properties.view') && (
+                  <Link href={route('properties.show', p.id)} className="text-indigo-600 hover:text-indigo-800">
+                    Show
+                  </Link>
                 )}
               </td>
             </tr>
           ))}
-          {properties.length === 0 && (
-            <tr>
-              <td className="px-6 py-4 border-t" colSpan="5">No properties found.</td>
-            </tr>
-          )}
         </tbody>
       </table>
     </div>

@@ -4,14 +4,17 @@ import Layout from '@/Shared/Layout';
 import Icon from '@/Shared/Icon';
 import SearchFilter from '@/Shared/SearchFilter';
 import Pagination from '@/Shared/Pagination';
-import PropertyList from '@/Shared/PropertyList';
 
 const Index = () => {
-  const { projects } = usePage().props;
+  const { projects, auth } = usePage().props;
   const {
     data,
     meta: { links }
   } = projects;
+
+  const can = (permission) => {
+    return auth.user?.permissions?.includes(permission) || false;
+  };
 
   function destroy(id) {
     if (confirm('Are you sure you want to delete this project?')) {
@@ -24,13 +27,15 @@ const Index = () => {
       <h1 className="mb-8 text-3xl font-bold">Projects</h1>
       <div className="flex items-center justify-between mb-6">
         <SearchFilter />
-        <Link
-          className="btn-indigo focus:outline-none"
-          href={route('projects.create')}
-        >
-          <span>Create</span>
-          <span className="hidden md:inline"> Project</span>
-        </Link>
+        {can('projects.create') && (
+          <Link
+            className="btn-indigo focus:outline-none"
+            href={route('projects.create')}
+          >
+            <span>Create</span>
+            <span className="hidden md:inline"> Project</span>
+          </Link>
+        )}
       </div>
       <div className="overflow-x-auto bg-white rounded shadow">
         <table className="w-full whitespace-nowrap">
@@ -69,13 +74,15 @@ const Index = () => {
                 <td className="border-t px-6 py-4">{p.city?.name || '—'}</td>
                 <td className="border-t px-6 py-4">{p.status?.name || '—'}</td>
                 <td className="border-t px-6 py-4">
-                  <Link
-                    href={route('projects.edit', p.id)}
-                    className="text-indigo-600 hover:text-indigo-800 mr-4"
-                  >
-                    Edit
-                  </Link>
-                  {!p.deleted_at && (
+                  {can('projects.edit') && (
+                    <Link
+                      href={route('projects.edit', p.id)}
+                      className="text-indigo-600 hover:text-indigo-800 mr-4"
+                    >
+                      Edit
+                    </Link>
+                  )}
+                  {!p.deleted_at && can('projects.delete') && (
                     <button
                       type="button"
                       onClick={() => destroy(p.id)}

@@ -115,6 +115,22 @@ class Project extends Model
         return $this->hasMany(Unit::class);
     }
 
+    /**
+     * Get the user who created this project.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the user who last updated this project.
+     */
+    public function updater()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
     // Filtering scope
     public function scopeFilter($query, array $filters)
     {

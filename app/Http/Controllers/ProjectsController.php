@@ -30,6 +30,8 @@ class ProjectsController extends Controller
 
     public function index()
     {
+        $this->authorize('viewAny', Project::class);
+        
         return Inertia::render('Projects/Index', [
             'filters' => Request::all('search', 'trashed'),
             'projects' => new ProjectCollection(
@@ -40,11 +42,15 @@ class ProjectsController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Project::class);
+        
         return Inertia::render('Projects/Create', $this->repo->getCreateData());
     }
 
     public function store(ProjectStoreRequest $request)
     {
+        $this->authorize('create', Project::class);
+        
         Project::create($request->validated());
 
         return Redirect::route('projects')->with('success', 'Project created.');
@@ -52,11 +58,15 @@ class ProjectsController extends Controller
 
     public function edit(Project $project)
     {
+        $this->authorize('update', $project);
+        
         return Inertia::render('Projects/Edit', $this->repo->getEditData($project));
     }
 
     public function update(Project $project, ProjectUpdateRequest $request)
     {
+        $this->authorize('update', $project);
+        
         $project->update($request->validated());
 
         return Redirect::back()->with('success', 'Project updated.');
@@ -64,6 +74,8 @@ class ProjectsController extends Controller
 
     public function destroy(Project $project)
     {
+        $this->authorize('delete', $project);
+        
         $project->delete();
 
         return Redirect::back()->with('success', 'Project deleted.');
@@ -71,6 +83,8 @@ class ProjectsController extends Controller
 
     public function restore(Project $project)
     {
+        $this->authorize('restore', $project);
+        
         $project->restore();
 
         return Redirect::back()->with('success', 'Project restored.');
@@ -78,6 +92,8 @@ class ProjectsController extends Controller
 
     public function show(Project $project)
     {
+        $this->authorize('view', $project);
+        
         return Inertia::render('Projects/Show', [
             'project' => $this->repo->getShowResource($project),
         ]);

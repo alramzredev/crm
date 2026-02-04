@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import LoadingButton from '@/Shared/LoadingButton';
 import TextInput from '@/Shared/TextInput';
@@ -7,12 +7,14 @@ import SelectInput from '@/Shared/SelectInput';
 import FileInput from '@/Shared/FileInput';
 
 const Create = () => {
+  const { roles = [] } = usePage().props;
+  
   const { data, setData, errors, post, processing } = useForm({
     first_name: '',
     last_name: '',
     email: '',
     password: '',
-    owner: '0',
+    role: '',
     photo: ''
   });
 
@@ -73,14 +75,14 @@ const Create = () => {
             />
             <SelectInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Owner"
-              name="owner"
-              errors={errors.owner}
-              value={data.owner}
-              onChange={e => setData('owner', e.target.value)}
+              label="Role"
+              name="role"
+              errors={errors.role}
+              value={data.role}
+              onChange={e => setData('role', e.target.value)}
             >
-              <option value="1">Yes</option>
-              <option value="0">No</option>
+              <option value="">Select a role</option>
+              {roles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
             </SelectInput>
             <FileInput
               className="w-full pb-8 pr-6 lg:w-1/2"

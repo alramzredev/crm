@@ -6,23 +6,30 @@ import SearchFilter from '@/Shared/SearchFilter';
 import Pagination from '@/Shared/Pagination';
 
 const Index = () => {
-  const { users } = usePage().props;
+  const { users, auth } = usePage().props;
   const {
     data,
     meta: { links }
   } = users;
+
+  const can = (permission) => {
+    return auth.user?.permissions?.includes(permission) || false;
+  };
+
   return (
     <div>
       <h1 className="mb-8 text-3xl font-bold">Users</h1>
       <div className="flex items-center justify-between mb-6">
         <SearchFilter />
-        <Link
-          className="btn-indigo focus:outline-none"
-          href={route('users.create')}
-        >
-          <span>Create</span>
-          <span className="hidden md:inline"> User</span>
-        </Link>
+        {can('users.create') && (
+          <Link
+            className="btn-indigo focus:outline-none"
+            href={route('users.create')}
+          >
+            <span>Create</span>
+            <span className="hidden md:inline"> User</span>
+          </Link>
+        )}
       </div>
       <div className="overflow-x-auto bg-white rounded shadow">
         <table className="w-full whitespace-nowrap">
@@ -36,7 +43,8 @@ const Index = () => {
             </tr>
           </thead>
           <tbody>
-            {data.map(({ id, name, photo, email, owner, deleted_at }) => {
+            {data.map(({ id, name, photo, email, roles, deleted_at }) => {
+              const role = roles && roles.length > 0 ? roles[0].name : 'User';
               return (
                 <tr
                   key={id}
@@ -77,20 +85,22 @@ const Index = () => {
                       href={route('users.edit', id)}
                       className="flex items-center px-6 py-4 focus:text-indigo focus:outline-none"
                     >
-                      {owner ? 'Owner' : 'User'}
+                      {role}
                     </Link>
                   </td>
                   <td className="w-px border-t">
-                    <Link
-                      tabIndex="-1"
-                      href={route('users.edit', id)}
-                      className="flex items-center px-4 focus:outline-none"
-                    >
-                      <Icon
-                        name="cheveron-right"
-                        className="block w-6 h-6 text-gray-400 fill-current"
-                      />
-                    </Link>
+                    {can('users.edit') && (
+                      <Link
+                        tabIndex="-1"
+                        href={route('users.edit', id)}
+                        className="flex items-center px-4 focus:outline-none"
+                      >
+                        <Icon
+                          name="cheveron-right"
+                          className="block w-6 h-6 text-gray-400 fill-current"
+                        />
+                      </Link>
+                    )}
                   </td>
                 </tr>
               );

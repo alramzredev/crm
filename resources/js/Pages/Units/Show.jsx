@@ -4,7 +4,11 @@ import Layout from '@/Shared/Layout';
 import TrashedMessage from '@/Shared/TrashedMessage';
 
 const Show = () => {
-  const { unit } = usePage().props;
+  const { unit, auth } = usePage().props;
+
+  const can = (permission) => {
+    return auth.user?.permissions?.includes(permission) || false;
+  };
 
   const projectLabel = unit.project?.name || '—';
   const propertyLabel = unit.property?.property_code || '—';
@@ -21,9 +25,11 @@ const Show = () => {
           <span className="mx-2 font-medium text-indigo-600">/</span>
           {unit.unit_code || unit.unit_number || `Unit #${unit.id}`}
         </h1>
-        <Link className="btn-indigo" href={route('units.edit', unit.id)}>
-          Edit
-        </Link>
+        {can('units.edit') && (
+          <Link className="btn-indigo" href={route('units.edit', unit.id)}>
+            Edit
+          </Link>
+        )}
       </div>
 
       {unit.deleted_at && (

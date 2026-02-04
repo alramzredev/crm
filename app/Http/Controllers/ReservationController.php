@@ -2,45 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Reservation;
 use App\Models\Lead;
-use App\Models\Unit;
 use App\Models\Project;
 use App\Models\Property;
-use App\Http\Requests\ReservationStoreRequest;
-use App\Repositories\ReservationRepository;
-use Illuminate\Http\Request;
+use App\Models\Unit;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\ReservationStoreRequest;
 
 class ReservationController extends Controller
 {
-    protected ReservationRepository $repo;
-
-    public function __construct()
+    public function create()
     {
-        $this->repo = new ReservationRepository();
-    }
+        $this->authorize('create', Reservation::class);
+        
+        $lead = Lead::find(Request::get('lead_id'));
 
-    public function create(Request $request)
-    {
-        $leadId = (int) $request->query('lead_id');
-
-        return Inertia::render('Reservations/CreateReservation', $this->repo->getCreateData($leadId));
+        return Inertia::render('Reservations/CreateReservation', [
+            'lead' => $lead,
+            'projects' => Project::orderBy('name')->get(),
+            'properties' => Property::orderBy('property_code')->get(),
+            'units' => Unit::orderBy('unit_code')->get(),
+        ]);
     }
 
     public function store(ReservationStoreRequest $request)
     {
-        $validated = $request->validated();
+        $this->authorize('create', Reservation::class);
+        
+        Reservation::create($request->validated());
 
-        $leadData = $request->validate([
-            'first_name' => ['required', 'string', 'max:25'],
-            'last_name' => ['required', 'string', 'max:25'],
-            'email' => ['nullable', 'email', 'max:50'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'national_id' => ['nullable', 'string', 'max:255'],
-        ]);
-
-        $this->repo->createReservation($validated, $leadData, $request);
-
-        return redirect()->route('leads')->with('success', 'Reservation created successfully.');
+        return Redirect::route('leads')->with('success', 'Reservation created.');
     }
 }

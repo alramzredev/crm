@@ -6,7 +6,11 @@ import ProjectTabs from '@/Shared/ProjectTabs';
 import PropertyList from '@/Shared/PropertyList';
 
 const Show = () => {
-  const { project } = usePage().props;
+  const { project, auth } = usePage().props;
+
+  const can = (permission) => {
+    return auth.user?.permissions?.includes(permission) || false;
+  };
 
   const allowedTabs = new Set(['overview', 'properties']);
   const initialTab = (() => {
@@ -48,9 +52,11 @@ const Show = () => {
           <span className="mx-2 font-medium text-indigo-600">/</span>
           {project.name}
         </h1>
-        <Link className="btn-indigo" href={route('projects.edit', project.id)}>
-          Edit
-        </Link>
+        {can('projects.edit') && (
+          <Link className="btn-indigo" href={route('projects.edit', project.id)}>
+            Edit
+          </Link>
+        )}
       </div>
 
       {project.deleted_at && (
@@ -123,12 +129,14 @@ const Show = () => {
           <div className="p-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold">Properties</h2>
-              <Link
-                className="btn-indigo"
-                href={route('properties.create', { project_id: project.id })}
-              >
-                Add Property
-              </Link>
+              {can('properties.create') && (
+                <Link
+                  className="btn-indigo"
+                  href={route('properties.create', { project_id: project.id })}
+                >
+                  Add Property
+                </Link>
+              )}
             </div>
             <PropertyList properties={project.properties} showButton={true} />
           </div>

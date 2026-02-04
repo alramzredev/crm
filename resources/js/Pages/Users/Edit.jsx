@@ -10,24 +10,26 @@ import FileInput from '@/Shared/FileInput';
 import TrashedMessage from '@/Shared/TrashedMessage';
 
 const Edit = () => {
-  const { user } = usePage().props;
+  const { user, roles = [], auth } = usePage().props;
+  
+  const userRoleId = user?.roles && user.roles.length > 0 ? user.roles[0].id : '';
+  
+  const can = (permission) => {
+    return auth.user?.permissions?.includes(permission) || false;
+  };
+
   const { data, setData, errors, post, processing } = useForm({
     first_name: user.first_name || '',
     last_name: user.last_name || '',
     email: user.email || '',
-    password: user.password || '',
-    owner: user.owner ? '1' : '0' || '0',
+    password: '',
+    role: userRoleId,
     photo: '',
-
-    // NOTE: When working with Laravel PUT/PATCH requests and FormData
-    // you SHOULD send POST request and fake the PUT request like this.
     _method: 'PUT'
   });
 
   function handleSubmit(e) {
     e.preventDefault();
-
-    // NOTE: We are using POST method here, not PUT/PACH. See comment above.
     post(route('users.update', user.id));
   }
 
@@ -61,7 +63,7 @@ const Edit = () => {
           <img className="block w-8 h-8 ml-4 rounded-full" src={user.photo} />
         )}
       </div>
-      {user.deleted_at && (
+      {user.deleted_at && can('users.restore') && (
         <TrashedMessage onRestore={restore}>
           This user has been deleted.
         </TrashedMessage>
@@ -105,14 +107,14 @@ const Edit = () => {
             />
             <SelectInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Owner"
-              name="owner"
-              errors={errors.owner}
-              value={data.owner}
-              onChange={e => setData('owner', e.target.value)}
+              label="Role"
+              name="role"
+              errors={errors.role}
+              value={data.role}
+              onChange={e => setData('role', e.target.value)}
             >
-              <option value="1">Yes</option>
-              <option value="0">No</option>
+              <option value="">Select a role</option>
+              {roles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
             </SelectInput>
             <FileInput
               className="w-full pb-8 pr-6 lg:w-1/2"
@@ -125,16 +127,18 @@ const Edit = () => {
             />
           </div>
           <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
-            {!user.deleted_at && (
+            {!user.deleted_at && can('users.delete') && (
               <DeleteButton onDelete={destroy}>Delete User</DeleteButton>
             )}
-            <LoadingButton
-              loading={processing}
-              type="submit"
-              className="ml-auto btn-indigo"
-            >
-              Update User
-            </LoadingButton>
+            {can('users.edit') && (
+              <LoadingButton
+                loading={processing}
+                type="submit"
+                className="ml-auto btn-indigo"
+              >
+                Update User
+              </LoadingButton>
+            )}
           </div>
         </form>
       </div>

@@ -20,9 +20,10 @@ class UserResource extends JsonResource
             'last_name' => $this->last_name,
             'name' => $this->name,
             'email' => $this->email,
-            'owner' => $this->owner,
             'photo' => $this->photo,
+            'photo_path' => $this->photo_path,
             'deleted_at' => $this->deleted_at,
+            'roles' => $this->whenLoaded('roles', $this->roles),
         ];
     }
 }

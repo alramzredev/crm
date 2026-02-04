@@ -20,6 +20,8 @@ class OwnersController extends Controller
 
     public function index()
     {
+        $this->authorize('viewAny', Owner::class);
+        
         $owners = $this->repo->getPaginatedOwners(Request::only('search', 'trashed'));
 
         return Inertia::render('Owners/Index', [
@@ -30,11 +32,15 @@ class OwnersController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Owner::class);
+        
         return Inertia::render('Owners/Create');
     }
 
     public function store(OwnerRequest $request)
     {
+        $this->authorize('create', Owner::class);
+        
         Owner::create($request->validated());
 
         return Redirect::route('owners')->with('success', 'Owner created.');
@@ -42,6 +48,8 @@ class OwnersController extends Controller
 
     public function edit(Owner $owner)
     {
+        $this->authorize('update', $owner);
+        
         return Inertia::render('Owners/Edit', [
             'owner' => $owner,
         ]);
@@ -49,6 +57,8 @@ class OwnersController extends Controller
 
     public function update(Owner $owner, OwnerRequest $request)
     {
+        $this->authorize('update', $owner);
+        
         $owner->update($request->validated());
 
         return Redirect::back()->with('success', 'Owner updated.');
@@ -56,6 +66,8 @@ class OwnersController extends Controller
 
     public function destroy(Owner $owner)
     {
+        $this->authorize('delete', $owner);
+        
         $owner->delete();
 
         return Redirect::back()->with('success', 'Owner deleted.');
@@ -63,6 +75,8 @@ class OwnersController extends Controller
 
     public function restore(Owner $owner)
     {
+        $this->authorize('restore', $owner);
+        
         $owner->restore();
 
         return Redirect::back()->with('success', 'Owner restored.');

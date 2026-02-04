@@ -13,10 +13,19 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Http\UploadedFile;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
-    use SoftDeletes, Authenticatable, Authorizable, HasFactory;
+    use SoftDeletes, Authenticatable, Authorizable, HasFactory, HasRoles;
+
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'email',
+        'password',
+        'photo_path',
+    ];
 
     protected $casts = [
         'owner' => 'boolean',
@@ -87,5 +96,31 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                 $query->onlyTrashed();
             }
         });
+    }
+
+    /**
+     * Supervisor → employees
+     */
+    public function salesEmployees()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'sales_teams',
+            'supervisor_id',
+            'employee_id'
+        )->withTimestamps();
+    }
+
+    /**
+     * Employee → supervisor
+     */
+    public function supervisor()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'sales_teams',
+            'employee_id',
+            'supervisor_id'
+        )->withTimestamps();
     }
 }
