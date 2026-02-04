@@ -1,12 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import LoadingButton from '@/Shared/LoadingButton';
 import SelectInput from '@/Shared/SelectInput';
 import TextInput from '@/Shared/TextInput';
+import PaymentsTable from './Components/PaymentsTable';
+import PaymentFormModal from './Components/PaymentFormModal';
 
 const Edit = () => {
   const { reservation } = usePage().props;
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [payments, setPayments] = useState(reservation.payments || []);
+
   const { data, setData, errors, put, processing } = useForm({
     status: reservation.status || '',
     payment_method: reservation.payment_method || '',
@@ -23,6 +29,26 @@ const Edit = () => {
     put(route('reservations.update', reservation.id));
   }
 
+  const handleEditPayment = (payment) => {
+    setSelectedPayment(payment);
+    setShowPaymentModal(true);
+  };
+
+  const handleDeletePayment = (paymentId) => {
+    if (confirm('Are you sure you want to delete this payment?')) {
+      // Delete via Inertia
+      const link = document.createElement('a');
+      link.href = route('payments.destroy', paymentId);
+      link.method = 'DELETE';
+      link.click();
+    }
+  };
+
+  const handlePaymentModalClose = () => {
+    setShowPaymentModal(false);
+    setSelectedPayment(null);
+  };
+
   return (
     <div>
       <h1 className="mb-8 text-3xl font-bold">
@@ -33,7 +59,8 @@ const Edit = () => {
         Edit
       </h1>
 
-      <div className="max-w-3xl overflow-hidden bg-white rounded shadow">
+      {/* Reservation Form */}
+      <div className="max-w-3xl overflow-hidden bg-white rounded shadow mb-8">
         <form onSubmit={handleSubmit}>
           <div className="flex flex-wrap p-8 -mb-8 -mr-6">
             <SelectInput
@@ -128,6 +155,31 @@ const Edit = () => {
           </div>
         </form>
       </div>
+
+      {/* Payments Section */}
+      <div className="bg-white rounded shadow overflow-hidden">
+        <div className="px-8 py-6 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Payments</h2>
+          <button
+            onClick={() => setShowPaymentModal(true)}
+            className="btn-indigo"
+          >
+            Record Payment
+          </button>
+        </div>
+        <PaymentsTable
+          payments={payments}
+          onEdit={handleEditPayment}
+          onDelete={handleDeletePayment}
+        />
+      </div>
+
+      <PaymentFormModal
+        isOpen={showPaymentModal}
+        payment={selectedPayment}
+        reservationId={reservation.id}
+        onClose={handlePaymentModalClose}
+      />
     </div>
   );
 };

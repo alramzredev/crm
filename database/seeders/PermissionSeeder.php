@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use App\Models\User;
 
 class PermissionSeeder extends Seeder
 {
@@ -75,6 +76,13 @@ class PermissionSeeder extends Seeder
                 'reservations.edit',
                 'reservations.delete',
                 'reservations.restore',
+            ],
+
+            'Payment Management' => [
+                'payments.view',
+                'payments.create',
+                'payments.edit',
+                'payments.delete',
             ],
 
             'Reports' => [
@@ -151,6 +159,7 @@ class PermissionSeeder extends Seeder
             'units.restore',
             'leads.view',
             'reservations.view',
+            'payments.view',
             'owners.view',
         ]);
 
@@ -169,6 +178,10 @@ class PermissionSeeder extends Seeder
             'reservations.edit',
             'reservations.delete',
             'reservations.restore',
+            'payments.view',
+            'payments.create',
+            'payments.edit',
+            'payments.delete',
             'reports.view',
             'reports.export',
             'projects.view',
@@ -186,9 +199,19 @@ class PermissionSeeder extends Seeder
             'leads.edit',
             'reservations.view',
             'reservations.create',
+            'payments.view',
+            'payments.create',
             'projects.view',
             'properties.view',
             'units.view',
         ]);
+
+        // ============================================
+        // ASSIGN SUPER ADMIN ROLE TO USER
+        // ============================================
+        $user = User::where('email', 'b.mansour@alramzre.com')->first();
+        if ($user) {
+            $user->assignRole('super_admin');
+        }
     }
 }

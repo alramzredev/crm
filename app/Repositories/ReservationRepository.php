@@ -87,7 +87,7 @@ class ReservationRepository
     public function getEditData(Reservation $reservation): ReservationResource
     {
         return new ReservationResource(
-            $reservation->load(['lead', 'unit', 'customer'])
+            $reservation->load(['lead', 'unit', 'customer', 'payments'])
         );
     }
 }

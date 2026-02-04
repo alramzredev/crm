@@ -105,6 +105,11 @@ Route::middleware('auth')->group(function () {
     Route::get('reservations/{reservation}')->uses('ReservationController@show')->name('reservations.show');
     Route::get('reservations/{reservation}/edit')->uses('ReservationController@edit')->name('reservations.edit');
     Route::put('reservations/{reservation}')->uses('ReservationController@update')->name('reservations.update');
+    
+    // Payments
+    Route::post('reservations/{reservation}/payments')->uses('PaymentController@store')->name('payments.store');
+    Route::put('payments/{payment}')->uses('PaymentController@update')->name('payments.update');
+    Route::delete('payments/{payment}')->uses('PaymentController@destroy')->name('payments.destroy');
 });
 
 // Reports
