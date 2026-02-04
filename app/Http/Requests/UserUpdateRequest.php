@@ -17,10 +17,14 @@ class UserUpdateRequest extends FormRequest
         return [
             'first_name' => ['required', 'max:50'],
             'last_name' => ['required', 'max:50'],
-            'email' => ['required', 'max:50', 'email', Rule::unique('users')->ignore($this->user->id)],
+            'email' => ['required', 'max:50', 'email', Rule::unique('users')->ignore($this->user())],
             'password' => ['nullable'],
             'role' => ['nullable', 'exists:roles,id'],
             'photo' => ['nullable', 'image'],
+            'supervisor_ids' => ['nullable', 'array'],
+            'supervisor_ids.*' => ['exists:users,id'],
+            'project_ids' => ['nullable', 'array'],
+            'project_ids.*' => ['exists:projects,id'],
         ];
     }
 }

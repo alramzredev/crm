@@ -24,6 +24,8 @@ class UserResource extends JsonResource
             'photo_path' => $this->photo_path,
             'deleted_at' => $this->deleted_at,
             'roles' => $this->whenLoaded('roles', $this->roles),
+            'supervisor' => $this->whenLoaded('supervisor', $this->supervisor),
+            'projects' => $this->whenLoaded('projects', $this->projects),
         ];
     }
 }

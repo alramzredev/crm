@@ -131,6 +131,71 @@ class Project extends Model
         return $this->belongsTo(User::class, 'updated_by');
     }
 
+    /**
+     * Project → users (many-to-many with role)
+     */
+    public function users()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'project_user',
+            'project_id',
+            'user_id'
+        )
+        ->withPivot('role_in_project', 'assigned_by', 'assigned_at', 'unassigned_at', 'is_active')
+        ->withTimestamps();
+    }
+
+    /**
+     * Get active project assignments
+     */
+    public function activeUsers()
+    {
+        return $this->users()
+            ->where('project_user.is_active', true)
+            ->wherePivot('is_active', true);
+    }
+
+    /**
+     * Get project managers
+     */
+    public function projectManagers()
+    {
+        return $this->users()
+            ->wherePivot('role_in_project', 'project_manager')
+            ->wherePivot('is_active', true);
+    }
+
+    /**
+     * Get sales managers
+     */
+    public function salesManagers()
+    {
+        return $this->users()
+            ->wherePivot('role_in_project', 'sales_manager')
+            ->wherePivot('is_active', true);
+    }
+
+    /**
+     * Get sales supervisors
+     */
+    public function salesSupervisors()
+    {
+        return $this->users()
+            ->wherePivot('role_in_project', 'sales_supervisor')
+            ->wherePivot('is_active', true);
+    }
+
+    /**
+     * Get sales employees
+     */
+    public function salesEmployees()
+    {
+        return $this->users()
+            ->wherePivot('role_in_project', 'sales_employee')
+            ->wherePivot('is_active', true);
+    }
+
     // Filtering scope
     public function scopeFilter($query, array $filters)
     {

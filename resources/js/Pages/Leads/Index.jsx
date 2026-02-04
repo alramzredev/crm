@@ -63,9 +63,14 @@ const Index = () => {
                 <td className="border-t px-6 py-4">{lead.email || '—'}</td>
                 <td className="border-t px-6 py-4">{lead.phone || '—'}</td>
                 <td className="border-t px-6 py-4">{lead.project?.name || '—'}</td>
-                <td className="border-t px-6 py-4">
+                <td className="border-t px-6 py-4 space-x-3">
+                  {!lead.deleted_at && can('reservations.create') && (
+                    <Link href={route('reservations.create', { lead_id: lead.id })} className="text-green-600 hover:text-green-800">
+                      Reserve
+                    </Link>
+                  )}
                   {can('leads.edit') && (
-                    <Link href={route('leads.edit', lead.id)} className="text-indigo-600 hover:text-indigo-800 mr-4">
+                    <Link href={route('leads.edit', lead.id)} className="text-indigo-600 hover:text-indigo-800">
                       Edit
                     </Link>
                   )}

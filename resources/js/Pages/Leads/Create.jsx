@@ -15,12 +15,14 @@ const Create = () => {
     national_id: '',
     project_id: '',
     lead_source_id: '',
-    broker_id: '',
+    employee_id: '',
     email: '',
     phone: '',
     national_address_file: '',
     national_id_file: '',
   });
+
+  const employeeLabel = b => b.name || [b.first_name, b.last_name].filter(Boolean).join(' ') || '—';
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -82,14 +84,14 @@ const Create = () => {
             </SelectInput>
             <SelectInput
               className="w-full"
-              label="Broker"
-              name="broker_id"
-              errors={errors.broker_id}
-              value={data.broker_id}
-              onChange={e => setData('broker_id', e.target.value)}
+              label="Sales Employee"
+              name="employee_id"
+              errors={errors.employee_id}
+              value={data.employee_id}
+              onChange={e => setData('employee_id', e.target.value)}
             >
               <option value=""></option>
-              {brokers.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+              {brokers.map(b => <option key={b.id} value={b.id}>{employeeLabel(b)}</option>)}
             </SelectInput>
           </div>
 

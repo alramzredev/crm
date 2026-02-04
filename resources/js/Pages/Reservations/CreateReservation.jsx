@@ -57,15 +57,23 @@ const CreateReservation = () => {
     return units.find(u => String(u.id) === String(data.unit_id));
   }, [data.unit_id, units]);
 
-  // Auto-populate total_price when unit is selected
+  // Auto-populate total_price and remaining_amount when unit is selected
   useMemo(() => {
     if (selectedUnit && selectedUnit.price) {
-      setData('total_price', selectedUnit.price);
-      // Auto-calculate remaining amount if down_payment exists
-      if (data.down_payment) {
-        const remaining = Math.max(0, parseFloat(selectedUnit.price) - parseFloat(data.down_payment));
-        setData('remaining_amount', remaining.toFixed(2));
-      }
+      setData(prev => {
+        const newData = { ...prev, total_price: selectedUnit.price };
+
+        // If there's a down_payment, calculate remaining
+        if (prev.down_payment) {
+          const remaining = Math.max(0, parseFloat(selectedUnit.price) - parseFloat(prev.down_payment));
+          newData.remaining_amount = remaining.toFixed(2);
+        } else {
+          // If no down_payment yet, remaining_amount equals total_price
+          newData.remaining_amount = selectedUnit.price;
+        }
+
+        return newData;
+      });
     }
   }, [selectedUnit?.id]);
 
@@ -89,16 +97,17 @@ const CreateReservation = () => {
       setData('unit_id', '');
       setData('total_price', '');
       setData('remaining_amount', '');
-    } else if (field === 'down_payment' && data.total_price) {
+    } else if (field === 'down_payment') {
       // Auto-calculate remaining amount when down_payment changes
-      const remaining = Math.max(0, parseFloat(data.total_price) - parseFloat(value));
-      setData('remaining_amount', remaining.toFixed(2));
-    } else if (field === 'total_price') {
-      // Auto-calculate remaining amount when total_price changes
-      if (data.down_payment) {
-        const remaining = Math.max(0, parseFloat(value) - parseFloat(data.down_payment));
+      if (data.total_price) {
+        const remaining = Math.max(0, parseFloat(data.total_price) - parseFloat(value || 0));
         setData('remaining_amount', remaining.toFixed(2));
       }
+    } else if (field === 'total_price') {
+      // Auto-calculate remaining amount when total_price changes
+      const downPayment = parseFloat(data.down_payment || 0);
+      const remaining = Math.max(0, parseFloat(value || 0) - downPayment);
+      setData('remaining_amount', remaining.toFixed(2));
     }
   };
 

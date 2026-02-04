@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
 use App\Repositories\LeadRepository;
 use App\Http\Requests\LeadRequest;
+use App\Models\LeadAssignment;
 
 class LeadsController extends Controller
 {
@@ -24,8 +25,8 @@ class LeadsController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Lead::class);
-        
-        $leads = $this->repo->getPaginatedLeads(Request::only('search', 'trashed'));
+
+        $leads = $this->repo->getPaginatedLeads(auth()->user(), Request::only('search', 'trashed'));
 
         return Inertia::render('Leads/Index', [
             'filters' => Request::all('search', 'trashed'),
@@ -36,7 +37,7 @@ class LeadsController extends Controller
     public function create()
     {
         $this->authorize('create', Lead::class);
-        
+
         return Inertia::render('Leads/Create', [
             'leadSources' => LeadSource::orderBy('name')->get(),
             'projects' => Project::orderBy('name')->get(),
@@ -47,8 +48,22 @@ class LeadsController extends Controller
     public function store(LeadRequest $request)
     {
         $this->authorize('create', Lead::class);
-        
-        Lead::create($request->validated());
+
+        $data = $request->validated();
+        $employeeId = $data['employee_id'] ?? null;
+        unset($data['employee_id']);
+
+        $lead = Lead::create($data);
+
+        if ($employeeId) {
+            LeadAssignment::create([
+                'lead_id' => $lead->id,
+                'employee_id' => $employeeId,
+                'assigned_by' => auth()->id(),
+                'assigned_at' => now(),
+                'is_active' => true,
+            ]);
+        }
 
         return Redirect::route('leads')->with('success', 'Lead created.');
     }
@@ -56,9 +71,9 @@ class LeadsController extends Controller
     public function edit(Lead $lead)
     {
         $this->authorize('update', $lead);
-        
+
         return Inertia::render('Leads/Edit', [
-            'lead' => $lead,
+            'lead' => $lead->load('activeAssignment'),
             'leadSources' => LeadSource::orderBy('name')->get(),
             'projects' => Project::orderBy('name')->get(),
             'brokers' => User::role('sales_employee')->orderByName()->get(),
@@ -68,8 +83,35 @@ class LeadsController extends Controller
     public function update(Lead $lead, LeadRequest $request)
     {
         $this->authorize('update', $lead);
-        
-        $lead->update($request->validated());
+
+        $data = $request->validated();
+        $employeeId = $data['employee_id'] ?? null;
+        unset($data['employee_id']);
+
+        $lead->update($data);
+
+        $current = $lead->activeAssignment()->first();
+        if ($current && (int) $current->employee_id !== (int) $employeeId) {
+            $current->update([
+                'is_active' => false,
+                'unassigned_at' => now(),
+            ]);
+        }
+        if ($employeeId && (!$current || (int) $current->employee_id !== (int) $employeeId)) {
+            LeadAssignment::create([
+                'lead_id' => $lead->id,
+                'employee_id' => $employeeId,
+                'assigned_by' => auth()->id(),
+                'assigned_at' => now(),
+                'is_active' => true,
+            ]);
+        }
+        if (!$employeeId && $current) {
+            $current->update([
+                'is_active' => false,
+                'unassigned_at' => now(),
+            ]);
+        }
 
         return Redirect::back()->with('success', 'Lead updated.');
     }
@@ -77,7 +119,7 @@ class LeadsController extends Controller
     public function destroy(Lead $lead)
     {
         $this->authorize('delete', $lead);
-        
+
         $lead->delete();
 
         return Redirect::back()->with('success', 'Lead deleted.');
@@ -86,7 +128,7 @@ class LeadsController extends Controller
     public function restore(Lead $lead)
     {
         $this->authorize('restore', $lead);
-        
+
         $lead->restore();
 
         return Redirect::back()->with('success', 'Lead restored.');

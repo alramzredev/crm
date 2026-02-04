@@ -31,6 +31,10 @@ class UserStoreRequest extends FormRequest
             'password' => ['nullable'],
             'role' => ['nullable', 'exists:roles,id'],
             'photo' => ['nullable', 'image'],
+            'supervisor_ids' => ['nullable', 'array'],
+            'supervisor_ids.*' => ['exists:users,id'],
+            'project_ids' => ['nullable', 'array'],
+            'project_ids.*' => ['exists:projects,id'],
         ];
     }
 

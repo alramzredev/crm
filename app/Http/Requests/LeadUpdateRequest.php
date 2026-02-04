@@ -23,6 +23,7 @@ class LeadUpdateRequest extends FormRequest
             'region' => ['nullable', 'string', 'max:50'],
             'country' => ['nullable', 'string', 'max:2'],
             'postal_code' => ['nullable', 'string', 'max:25'],
+            'employee_id' => ['nullable', 'integer', 'exists:users,id'],
         ];
     }
 }

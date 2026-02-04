@@ -20,7 +20,7 @@ class Lead extends Model
         'email',
         'phone',
         'lead_source_id',
-        'broker_id',
+        // 'broker_id',
         'national_address_file',
         'national_id_file',
         'created_by',

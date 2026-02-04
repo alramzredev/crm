@@ -125,6 +125,51 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         )->withTimestamps();
     }
 
+    /**
+     * User → projects (many-to-many with role)
+     */
+    public function projects()
+    {
+        return $this->belongsToMany(
+            Project::class,
+            'project_user',
+            'user_id',
+            'project_id'
+        )
+        ->withPivot('role_in_project', 'assigned_by', 'assigned_at', 'unassigned_at', 'is_active')
+        ->withTimestamps();
+    }
+
+    /**
+     * Active project assignments only
+     */
+    public function activeProjects()
+    {
+        return $this->projects()
+            ->where('project_user.is_active', true)
+            ->wherePivot('is_active', true);
+    }
+
+    /**
+     * Get projects where user is project manager
+     */
+    public function managedProjects()
+    {
+        return $this->projects()
+            ->wherePivot('role_in_project', 'project_manager')
+            ->wherePivot('is_active', true);
+    }
+
+    /**
+     * Get projects where user is sales manager
+     */
+    public function salesManagedProjects()
+    {
+        return $this->projects()
+            ->wherePivot('role_in_project', 'sales_manager')
+            ->wherePivot('is_active', true);
+    }
+
     public function leadAssignments(): HasMany
     {
         return $this->hasMany(LeadAssignment::class, 'employee_id');

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Helmet from 'react-helmet';
 import { Link, usePage, useForm, router } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
@@ -10,9 +10,11 @@ import FileInput from '@/Shared/FileInput';
 import TrashedMessage from '@/Shared/TrashedMessage';
 
 const Edit = () => {
-  const { user, roles = [], auth } = usePage().props;
+  const { user, roles = [], supervisors = [], projects = [], auth } = usePage().props;
   
   const userRoleId = user?.roles && user.roles.length > 0 ? user.roles[0].id : '';
+  const userSupervisorIds = user?.supervisor ? user.supervisor.map(s => s.id) : [];
+  const userProjectIds = user?.projects ? user.projects.map(p => p.id) : [];
   
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
@@ -25,8 +27,33 @@ const Edit = () => {
     password: '',
     role: userRoleId,
     photo: '',
+    supervisor_ids: userSupervisorIds,
+    project_ids: userProjectIds,
     _method: 'PUT'
   });
+
+  const selectedRole = useMemo(() => {
+    return roles.find(r => r.id == data.role);
+  }, [data.role, roles]);
+
+  const isSalesEmployee = selectedRole?.name === 'sales_employee';
+  const isSalesSupervisor = selectedRole?.name === 'sales_supervisor';
+
+  function handleSupervisorChange(supervisorId) {
+    setData('supervisor_ids', 
+      data.supervisor_ids.includes(supervisorId)
+        ? data.supervisor_ids.filter(id => id !== supervisorId)
+        : [...data.supervisor_ids, supervisorId]
+    );
+  }
+
+  function handleProjectChange(projectId) {
+    setData('project_ids', 
+      data.project_ids.includes(projectId)
+        ? data.project_ids.filter(id => id !== projectId)
+        : [...data.project_ids, projectId]
+    );
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -125,6 +152,66 @@ const Edit = () => {
               value={data.photo}
               onChange={photo => setData('photo', photo)}
             />
+
+            {isSalesEmployee && (
+              <div className="w-full pb-8 pr-6">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Assign Supervisors
+                </label>
+                {errors.supervisor_ids && (
+                  <div className="text-sm text-red-500 mb-3">{errors.supervisor_ids}</div>
+                )}
+                <div className="space-y-2 bg-gray-50 p-4 rounded border border-gray-200">
+                  {supervisors.length === 0 ? (
+                    <p className="text-sm text-gray-500">No supervisors available</p>
+                  ) : (
+                    supervisors.map(supervisor => (
+                      <label key={supervisor.id} className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={data.supervisor_ids.includes(supervisor.id)}
+                          onChange={() => handleSupervisorChange(supervisor.id)}
+                          className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500"
+                        />
+                        <span className="ml-2 text-sm text-gray-700">
+                          {supervisor.first_name} {supervisor.last_name}
+                        </span>
+                      </label>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            {isSalesSupervisor && (
+              <div className="w-full pb-8 pr-6">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Assign Projects
+                </label>
+                {errors.project_ids && (
+                  <div className="text-sm text-red-500 mb-3">{errors.project_ids}</div>
+                )}
+                <div className="space-y-2 bg-gray-50 p-4 rounded border border-gray-200 max-h-60 overflow-y-auto">
+                  {projects.length === 0 ? (
+                    <p className="text-sm text-gray-500">No projects available</p>
+                  ) : (
+                    projects.map(project => (
+                      <label key={project.id} className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={data.project_ids.includes(project.id)}
+                          onChange={() => handleProjectChange(project.id)}
+                          className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500"
+                        />
+                        <span className="ml-2 text-sm text-gray-700">
+                          {project.name} <span className="text-gray-400">({project.project_code})</span>
+                        </span>
+                      </label>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
           </div>
           <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
             {!user.deleted_at && can('users.delete') && (

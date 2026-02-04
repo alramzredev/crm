@@ -17,11 +17,13 @@ class PropertyRepository
 {
     public function getPaginatedProperties(array $filters = [])
     {
-        return Property::with(['project', 'owner', 'status'])
-            ->orderBy('property_code')
-            ->when(Request::get('project_id'), fn ($q, $pid) => $q->where('project_id', $pid))
-            ->paginate()
-            ->appends(Request::all());
+        return PropertyResource::collection(
+            Property::with(['project', 'owner', 'status'])
+                ->orderBy('property_code')
+                ->when(Request::get('project_id'), fn ($q, $pid) => $q->where('project_id', $pid))
+                ->paginate()
+                ->appends(Request::all())
+        );
     }
 
     public function getCreateData(): array
