@@ -14,6 +14,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Http\UploadedFile;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -122,5 +123,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             'employee_id',
             'supervisor_id'
         )->withTimestamps();
+    }
+
+    public function leadAssignments(): HasMany
+    {
+        return $this->hasMany(LeadAssignment::class, 'employee_id');
+    }
+
+    public function leadAssignmentsAssignedBy(): HasMany
+    {
+        return $this->hasMany(LeadAssignment::class, 'assigned_by');
     }
 }

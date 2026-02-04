@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Lead extends Model
 {
@@ -68,5 +70,15 @@ class Lead extends Model
     public function project()
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(LeadAssignment::class);
+    }
+
+    public function activeAssignment(): HasOne
+    {
+        return $this->hasOne(LeadAssignment::class)->where('is_active', true);
     }
 }
