@@ -29,9 +29,8 @@ class UsersController extends Controller
         
         return Inertia::render('Users/Index', [
             'filters' => Request::all('search', 'role', 'trashed'),
-            'users' => new UserCollection(
+            'users' => 
                 $this->repo->getPaginatedUsers(Request::only('search', 'role', 'trashed'))
-            ),
         ]);
     }
 
