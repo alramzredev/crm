@@ -12,7 +12,6 @@ const Edit = () => {
     project_id: unit.project?.id || '',
     property_id: unit.property?.id || '',
     unit_code: unit.unit_code || '',
-    unit_number: unit.unit_number || '',
     unit_external_id: unit.unit_external_id || '',
     property_type_id: unit.property_type?.id || '',
     status_id: unit.status?.id || '',

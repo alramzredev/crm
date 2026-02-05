@@ -135,13 +135,10 @@ class ProjectsController extends Controller
     {
         $this->authorize('view', $project);
 
-        // Additional check: Can user access this project?
         if (!$this->repo->canAccessProject(Auth::user(), $project)) {
             return Redirect::back()->with('error', 'You do not have access to this project.');
         }
 
-        return Inertia::render('Projects/Show', [
-            'project' => $this->repo->getShowResource($project),
-        ]);
+        return Inertia::render('Projects/Show', $this->repo->getShowResource($project));
     }
 }

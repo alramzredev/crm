@@ -20,7 +20,11 @@ class ProjectCollection extends ResourceCollection
                 'project_id' => $project->project_id,
                 'project_code' => $project->project_code,
                 'name' => $project->name,
-                'owner' => $project->owner ? $project->owner->only('id', 'name') : null,
+                'owner' => $project->owner ? [
+                    'id' => $project->owner->id,
+                    'name' => $project->owner->name,
+                    'owner_type' => optional($project->owner->ownerType)->only('id', 'name'),
+                ] : null,
                 'city' => $project->city ? $project->city->only('id', 'name') : null,
                 'project_type' => $project->projectType ? $project->projectType->only('id', 'name') : null,
                 'project_ownership' => $project->ownership ? $project->ownership->only('id', 'name') : null,

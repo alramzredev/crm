@@ -13,7 +13,6 @@ const Create = () => {
     project_id: defaults.project_id || '',
     property_id: defaults.property_id || '',
     unit_code: '',
-    unit_number: '',
     unit_external_id: '',
     property_type_id: '',
     status_id: defaults.status_id || '',

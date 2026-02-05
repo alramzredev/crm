@@ -12,7 +12,6 @@ class UnitCollection extends ResourceCollection
             return [
                 'id' => $unit->id,
                 'unit_code' => $unit->unit_code,
-                'unit_number' => $unit->unit_number,
                 'project' => $unit->project ? $unit->project->only('id', 'name') : null,
                 'property' => $unit->property ? $unit->property->only('id', 'property_code') : null,
                 'property_type' => $unit->propertyType ? $unit->propertyType->only('id', 'name') : null,

@@ -1,16 +1,17 @@
 import React from 'react';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
 import LoadingButton from '@/Shared/LoadingButton';
 
 const Create = () => {
+  const { ownerTypes = [] } = usePage().props;
   const { data, setData, errors, post, processing } = useForm({
     name: '',
-    type: 'individual',
     phone: '',
-    email: ''
+    email: '',
+    owner_type_id: '',
   });
 
   function submit(e) {
@@ -27,14 +28,13 @@ const Create = () => {
       <div className="max-w-3xl bg-white rounded shadow">
         <form onSubmit={submit} className="p-8">
           <TextInput label="Name" name="name" value={data.name} errors={errors.name} onChange={e => setData('name', e.target.value)} />
-          <SelectInput label="Type" name="type" value={data.type} errors={errors.type} onChange={e => setData('type', e.target.value)}>
-            <option value="individual">Individual</option>
-            <option value="company">Company</option>
-            <option value="government">Government</option>
-            <option value="partnership">Partnership</option>
+          <SelectInput label="Owner Type" name="owner_type_id" value={data.owner_type_id} errors={errors.owner_type_id} onChange={e => setData('owner_type_id', e.target.value)}>
+            <option value=""></option>
+            {ownerTypes.map(ot => <option key={ot.id} value={ot.id}>{ot.name}</option>)}
           </SelectInput>
           <TextInput label="Phone" name="phone" value={data.phone} errors={errors.phone} onChange={e => setData('phone', e.target.value)} />
           <TextInput label="Email" name="email" type="email" value={data.email} errors={errors.email} onChange={e => setData('email', e.target.value)} />
+          
           <div className="mt-4">
             <LoadingButton loading={processing} type="submit" className="btn-indigo">Create Owner</LoadingButton>
           </div>

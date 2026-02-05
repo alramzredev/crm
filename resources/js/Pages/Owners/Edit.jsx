@@ -8,12 +8,12 @@ import SelectInput from '@/Shared/SelectInput';
 import TrashedMessage from '@/Shared/TrashedMessage';
 
 const Edit = () => {
-  const { owner } = usePage().props;
+  const { owner = {}, ownerTypes = [] } = usePage().props;
   const { data, setData, errors, put, processing } = useForm({
     name: owner.name || '',
-    type: owner.type || 'individual',
     phone: owner.phone || '',
-    email: owner.email || ''
+    email: owner.email || '',
+    owner_type_id: owner.owner_type?.id || owner.owner_type_id || '',
   });
 
   function submit(e) {
@@ -46,15 +46,39 @@ const Edit = () => {
 
       <div className="max-w-3xl bg-white rounded shadow">
         <form onSubmit={submit} className="p-8">
-          <TextInput label="Name" name="name" value={data.name} errors={errors.name} onChange={e => setData('name', e.target.value)} />
-          <SelectInput label="Type" name="type" value={data.type} errors={errors.type} onChange={e => setData('type', e.target.value)}>
-            <option value="individual">Individual</option>
-            <option value="company">Company</option>
-            <option value="government">Government</option>
-            <option value="partnership">Partnership</option>
+          <TextInput
+            label="Name"
+            name="name"
+            value={data.name}
+            errors={errors.name}
+            onChange={e => setData('name', e.target.value)}
+          />
+          <SelectInput
+            label="Owner Type"
+            name="owner_type_id"
+            errors={errors.owner_type_id}
+            value={data.owner_type_id}
+            onChange={e => setData('owner_type_id', e.target.value)}
+          >
+            <option value=""></option>
+            {ownerTypes.map(ot => <option key={ot.id} value={ot.id}>{ot.name}</option>)}
           </SelectInput>
-          <TextInput label="Phone" name="phone" value={data.phone} errors={errors.phone} onChange={e => setData('phone', e.target.value)} />
-          <TextInput label="Email" name="email" type="email" value={data.email} errors={errors.email} onChange={e => setData('email', e.target.value)} />
+
+          <TextInput
+            label="Phone"
+            name="phone"
+            value={data.phone}
+            errors={errors.phone}
+            onChange={e => setData('phone', e.target.value)}
+          />
+          <TextInput
+            label="Email"
+            name="email"
+            type="email"
+            value={data.email}
+            errors={errors.email}
+            onChange={e => setData('email', e.target.value)}
+          />
 
           <div className="flex items-center mt-4">
             {!owner.deleted_at && <button type="button" onClick={destroy} className="text-red-600 mr-4">Delete</button>}

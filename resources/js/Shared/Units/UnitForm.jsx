@@ -38,22 +38,6 @@ const UnitForm = ({
             value={data.unit_code}
             onChange={e => setData('unit_code', e.target.value)}
           />
-          <TextInput
-            className="w-full pb-8 pr-6 lg:w-1/3"
-            label="Unit Number"
-            name="unit_number"
-            errors={errors.unit_number}
-            value={data.unit_number}
-            onChange={e => setData('unit_number', e.target.value)}
-          />
-          <TextInput
-            className="w-full pb-8 pr-6 lg:w-1/3"
-            label="External ID"
-            name="unit_external_id"
-            errors={errors.unit_external_id}
-            value={data.unit_external_id}
-            onChange={e => setData('unit_external_id', e.target.value)}
-          />
 
           {isPropertyPredefined && predefinedProperty ? (
             <>

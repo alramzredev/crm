@@ -34,7 +34,7 @@ class OwnersController extends Controller
     {
         $this->authorize('create', Owner::class);
         
-        return Inertia::render('Owners/Create');
+        return Inertia::render('Owners/Create', $this->repo->getCreateData());
     }
 
     public function store(OwnerRequest $request)
@@ -50,9 +50,7 @@ class OwnersController extends Controller
     {
         $this->authorize('update', $owner);
         
-        return Inertia::render('Owners/Edit', [
-            'owner' => $owner,
-        ]);
+        return Inertia::render('Owners/Edit', $this->repo->getEditData($owner));
     }
 
     public function update(Owner $owner, OwnerRequest $request)

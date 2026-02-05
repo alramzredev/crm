@@ -6,7 +6,7 @@ import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
 
 const Create = () => {
-  const { owners = [], cities = [], projectTypes = [], projectOwnerships = [], projectStatuses = [] } = usePage().props;
+  const { owners = [], cities = [], projectTypes = [], projectStatuses = [] } = usePage().props;
   const { data, setData, errors, post, processing } = useForm({
     project_code: '',
     name: '',
@@ -14,7 +14,6 @@ const Create = () => {
     owner_id: '',
     city_id: '',
     project_type_id: '',
-    project_ownership_id: '',
     status_id: '',
     neighborhood: '',
     location: '',
@@ -108,17 +107,6 @@ const Create = () => {
             >
               <option value=""></option>
               {projectTypes.map(pt => <option key={pt.id} value={pt.id}>{pt.name}</option>)}
-            </SelectInput>
-            <SelectInput
-              className="w-full pb-8 pr-6 lg:w-1/3"
-              label="Ownership"
-              name="project_ownership_id"
-              errors={errors.project_ownership_id}
-              value={data.project_ownership_id}
-              onChange={e => setData('project_ownership_id', e.target.value)}
-            >
-              <option value=""></option>
-              {projectOwnerships.map(po => <option key={po.id} value={po.id}>{po.name}</option>)}
             </SelectInput>
             <SelectInput
               className="w-full pb-8 pr-6 lg:w-1/3"

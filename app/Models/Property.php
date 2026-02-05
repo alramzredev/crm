@@ -51,6 +51,27 @@ class Property extends Model
                 $property->property_code = 'Prop-' . str_pad((string) $nextId, 5, '0', STR_PAD_LEFT);
             }
         });
+
+        static::created(function ($property) {
+            $ownerId = $property->owner_id ?: optional($property->project)->owner_id;
+
+            if (!$ownerId) {
+                return;
+            }
+
+            if (!$property->owner_id) {
+                $property->owner_id = $ownerId;
+                $property->saveQuietly();
+            }
+
+            if (!$property->ownerships()->where('is_current', true)->exists()) {
+                $property->ownerships()->create([
+                    'owner_id' => $ownerId,
+                    'started_at' => now(),
+                    'is_current' => true,
+                ]);
+            }
+        });
     }
 
     public function propertyType()
@@ -86,6 +107,28 @@ class Property extends Model
     public function units()
     {
         return $this->hasMany(Unit::class);
+    }
+
+    public function ownerships()
+    {
+        return $this->hasMany(PropertyOwnership::class);
+    }
+
+    public function currentOwnership()
+    {
+        return $this->hasOne(PropertyOwnership::class)->where('is_current', true);
+    }
+
+    public function currentOwner()
+    {
+        return $this->hasOneThrough(
+            Owner::class,
+            PropertyOwnership::class,
+            'property_id',
+            'id',
+            'id',
+            'owner_id'
+        )->where('property_ownerships.is_current', true);
     }
 
     /**

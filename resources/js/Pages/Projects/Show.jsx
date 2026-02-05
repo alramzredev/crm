@@ -4,9 +4,10 @@ import Layout from '@/Shared/Layout';
 import TrashedMessage from '@/Shared/TrashedMessage';
 import ProjectTabs from '@/Shared/ProjectTabs';
 import PropertyList from '@/Shared/PropertyList';
+import Pagination from '@/Shared/Pagination';
 
 const Show = () => {
-  const { project, auth } = usePage().props;
+  const { project, properties, auth } = usePage().props;
 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
@@ -34,9 +35,9 @@ const Show = () => {
   }, [activeTab]);
 
   const ownerLabel = project.owner?.name || project.owner || '';
+  const ownerTypeLabel = project.owner?.owner_type?.name || '';
   const statusLabel = project.status?.name || project.status || '';
   const typeLabel = project.project_type?.name || project.project_type || '';
-  const ownershipLabel = project.project_ownership?.name || project.project_ownership || '';
   const cityLabel = project.city?.name || project.city || '';
 
   return (
@@ -79,12 +80,12 @@ const Show = () => {
                   <div className="mt-1">{ownerLabel || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">Type</div>
-                  <div className="mt-1">{typeLabel || '—'}</div>
+                  <div className="text-sm font-semibold text-gray-600">Owner Type</div>
+                  <div className="mt-1">{ownerTypeLabel || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">Ownership</div>
-                  <div className="mt-1">{ownershipLabel || '—'}</div>
+                  <div className="text-sm font-semibold text-gray-600">Type</div>
+                  <div className="mt-1">{typeLabel || '—'}</div>
                 </div>
                 <div>
                   <div className="text-sm font-semibold text-gray-600">Status</div>
@@ -127,7 +128,7 @@ const Show = () => {
       {activeTab === 'properties' && (
         <div className="max-w-4xl bg-white rounded shadow">
           <div className="p-8">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-2">
               <h2 className="text-lg font-semibold">Properties</h2>
               {can('properties.create') && (
                 <Link
@@ -138,7 +139,15 @@ const Show = () => {
                 </Link>
               )}
             </div>
-            <PropertyList properties={project.properties} showButton={true} />
+            <div className="mb-6 text-sm text-gray-500">
+              <Link
+                className="text-indigo-600 hover:text-indigo-800"
+                href={route('properties', { project_id: project.id })}
+              >
+                View all properties
+              </Link>
+            </div>
+            <PropertyList properties={properties} showButton={true} inTab={true} />
           </div>
         </div>
       )}

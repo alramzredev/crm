@@ -71,8 +71,24 @@ class PropertyRepository
 
     public function getShowResource(Property $property)
     {
-        return new PropertyResource(
-            $property->load(['project', 'owner', 'status', 'neighborhood.municipality.city', 'units.status', 'units.propertyType'])
-        );
+        $property->load([
+            'project',
+            'owner',
+            'status',
+            'neighborhood.municipality.city',
+            'propertyType',
+            'propertyClass'
+        ]);
+
+        $units = $property->units()
+            ->with(['property', 'status', 'propertyType'])
+            ->orderBy('unit_code')
+            ->paginate(25)
+            ->appends(request()->except('page'));
+
+        return [
+            'property' => new PropertyResource($property),
+            'units' => \App\Http\Resources\UnitResource::collection($units),
+        ];
     }
 }

@@ -32,7 +32,7 @@ const Index = () => {
           <thead>
             <tr className="font-bold text-left">
               <th className="px-6 py-3">Name</th>
-              <th className="px-6 py-3">Type</th>
+              <th className="px-6 py-3">Owner Type</th>
               <th className="px-6 py-3">Phone</th>
               <th className="px-6 py-3">Email</th>
               <th className="px-6 py-3">Actions</th>
@@ -42,7 +42,7 @@ const Index = () => {
             {data.map(o => (
               <tr key={o.id} className="border-t">
                 <td className="px-6 py-4">{o.name}</td>
-                <td className="px-6 py-4">{o.type}</td>
+                <td className="px-6 py-4">{o.owner_type?.name || '—'}</td>
                 <td className="px-6 py-4">{o.phone}</td>
                 <td className="px-6 py-4">{o.email}</td>
                 <td className="px-6 py-4">

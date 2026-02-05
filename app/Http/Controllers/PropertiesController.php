@@ -83,8 +83,6 @@ class PropertiesController extends Controller
     {
         $this->authorize('view', $property);
         
-        return Inertia::render('Properties/Show', [
-            'property' => $this->repo->getShowResource($property),
-        ]);
+        return Inertia::render('Properties/Show', $this->repo->getShowResource($property));
     }
 }

@@ -11,10 +11,30 @@ class Owner extends Model
 
     public $timestamps = true;
 
-    protected $fillable = ['name', 'type', 'phone', 'email'];
+    protected $fillable = ['name', 'phone', 'email', 'owner_type_id'];
 
     public function projects()
     {
         return $this->hasMany(Project::class);
+    }
+
+    public function ownerType()
+    {
+        return $this->belongsTo(OwnerType::class, 'owner_type_id');
+    }
+
+    public function projectOwnerships()
+    {
+        return $this->hasMany(ProjectOwnership::class);
+    }
+
+    public function propertyOwnerships()
+    {
+        return $this->hasMany(PropertyOwnership::class);
+    }
+
+    public function unitOwnerships()
+    {
+        return $this->hasMany(UnitOwnership::class);
     }
 }

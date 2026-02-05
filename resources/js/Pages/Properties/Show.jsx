@@ -6,7 +6,11 @@ import PropertyTabs from '@/Shared/PropertyTabs';
 import UnitList from '@/Shared/UnitList';
 
 const Show = () => {
-  const { property } = usePage().props;
+  const { property, units, auth } = usePage().props;
+
+  const can = (permission) => {
+    return auth.user?.permissions?.includes(permission) || false;
+  };
 
   const allowedTabs = new Set(['overview', 'units']);
   const initialTab = (() => {
@@ -100,19 +104,29 @@ const Show = () => {
       {activeTab === 'units' && (
         <div className="max-w-4xl bg-white rounded shadow">
           <div className="p-8">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-2">
               <h2 className="text-lg font-semibold">Units</h2>
+              {can('units.create') && (
+                <Link
+                  className="btn-indigo"
+                  href={route('units.create', { 
+                    property_id: property.id, 
+                    project_id: property.project_id 
+                  })}
+                >
+                  Add Unit
+                </Link>
+              )}
+            </div>
+            <div className="mb-6 text-sm text-gray-500">
               <Link
-                className="btn-indigo"
-                href={route('units.create', { 
-                  property_id: property.id, 
-                  project_id: property.project_id 
-                })}
+                className="text-indigo-600 hover:text-indigo-800"
+                href={route('units', { property_id: property.id })}
               >
-                Add Unit
+                View all units
               </Link>
             </div>
-            <UnitList units={property.units} showButton={true} />
+            <UnitList units={units} showButton={true} inTab={true} />
           </div>
         </div>
       )}

@@ -11,12 +11,13 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CountrySeeder::class,
             CitySeeder::class,
-            ProjectOwnershipSeeder::class,
+            OwnerTypeSeeder::class,
             ProjectStatusSeeder::class,
             ProjectTypeSeeder::class,
             PropertyStatusSeeder::class,
             PropertyClassSeeder::class,
             UnitStatusSeeder::class,
+            ProjectPropertyUnitSeeder::class,
         ]);
     }
 }

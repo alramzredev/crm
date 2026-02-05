@@ -15,7 +15,6 @@ class UnitStoreRequest extends FormRequest
     {
         return [
             'unit_code' => ['nullable', 'string', 'max:100', 'unique:units,unit_code'],
-            'unit_number' => ['nullable', 'string', 'max:50'],
             'unit_external_id' => ['nullable', 'string', 'max:50'],
             'project_id' => ['required', 'integer', 'exists:projects,id'],
             'property_id' => ['required', 'integer', 'exists:properties,id'],

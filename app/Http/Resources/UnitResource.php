@@ -12,7 +12,6 @@ class UnitResource extends JsonResource
             'id' => $this->id,
             'unit_uuid' => $this->unit_uuid,
             'unit_code' => $this->unit_code,
-            'unit_number' => $this->unit_number,
             'unit_external_id' => $this->unit_external_id,
             'project' => $this->whenLoaded('project', $this->project ? $this->project->only('id', 'name', 'project_code') : null),
             'property' => $this->whenLoaded('property', $this->property ? $this->property->only('id', 'property_code') : null),

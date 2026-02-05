@@ -10,7 +10,10 @@ use App\Models\ProjectType;
 use App\Models\ProjectOwnership;
 use App\Models\ProjectStatus;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\PropertyResource;
 use Illuminate\Support\Facades\Request;
+
+// use App\Models\OwnerType; // removed
 
 class ProjectRepository
 {
@@ -78,7 +81,6 @@ class ProjectRepository
             'owners' => Owner::orderBy('name')->get(),
             'cities' => City::orderBy('name')->get(),
             'projectTypes' => ProjectType::orderBy('name')->get(),
-            'projectOwnerships' => ProjectOwnership::orderBy('name')->get(),
             'projectStatuses' => ProjectStatus::orderBy('name')->get(),
         ];
     }
@@ -94,7 +96,6 @@ class ProjectRepository
                     'owner',
                     'city',
                     'projectType',
-                    'ownership',
                     'status',
                     'users'
                 ])
@@ -102,27 +103,33 @@ class ProjectRepository
             'owners' => Owner::orderBy('name')->get(),
             'cities' => City::orderBy('name')->get(),
             'projectTypes' => ProjectType::orderBy('name')->get(),
-            'projectOwnerships' => ProjectOwnership::orderBy('name')->get(),
             'projectStatuses' => ProjectStatus::orderBy('name')->get(),
         ];
     }
 
     /**
-     * Get project resource with all relations loaded
+     * Get project resource with paginated properties
      */
     public function getShowResource(Project $project)
     {
-        return new ProjectResource(
-            $project->load([
-                'owner',
-                'city',
-                'projectType',
-                'ownership',
-                'status',
-                'properties.units',
-                'users'
-            ])
-        );
+        $project->load([
+            'owner.ownerType',
+            'city',
+            'projectType',
+            'status',
+            'users',
+        ]);
+
+        $properties = $project->properties()
+            ->with(['project', 'owner', 'status'])
+            ->orderBy('property_code')
+            ->paginate(25)
+            ->appends(request()->except('page'));
+
+        return [
+            'project' => new ProjectResource($project),
+            'properties' => PropertyResource::collection($properties),
+        ];
     }
 
     /**

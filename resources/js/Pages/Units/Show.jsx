@@ -67,7 +67,7 @@ const Show = () => {
             Units
           </Link>
           <span className="mx-2 font-medium text-indigo-600">/</span>
-          {unit.unit_code || unit.unit_number || `Unit #${unit.id}`}
+          {unit.unit_code || `Unit #${unit.id}`}
         </h1>
         {can('units.edit') && (
           <Link className="btn-indigo" href={route('units.edit', unit.id)}>
@@ -88,10 +88,6 @@ const Show = () => {
             <div>
               <div className="text-sm font-semibold text-gray-600">Unit Code</div>
               <div className="mt-1">{unit.unit_code || '—'}</div>
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-gray-600">Unit Number</div>
-              <div className="mt-1">{unit.unit_number || '—'}</div>
             </div>
             <div>
               <div className="text-sm font-semibold text-gray-600">External ID</div>

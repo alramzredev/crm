@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ProjectOwnership extends Model
+class UnitOwnership extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'project_id',
+        'unit_id',
         'owner_id',
+        'contract_id',
         'started_at',
         'ended_at',
         'is_current',
@@ -23,13 +24,18 @@ class ProjectOwnership extends Model
         'is_current' => 'boolean',
     ];
 
-    public function project()
+    public function unit()
     {
-        return $this->belongsTo(Project::class);
+        return $this->belongsTo(Unit::class);
     }
 
     public function owner()
     {
         return $this->belongsTo(Owner::class);
+    }
+
+    public function contract()
+    {
+        return $this->belongsTo(Contract::class);
     }
 }

@@ -11,10 +11,6 @@ const UnitInformationCard = ({ selectedUnit }) => {
             <p className="text-sm font-semibold text-gray-900 mt-1">{selectedUnit.unit_code}</p>
           </div>
           <div>
-            <p className="text-xs font-semibold text-gray-500 uppercase">Unit Number</p>
-            <p className="text-sm font-semibold text-gray-900 mt-1">{selectedUnit.unit_number}</p>
-          </div>
-          <div>
             <p className="text-xs font-semibold text-gray-500 uppercase">Floor</p>
             <p className="text-sm font-semibold text-gray-900 mt-1">{selectedUnit.floor || '—'}</p>
           </div>

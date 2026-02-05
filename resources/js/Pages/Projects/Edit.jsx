@@ -9,7 +9,7 @@ import SelectInput from '@/Shared/SelectInput';
 import TrashedMessage from '@/Shared/TrashedMessage';
 
 const Edit = () => {
-  const { project = {}, owners = [], cities = [], projectTypes = [], projectOwnerships = [], projectStatuses = [] } = usePage().props;
+  const { project = {}, owners = [], cities = [], projectTypes = [], projectStatuses = [] } = usePage().props;
   const { data, setData, errors, put, processing } = useForm({
     project_code: project.project_code || '',
     name: project.name || '',
@@ -17,7 +17,6 @@ const Edit = () => {
     owner_id: project.owner?.id || project.owner_id || '',
     city_id: project.city?.id || project.city_id || '',
     project_type_id: project.project_type?.id || project.project_type_id || '',
-    project_ownership_id: project.project_ownership?.id || project.project_ownership_id || '',
     status_id: project.status?.id || project.status_id || '',
     neighborhood: project.neighborhood || '',
     location: project.location || '',
@@ -138,18 +137,6 @@ const Edit = () => {
             >
               <option value=""></option>
               {projectTypes.map(pt => <option key={pt.id} value={pt.id}>{pt.name}</option>)}
-            </SelectInput>
-
-            <SelectInput
-              className="w-full pb-8 pr-6 lg:w-1/3"
-              label="Ownership"
-              name="project_ownership_id"
-              errors={errors.project_ownership_id}
-              value={data.project_ownership_id}
-              onChange={e => setData('project_ownership_id', e.target.value)}
-            >
-              <option value=""></option>
-              {projectOwnerships.map(po => <option key={po.id} value={po.id}>{po.name}</option>)}
             </SelectInput>
 
             <SelectInput

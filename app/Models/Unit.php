@@ -14,7 +14,6 @@ class Unit extends Model
     protected $fillable = [
         'unit_uuid',
         'unit_code',
-        'unit_number',
         'unit_external_id',
         'project_id',
         'property_id',
@@ -139,6 +138,26 @@ class Unit extends Model
             if (empty($unit->unit_uuid)) {
                 $unit->unit_uuid = (string) Str::uuid();
             }
+            if (empty($unit->unit_code)) {
+                $nextId = (static::withTrashed()->max('id') ?? 0) + 1;
+                $unit->unit_code = 'Unit-' . str_pad((string) $nextId, 6, '0', STR_PAD_LEFT);
+            }
+        });
+
+        static::created(function ($unit) {
+            $ownerId = optional($unit->property)->owner_id;
+
+            if (!$ownerId) {
+                return;
+            }
+
+            if (!$unit->ownerships()->where('is_current', true)->exists()) {
+                $unit->ownerships()->create([
+                    'owner_id' => $ownerId,
+                    'started_at' => now(),
+                    'is_current' => true,
+                ]);
+            }
         });
     }
 
@@ -170,6 +189,28 @@ class Unit extends Model
     public function contracts()
     {
         return $this->hasMany(Contract::class);
+    }
+
+    public function ownerships()
+    {
+        return $this->hasMany(UnitOwnership::class);
+    }
+
+    public function currentOwnership()
+    {
+        return $this->hasOne(UnitOwnership::class)->where('is_current', true);
+    }
+
+    public function currentOwner()
+    {
+        return $this->hasOneThrough(
+            Owner::class,
+            UnitOwnership::class,
+            'unit_id',
+            'id',
+            'id',
+            'owner_id'
+        )->where('unit_ownerships.is_current', true);
     }
 
     /**

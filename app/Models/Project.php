@@ -23,7 +23,6 @@ class Project extends Model
         'neighborhood',
         'location',
         'project_type_id',
-        'project_ownership_id',
         'status_id',
         'status_reason',
         'land_area',
@@ -58,6 +57,20 @@ class Project extends Model
                 $project->project_code = 'PRJ-' . strtoupper(Str::random(6));
             }
         });
+
+        static::created(function ($project) {
+            if (!$project->owner_id) {
+                return;
+            }
+
+            if (!$project->ownerships()->where('is_current', true)->exists()) {
+                $project->ownerships()->create([
+                    'owner_id' => $project->owner_id,
+                    'started_at' => now(),
+                    'is_current' => true,
+                ]);
+            }
+        });
     }
 
     // Relations
@@ -79,6 +92,28 @@ class Project extends Model
     public function ownership()
     {
         return $this->belongsTo(ProjectOwnership::class, 'project_ownership_id');
+    }
+
+    public function ownerships()
+    {
+        return $this->hasMany(ProjectOwnership::class);
+    }
+
+    public function currentOwnership()
+    {
+        return $this->hasOne(ProjectOwnership::class)->where('is_current', true);
+    }
+
+    public function currentOwner()
+    {
+        return $this->hasOneThrough(
+            Owner::class,
+            ProjectOwnership::class,
+            'project_id',
+            'id',
+            'id',
+            'owner_id'
+        )->where('project_ownerships.is_current', true);
     }
 
     public function status()
