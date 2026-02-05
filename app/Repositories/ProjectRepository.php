@@ -124,7 +124,7 @@ class ProjectRepository
             ->with(['project', 'owner', 'status'])
             ->orderBy('property_code')
             ->paginate(25)
-            ->appends(request()->except('page'));
+            ->appends(request()->query());
 
         return [
             'project' => new ProjectResource($project),

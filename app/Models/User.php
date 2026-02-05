@@ -179,4 +179,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         return $this->hasMany(LeadAssignment::class, 'assigned_by');
     }
+
+   
 }

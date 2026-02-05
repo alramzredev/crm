@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 import Pagination from '@/Shared/Pagination';
 
-const PropertyList = ({ properties, showButton = true }) => {
+const PropertyList = ({ properties, showButton = true, inTab = false }) => {
   const { auth } = usePage().props;
 
   const can = (permission) => {
@@ -65,7 +65,14 @@ const PropertyList = ({ properties, showButton = true }) => {
           </tbody>
         </table>
       </div>
-      {paginationLinks && <Pagination links={paginationLinks} />}
+      {paginationLinks && (
+        <Pagination
+          links={paginationLinks}
+          preserveScroll={inTab}
+          preserveState={inTab}
+          showSinglePage={false}
+        />
+      )}
     </>
   );
 };

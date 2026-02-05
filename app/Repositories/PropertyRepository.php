@@ -84,7 +84,7 @@ class PropertyRepository
             ->with(['property', 'status', 'propertyType'])
             ->orderBy('unit_code')
             ->paginate(25)
-            ->appends(request()->except('page'));
+            ->appends(request()->query());
 
         return [
             'property' => new PropertyResource($property),

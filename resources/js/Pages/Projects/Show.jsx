@@ -4,7 +4,6 @@ import Layout from '@/Shared/Layout';
 import TrashedMessage from '@/Shared/TrashedMessage';
 import ProjectTabs from '@/Shared/ProjectTabs';
 import PropertyList from '@/Shared/PropertyList';
-import Pagination from '@/Shared/Pagination';
 
 const Show = () => {
   const { project, properties, auth } = usePage().props;
