@@ -26,12 +26,9 @@ class LeadRepository
 
         // Sales employees: Only see leads assigned to them from their allowed projects
         if ($user->hasRole('sales_employee')) {
-            $query->whereHas('activeAssignment', function ($q) use ($user) {
+             $query->whereHas('activeAssignment', function ($q) use ($user) {
                 // Condition: Lead must be assigned to this employee
                 $q->where('employee_id', $user->id);
-            })->whereHas('project', function ($q) use ($user) {
-                // Condition: Lead's project must be in employee's assigned projects
-                $q->whereIn('id', $user->activeProjects()->pluck('projects.id'));
             });
         }
         // Sales supervisors: See leads from their assigned projects

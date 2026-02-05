@@ -140,15 +140,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         ->withTimestamps();
     }
 
-    /**
-     * Active project assignments only
-     */
-    public function activeProjects()
-    {
-        return $this->projects()
-            ->where('project_user.is_active', true)
-            ->wherePivot('is_active', true);
-    }
+  /**
+ * Active project assignments only
+ */
+public function activeProjects()
+{
+    return $this->projects()
+        ->wherePivot('is_active', true);
+}
+
 
     /**
      * Get projects where user is project manager

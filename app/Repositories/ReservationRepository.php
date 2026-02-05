@@ -8,18 +8,43 @@ use App\Models\Project;
 use App\Models\Property;
 use App\Models\Reservation;
 use App\Models\Customer;
+use App\Models\User;
 use App\Http\Resources\ReservationResource;
 use App\Http\Requests\ReservationStoreRequest;
 use Illuminate\Support\Facades\Request;
 
 class ReservationRepository
 {
-    public function getCreateData(int $leadId): array
+    public function getCreateData(int $leadId, User $user): array
     {
         $lead = Lead::findOrFail($leadId);
-        $projects = Project::orderBy('name')->get();
-        $properties = Property::with('project')->orderBy('property_code')->get();
-        $units = Unit::with(['property', 'status'])->where('status_id', 1)->get();
+
+        $projectsQuery = Project::orderBy('name');
+
+        if (!$user->hasRole('super_admin')) {
+            $projectsQuery->whereHas('users', function ($q) use ($user) {
+                $q->where('project_user.user_id', $user->id)
+                  ->where('project_user.is_active', true);
+            });
+        }
+
+        // $projects = $projectsQuery->get();
+
+        // $projectIds = $projects->pluck('id');
+
+        // $properties = Property::with('project')
+        //     ->whereIn('project_id', $projectIds)
+        //     ->orderBy('property_code')
+        //     ->get();
+
+        // $units = Unit::with(['property', 'status'])
+        //     ->whereIn('project_id', $projectIds)
+        //     ->where('status_id', 1)
+        //     ->orderBy('unit_code')
+        //     ->get();
+        $projects = [];
+        $properties = [];
+        $units = [];
 
         return compact('lead', 'projects', 'properties', 'units');
     }

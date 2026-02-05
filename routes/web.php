@@ -115,6 +115,13 @@ Route::middleware('auth')->group(function () {
 // Reports
 Route::get('reports')->name('reports')->uses('ReportsController')->middleware('auth');
 
+// Search Routes
+Route::middleware('auth')->group(function () {
+    Route::get('search/projects')->uses('SearchController@projects')->name('search.projects');
+    Route::get('search/properties')->uses('SearchController@properties')->name('search.properties');
+    Route::get('search/units')->uses('SearchController@units')->name('search.units');
+});
+
 // 500 error
 Route::get('500', function () {
     //

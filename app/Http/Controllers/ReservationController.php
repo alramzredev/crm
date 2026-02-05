@@ -10,11 +10,12 @@ use App\Models\Property;
 use App\Models\Unit;
 use App\Repositories\ReservationRepository;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ReservationStoreRequest;
 use App\Http\Requests\ReservationUpdateRequest;
- 
+
 class ReservationController extends Controller
 {
     protected $repo;
@@ -37,15 +38,10 @@ class ReservationController extends Controller
     public function create()
     {
         $this->authorize('create', Reservation::class);
-        
-        $lead = Lead::find(Request::get('lead_id'));
 
-        return Inertia::render('Reservations/CreateReservation', [
-            'lead' => $lead,
-            'projects' => Project::orderBy('name')->get(),
-            'properties' => Property::orderBy('property_code')->get(),
-            'units' => Unit::orderBy('unit_code')->get(),
-        ]);
+        $leadId = (int) Request::get('lead_id');
+
+        return Inertia::render('Reservations/CreateReservation', $this->repo->getCreateData($leadId, Auth::user()));
     }
 
     public function store(ReservationStoreRequest $request)
