@@ -15,6 +15,8 @@ class ReservationResource extends JsonResource
             'customer_id' => $this->customer_id,
             'unit_id' => $this->unit_id,
             'status' => $this->status,
+            'started_at' => $this->started_at,
+            'expires_at' => $this->expires_at,
             'payment_method' => $this->payment_method,
             'payment_plan' => $this->payment_plan,
             'total_price' => $this->total_price,

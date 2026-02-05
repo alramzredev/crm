@@ -10,6 +10,7 @@ const Create = () => {
   const { data, setData, errors, post, processing } = useForm({
     project_code: '',
     name: '',
+    reservation_period_days: '30',
     owner_id: '',
     city_id: '',
     project_type_id: '',
@@ -57,12 +58,23 @@ const Create = () => {
               onChange={e => setData('project_code', e.target.value)}
             />
             <TextInput
-              className="w-full pb-8 pr-6"
+              className="w-full pb-8 pr-6 lg:w-1/2"
               label="Name"
               name="name"
               errors={errors.name}
               value={data.name}
               onChange={e => setData('name', e.target.value)}
+            />
+            <TextInput
+              className="w-full pb-8 pr-6 lg:w-1/2"
+              label="Reservation Period (Days)"
+              name="reservation_period_days"
+              type="number"
+              min="1"
+              max="365"
+              errors={errors.reservation_period_days}
+              value={data.reservation_period_days}
+              onChange={e => setData('reservation_period_days', e.target.value)}
             />
             <SelectInput
               className="w-full pb-8 pr-6 lg:w-1/2"

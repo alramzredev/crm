@@ -16,6 +16,7 @@ class ProjectStoreRequest extends FormRequest
         return [
             'project_code' => ['required', 'string', 'max:100', 'unique:projects,project_code'],
             'name' => ['required', 'string', 'max:255'],
+            'reservation_period_days' => ['nullable', 'integer', 'min:1', 'max:365'],
             'owner_id' => ['nullable', 'integer', 'exists:owners,id'],
             'city_id' => ['nullable', 'integer', 'exists:cities,id'],
             'neighborhood' => ['nullable', 'string', 'max:255'],

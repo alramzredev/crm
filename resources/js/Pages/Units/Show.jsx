@@ -15,6 +15,50 @@ const Show = () => {
   const propertyTypeLabel = unit.property_type?.name || '—';
   const statusLabel = unit.status?.name || '—';
 
+  const featureItems = [
+    ['Balcony', unit.has_balcony],
+    ['Basement', unit.has_basement],
+    ['Basement Parking', unit.has_basement_parking],
+    ['Big Housh', unit.has_big_housh],
+    ['Small Housh', unit.has_small_housh],
+    ['Housh', unit.has_housh],
+    ['Big Roof', unit.has_big_roof],
+    ['Small Roof', unit.has_small_roof],
+    ['Roof', unit.has_roof],
+    ['Rooftop', unit.has_rooftop],
+    ['Pool', unit.has_pool],
+    ['Pool View', unit.has_pool_view],
+    ['Tennis View', unit.has_tennis_view],
+    ['Golf View', unit.has_golf_view],
+    ['Caffe View', unit.has_caffe_view],
+    ['Waterfall', unit.has_waterfall],
+    ['Elevator', unit.has_elevator],
+    ['Private Entrance', unit.has_private_entrance],
+    ['Two Interfaces', unit.has_two_interfaces],
+    ['Security System', unit.has_security_system],
+    ['Internet', unit.has_internet],
+    ['Kitchen', unit.has_kitchen],
+    ['Laundry Room', unit.has_laundry_room],
+    ['Internal Store', unit.has_internal_store],
+    ['Warehouse', unit.has_warehouse],
+    ['Living Room', unit.has_living_room],
+    ['Family Lounge', unit.has_family_lounge],
+    ['Big Lounge', unit.has_big_lounge],
+    ['Food Area', unit.has_food_area],
+    ['Council', unit.has_council],
+    ['Diwaniyah', unit.has_diwaniyah],
+    ['Diwan 1', unit.has_diwan1],
+    ["Men's Council", unit.has_mens_council],
+    ["Women's Council", unit.has_womens_council],
+    ['Family Council', unit.has_family_council],
+    ['Maids Room', unit.has_maids_room],
+    ['Drivers Room', unit.has_drivers_room],
+    ['Terrace', unit.has_terrace],
+    ['Outdoor', unit.has_outdoor],
+  ];
+
+  const enabledFeatures = featureItems.filter(([, enabled]) => !!enabled);
+
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
@@ -38,7 +82,9 @@ const Show = () => {
 
       <div className="max-w-3xl overflow-hidden bg-white rounded shadow">
         <div className="p-8">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {/* Basic Information */}
+          <h3 className="text-lg font-semibold mb-4 border-b pb-2">Basic Information</h3>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-8">
             <div>
               <div className="text-sm font-semibold text-gray-600">Unit Code</div>
               <div className="mt-1">{unit.unit_code || '—'}</div>
@@ -115,13 +161,113 @@ const Show = () => {
               <div className="text-sm font-semibold text-gray-600">Price Base</div>
               <div className="mt-1">{unit.price_base ? `SAR ${parseFloat(unit.price_base).toFixed(2)}` : '—'}</div>
             </div>
-            {unit.status_reason && (
-              <div className="sm:col-span-2">
-                <div className="text-sm font-semibold text-gray-600">Status Reason</div>
-                <div className="mt-1">{unit.status_reason}</div>
+            {unit.exchange_rate && (
+              <div>
+                <div className="text-sm font-semibold text-gray-600">Exchange Rate</div>
+                <div className="mt-1">{unit.exchange_rate}</div>
+              </div>
+            )}
+            {unit.model && (
+              <div>
+                <div className="text-sm font-semibold text-gray-600">Model</div>
+                <div className="mt-1">{unit.model}</div>
               </div>
             )}
           </div>
+
+          {/* Financial Information */}
+          <h3 className="text-lg font-semibold mb-4 border-b pb-2">Financial Information</h3>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-8">
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Currency</div>
+              <div className="mt-1">{unit.currency || '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Exchange Rate</div>
+              <div className="mt-1">{unit.exchange_rate || '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Model</div>
+              <div className="mt-1">{unit.model || '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Purpose</div>
+              <div className="mt-1">{unit.purpose || '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Unit Type</div>
+              <div className="mt-1">{unit.unit_type || '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Owner</div>
+              <div className="mt-1">{unit.owner || '—'}</div>
+            </div>
+          </div>
+
+          {/* Legal / Document Information */}
+          <h3 className="text-lg font-semibold mb-4 border-b pb-2">Legal / Document Information</h3>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-8">
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Instrument No</div>
+              <div className="mt-1">{unit.instrument_no || '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Instrument Hijri Date</div>
+              <div className="mt-1">{unit.instrument_hijri_date || '—'}</div>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-600">Instrument No (After Sales)</div>
+              <div className="mt-1">{unit.instrument_no_after_sales || '—'}</div>
+            </div>
+          </div>
+
+          {/* Features */}
+          <h3 className="text-lg font-semibold mb-4 border-b pb-2">Features</h3>
+          {enabledFeatures.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+              {enabledFeatures.map(([label]) => (
+                <div key={label} className="flex items-center">
+                  <span className="text-green-600 mr-2">✓</span> {label}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-sm text-gray-500 mb-8">No features enabled.</div>
+          )}
+
+          {/* Additional Information */}
+          {(unit.unit_description_en || unit.national_address || unit.water_meter_no) && (
+            <>
+              <h3 className="text-lg font-semibold mb-4 border-b pb-2">Additional Information</h3>
+              <div className="grid grid-cols-1 gap-6 mb-8">
+                {unit.unit_description_en && (
+                  <div>
+                    <div className="text-sm font-semibold text-gray-600">Description</div>
+                    <div className="mt-1">{unit.unit_description_en}</div>
+                  </div>
+                )}
+                {unit.national_address && (
+                  <div>
+                    <div className="text-sm font-semibold text-gray-600">National Address</div>
+                    <div className="mt-1">{unit.national_address}</div>
+                  </div>
+                )}
+                {unit.water_meter_no && (
+                  <div>
+                    <div className="text-sm font-semibold text-gray-600">Water Meter No</div>
+                    <div className="mt-1">{unit.water_meter_no}</div>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {unit.status_reason && (
+            <div className="sm:col-span-2">
+              <div className="text-sm font-semibold text-gray-600">Status Reason</div>
+              <div className="mt-1">{unit.status_reason}</div>
+            </div>
+          )}
         </div>
       </div>
     </div>

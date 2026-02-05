@@ -104,7 +104,10 @@ const Show = () => {
               <h2 className="text-lg font-semibold">Units</h2>
               <Link
                 className="btn-indigo"
-                href={route('units.create', { property_id: property.id, project_id: property.project_id })}
+                href={route('units.create', { 
+                  property_id: property.id, 
+                  project_id: property.project_id 
+                })}
               >
                 Add Unit
               </Link>

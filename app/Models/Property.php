@@ -12,7 +12,7 @@ class Property extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'property_id',
+        'uuid',
         'property_code',
         'property_no',
         'project_id',
@@ -43,8 +43,12 @@ class Property extends Model
     protected static function booted()
     {
         static::creating(function ($property) {
-            if (empty($property->property_id)) {
-                $property->property_id = (string) Str::uuid();
+            if (empty($property->uuid)) {
+                $property->uuid = (string) Str::uuid();
+            }
+            if (empty($property->property_code)) {
+                $nextId = (static::withTrashed()->max('id') ?? 0) + 1;
+                $property->property_code = 'Prop-' . str_pad((string) $nextId, 5, '0', STR_PAD_LEFT);
             }
         });
     }

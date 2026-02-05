@@ -46,11 +46,18 @@ class ReservationRepository
                 ->store('reservations/national-id', 'public');
         }
 
+        // Get unit and its project to calculate expiration
+        $unit = Unit::with('property.project')->findOrFail($validated['unit_id']);
+        $project = $unit->property?->project;
+        $reservationPeriodDays = $project?->reservation_period_days ?? 30;
+
         $reservation = new Reservation();
         $reservation->lead_id = $validated['lead_id'];
         $reservation->unit_id = $validated['unit_id'];
         $reservation->customer_id = $validated['customer_id'];
         $reservation->status = $validated['status'] ?? 'draft';
+        $reservation->started_at = now();
+        $reservation->expires_at = now()->addDays($reservationPeriodDays);
         $reservation->payment_method = $validated['payment_method'] ?? null;
         $reservation->payment_plan = $validated['payment_plan'] ?? null;
         $reservation->total_price = $validated['total_price'] ?? null;

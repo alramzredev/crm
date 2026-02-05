@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Unit;
+use App\Models\Property;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -32,8 +33,22 @@ class UnitsController extends Controller
     public function create()
     {
         $this->authorize('create', Unit::class);
+
+        $createData = $this->repo->getCreateData();
         
-        return Inertia::render('Units/Create', $this->repo->getCreateData());
+        // If property_id is provided, load the property with project
+        if (request('property_id')) {
+            $property = Property::with('project')->find(request('property_id'));
+            $createData['property'] = $property;
+            
+            // Override defaults with property's project
+            if ($property) {
+                $createData['defaults']['project_id'] = $property->project_id;
+                $createData['defaults']['property_id'] = $property->id;
+            }
+        }
+
+        return Inertia::render('Units/Create', $createData);
     }
 
     public function store(UnitStoreRequest $request)

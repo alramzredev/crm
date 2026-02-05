@@ -25,6 +25,8 @@ class Reservation extends Model
         'terms_accepted',
         'privacy_accepted',
         'status',
+        'started_at',
+        'expires_at',
         'cancel_reason_id',
         'notes',
         'created_by',
@@ -43,6 +45,8 @@ class Reservation extends Model
         'terms_accepted' => 'boolean',
         'privacy_accepted' => 'boolean',
         'down_payment' => 'decimal:2',
+        'started_at' => 'datetime',
+        'expires_at' => 'datetime',
     ];
 
     protected static function booted()

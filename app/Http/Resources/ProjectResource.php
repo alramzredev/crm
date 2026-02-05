@@ -18,6 +18,7 @@ class ProjectResource extends JsonResource
             'id' => $this->id,
             'project_code' => $this->project_code,
             'name' => $this->name,
+            'reservation_period_days' => $this->reservation_period_days,
             'owner' => $this->whenLoaded('owner', $this->owner ? $this->owner->only('id', 'name') : null),
             'city' => $this->whenLoaded('city', $this->city ? $this->city->only('id', 'name') : null),
             'neighborhood' => $this->neighborhood,

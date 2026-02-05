@@ -22,6 +22,7 @@ const Index = () => {
               <th className="px-6 pt-5 pb-4">Lead</th>
               <th className="px-6 pt-5 pb-4">Unit</th>
               <th className="px-6 pt-5 pb-4">Status</th>
+              <th className="px-6 pt-5 pb-4">Expires At</th>
               <th className="px-6 pt-5 pb-4">Actions</th>
             </tr>
           </thead>
@@ -34,6 +35,9 @@ const Index = () => {
                 </td>
                 <td className="border-t px-6 py-4">{r.unit?.unit_code || '—'}</td>
                 <td className="border-t px-6 py-4">{r.status || '—'}</td>
+                <td className="border-t px-6 py-4">
+                  {r.expires_at ? new Date(r.expires_at).toLocaleDateString() : '—'}
+                </td>
                 <td className="border-t px-6 py-4 space-x-3">
                   {can('reservations.edit') && (
                     <Link href={route('reservations.edit', r.id)} className="text-indigo-600 hover:text-indigo-800">
@@ -50,7 +54,7 @@ const Index = () => {
             ))}
             {data.length === 0 && (
               <tr>
-                <td className="px-6 py-4 border-t" colSpan="5">
+                <td className="px-6 py-4 border-t" colSpan="6">
                   No reservations found.
                 </td>
               </tr>

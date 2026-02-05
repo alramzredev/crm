@@ -37,21 +37,21 @@ export default ({ className }) => {
           />
         )}
 
-        {can('properties.view') && (
+        {/* {can('properties.view') && (
           <MainMenuItem
             text="Properties"
             link="properties"
             icon="office"
           />
-        )}
+        )} */}
 
-        {can('units.view') && (
+        {/* {can('units.view') && (
           <MainMenuItem
             text="Units"
             link="units"
             icon="office"
           />
-        )}
+        )} */}
 
         {can('owners.view') && (
           <MainMenuItem

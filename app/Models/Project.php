@@ -17,6 +17,7 @@ class Project extends Model
         'uuid',
         'project_code',
         'name',
+        'reservation_period_days',
         'owner_id',
         'city_id',
         'neighborhood',
