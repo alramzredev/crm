@@ -55,17 +55,26 @@ class UserRepository
 
     public function syncProjectsWithRole(User $user, array $projectIds, string $role): void
     {
+        // Get current project IDs for this specific role
         $current = $user->projects()
-            ->where('role_in_project', $role)
-            ->where('is_active', true)
+            ->wherePivot('role_in_project', $role)
+            ->wherePivot('is_active', true)
             ->pluck('project_id')
             ->toArray();
 
+        // Find projects to detach (only for this role)
         $toDetach = array_diff($current, $projectIds);
         if (!empty($toDetach)) {
-            $user->projects()->wherePivot('role_in_project', $role)->detach($toDetach);
+            // Detach only projects with this specific role
+            foreach ($toDetach as $projectId) {
+                $user->projects()
+                    ->wherePivot('project_id', $projectId)
+                    ->wherePivot('role_in_project', $role)
+                    ->detach($projectId);
+            }
         }
 
+        // Find projects to attach
         $toAttach = array_diff($projectIds, $current);
         if (!empty($toAttach)) {
             $this->attachProjectsWithRole($user, $toAttach, $role);

@@ -122,6 +122,14 @@ Route::middleware('auth')->group(function () {
     Route::get('search/units')->uses('SearchController@units')->name('search.units');
 });
 
+// Employees (Sales Supervisor Management)
+Route::middleware('auth')->group(function () {
+    Route::get('employees')->name('employees')->uses('EmployeeController@index');
+    Route::get('employees/{employee}')->name('employees.show')->uses('EmployeeController@show');
+    Route::post('employees/{employee}/assign-project')->name('employees.assign-project')->uses('EmployeeController@assignProject');
+    Route::delete('employees/{employee}/remove-project')->name('employees.remove-project')->uses('EmployeeController@removeProject');
+});
+
 // 500 error
 Route::get('500', function () {
     //

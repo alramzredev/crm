@@ -96,7 +96,8 @@ class UsersController extends Controller
             
             if ($role->name === 'sales_employee') {
                 $user->supervisor()->sync($request->input('supervisor_ids') ?? []);
-                $user->projects()->detach();
+                // Remove only sales_employee project assignments
+                $user->projects()->wherePivot('role_in_project', 'sales_employee')->detach();
             } 
             else if ($role->name === 'sales_supervisor') {
                 $user->supervisor()->detach();
@@ -107,6 +108,7 @@ class UsersController extends Controller
                 $this->repo->syncProjectsWithRole($user, $request->input('project_ids') ?? [], 'project_manager');
             }
             else {
+                // Only detach if changing to a role that doesn't use projects
                 $user->supervisor()->detach();
                 $user->projects()->detach();
             }

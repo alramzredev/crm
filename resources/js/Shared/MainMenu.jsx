@@ -10,6 +10,9 @@ export default ({ className }) => {
     return auth.user.permissions.includes(permission);
   };
 
+  console.log(auth.user.roles);
+
+
   return (
     <nav className={className}>
       <div className="mb-12 flex flex-col">
@@ -68,6 +71,14 @@ export default ({ className }) => {
             icon="users"
           />
         )}
+
+{auth.user?.roles?.includes('sales_supervisor') && (
+  <MainMenuItem
+    text="Team"
+    link="employees"
+    icon="users"
+  />
+)}
 
         {can('reservations.view') && (
           <MainMenuItem
