@@ -10,112 +10,84 @@ use Illuminate\Support\Facades\Request;
 class EmployeeRepository
 {
     /**
-     * Get paginated employees supervised by a sales supervisor
+     * Get paginated employees supervised by the given supervisor
      */
     public function getPaginatedEmployees(User $supervisor)
     {
-        $query = User::role('sales_employee')
-            ->whereHas('supervisor', function ($q) use ($supervisor) {
-                $q->where('supervisor_id', $supervisor->id);
-            });
-
-        if (Request::has('search')) {
-            $search = Request::get('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        return $query->orderByName()
-            ->paginate(25)
+        return $supervisor->salesEmployees()
+            ->withCount('projects')
+            ->orderByName()
+            ->paginate()
             ->appends(Request::all());
     }
 
     /**
-     * Get detailed employee information with projects
+     * Get employee details with their project assignments
      */
     public function getEmployeeDetails(User $employee, User $supervisor)
     {
-        $employee->load(['supervisor', 'projects']);
-        
-        // Get only projects this supervisor manages
-        $assignedProjects = $employee->projects()
-            ->whereHas('users', function ($q) use ($supervisor) {
-                $q->where('user_id', $supervisor->id)
-                  ->wherePivot('role_in_project', 'sales_supervisor')
-                  ->wherePivot('is_active', true);
-            })
-            ->get();
-
-        $employee->assigned_projects = $assignedProjects;
-
-        return new UserResource($employee);
+        return $employee->load([
+            'projects' => function ($q) {
+                $q->where('project_user.role_in_project', 'sales_employee')
+                  ->where('project_user.is_active', true);
+            }
+        ]);
     }
 
     /**
-     * Get projects available to assign (only those supervised by the supervisor)
+     * Get projects available for the supervisor to assign
      */
     public function getAvailableProjects(User $supervisor)
     {
         return Project::whereHas('users', function ($q) use ($supervisor) {
-            $q->where('user_id', $supervisor->id)
-              ->wherePivot('role_in_project', 'sales_supervisor')
-              ->wherePivot('is_active', true);
+            $q->where('project_user.user_id', $supervisor->id)
+              ->where('project_user.role_in_project', 'sales_supervisor')
+              ->where('project_user.is_active', true);
         })
         ->orderBy('name')
         ->get();
     }
 
     /**
-     * Check if an employee is supervised by a supervisor
+     * Check if an employee is supervised by the given supervisor
      */
     public function isEmployeeSupervisedBy(User $employee, User $supervisor): bool
     {
-        return $employee->supervisor()
-            ->where('supervisor_id', $supervisor->id)
+        return $supervisor->salesEmployees()
+            ->where('sales_teams.employee_id', $employee->id)
             ->exists();
     }
 
     /**
-     * Check if a project is supervised by a supervisor
+     * Check if a project is supervised by the given supervisor
      */
-    public function isProjectSupervisedBy($projectId, User $supervisor): bool
+    public function isProjectSupervisedBy(int $projectId, User $supervisor): bool
     {
-        return Project::where('id', $projectId)
-            ->whereHas('users', function ($q) use ($supervisor) {
-                $q->where('user_id', $supervisor->id)
-                  ->wherePivot('role_in_project', 'sales_supervisor')
-                  ->wherePivot('is_active', true);
-            })
+        return $supervisor->salesManagedProjects()
+            ->where('projects.id', $projectId)
             ->exists();
     }
 
     /**
-     * Assign employee to a project
+     * Assign an employee to a project
      */
-    public function assignEmployeeToProject(User $employee, $projectId): void
+    public function assignEmployeeToProject(User $employee, int $projectId): void
     {
-        // Check if already assigned
-        if ($employee->projects()->where('project_id', $projectId)->exists()) {
-            return;
-        }
-
-        $employee->projects()->attach($projectId, [
-            'role_in_project' => 'sales_employee',
-            'assigned_by' => auth()->id(),
-            'assigned_at' => now(),
-            'is_active' => true,
+        $employee->projects()->syncWithoutDetaching([
+            $projectId => [
+                'role_in_project' => 'sales_employee',
+                'assigned_by' => auth()->id(),
+                'assigned_at' => now(),
+                'is_active' => true,
+            ]
         ]);
     }
 
     /**
-     * Remove employee from a project
+     * Remove an employee from a project
      */
-    public function removeEmployeeFromProject(User $employee, $projectId): void
+    public function removeEmployeeFromProject(User $employee, int $projectId): void
     {
-        // Only detach the specific project with sales_employee role
         $employee->projects()
             ->wherePivot('project_id', $projectId)
             ->wherePivot('role_in_project', 'sales_employee')

@@ -64,17 +64,10 @@ class EmployeeController extends Controller
      */
     public function assignProject(User $employee)
     {
+        $this->authorize('assignProjects', $employee);
+
         $supervisor = Auth::user();
 
-        // Only sales supervisors can access this
-        if (!$supervisor->hasRole('sales_supervisor')) {
-            return Redirect::back()->with('error', 'Unauthorized access.');
-        }
-
-        // Verify the employee is supervised by this supervisor
-        if (!$this->repo->isEmployeeSupervisedBy($employee, $supervisor)) {
-            return Redirect::back()->with('error', 'You do not supervise this employee.');
-        }
 
         $validated = Request::validate([
             'project_ids' => 'required|array',
@@ -102,21 +95,12 @@ class EmployeeController extends Controller
      */
     public function removeProject(User $employee)
     {
-        $supervisor = Auth::user();
-
-        // Only sales supervisors can access this
-        if (!$supervisor->hasRole('sales_supervisor')) {
-            return Redirect::back()->with('error', 'Unauthorized access.');
-        }
-
-        // Verify the employee is supervised by this supervisor
-        if (!$this->repo->isEmployeeSupervisedBy($employee, $supervisor)) {
-            return Redirect::back()->with('error', 'You do not supervise this employee.');
-        }
-
         $validated = Request::validate([
             'project_id' => 'required|integer|exists:projects,id',
         ]);
+        $this->authorize('removeFromProject', $employee);
+
+        $supervisor = Auth::user();
 
         // Verify the project is supervised by this supervisor
         if (!$this->repo->isProjectSupervisedBy($validated['project_id'], $supervisor)) {

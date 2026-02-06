@@ -40,4 +40,46 @@ class UserPolicy
     {
         return $user->hasPermissionTo('users.delete');
     }
+
+    /**
+     * Check if user can assign projects to an employee
+     */
+    public function assignProjects(User $user, User $employee)
+    {
+        // Must be a sales supervisor
+        if (!$user->hasRole('sales_supervisor')) {
+            return false;
+        }
+
+        // Employee must be a sales employee
+        if (!$employee->hasRole('sales_employee')) {
+            return false;
+        }
+
+        // User must supervise this employee
+        return $user->salesEmployees()
+            ->where('sales_teams.employee_id', $employee->id)
+            ->exists();
+    }
+
+    /**
+     * Check if user can remove an employee from a project
+     */
+    public function removeFromProject(User $user, User $employee)
+    {
+        // Must be a sales supervisor
+         if (!$user->hasRole('sales_supervisor')) {
+            return false;
+        }
+
+        // Employee must be a sales employee
+        if (!$employee->hasRole('sales_employee')) {
+            return false;
+        }
+
+        // User must supervise this employee
+        return $user->salesEmployees()
+            ->where('sales_teams.employee_id', $employee->id)
+            ->exists();
+    }
 }
