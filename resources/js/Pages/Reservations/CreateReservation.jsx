@@ -41,18 +41,7 @@ const CreateReservation = () => {
 
   const steps = ['Lead Information', 'Select Unit', 'Payment Information', 'Contract & Sign'];
 
-  // Filter properties by selected project
-  const filteredProperties = useMemo(() => {
-    if (!data.project_id) return [];
-    return properties.filter(p => String(p.project_id) === String(data.project_id));
-  }, [data.project_id, properties]);
-
-  // Filter units by selected property
-  const filteredUnits = useMemo(() => {
-    if (!data.property_id) return [];
-    return units.filter(u => String(u.property_id) === String(data.property_id));
-  }, [data.property_id, units]);
-
+  // Get selected unit from units array
   const selectedUnit = useMemo(() => {
     return units.find(u => String(u.id) === String(data.unit_id));
   }, [data.unit_id, units]);
@@ -130,9 +119,6 @@ const CreateReservation = () => {
             <UnitSelectionStep 
               data={data} 
               handleChange={handleChange} 
-              projects={projects} 
-              properties={filteredProperties} 
-              units={filteredUnits} 
               selectedUnit={selectedUnit} 
             />
             {selectedUnit && <UnitInformationCard selectedUnit={selectedUnit} />}

@@ -7,7 +7,7 @@ import SelectInput from '@/Shared/SelectInput';
 import FileInput from '@/Shared/FileInput';
 
 const Create = () => {
-  const { projects, leadSources = [], brokers = [] } = usePage().props;
+  const { projects, leadSources = [], leadStatuses = [], brokers = [] } = usePage().props;
   const { data, setData, errors, post, processing } = useForm({
     title: '',
     first_name: '',
@@ -15,6 +15,7 @@ const Create = () => {
     national_id: '',
     project_id: '',
     lead_source_id: '',
+    status_id: '',
     employee_id: '',
     email: '',
     phone: '',
@@ -81,6 +82,17 @@ const Create = () => {
             >
               <option value=""></option>
               {leadSources.map(ls => <option key={ls.id} value={ls.id}>{ls.name}</option>)}
+            </SelectInput>
+            <SelectInput
+              className="w-full"
+              label="Status"
+              name="status_id"
+              errors={errors.status_id}
+              value={data.status_id}
+              onChange={e => setData('status_id', e.target.value)}
+            >
+              <option value=""></option>
+              {leadStatuses.map(ls => <option key={ls.id} value={ls.id}>{ls.name}</option>)}
             </SelectInput>
             <SelectInput
               className="w-full"

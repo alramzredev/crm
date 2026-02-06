@@ -3,14 +3,12 @@ import { Link, usePage, router } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import Icon from '@/Shared/Icon';
 import SearchFilter from '@/Shared/SearchFilter';
+import StatusFilter from '@/Shared/StatusFilter';
 import Pagination from '@/Shared/Pagination';
 
 const Index = () => {
-  const { leads = { data: [], meta: { links: [] } }, auth } = usePage().props;
-  const {
-    data = [],
-    meta: { links } = { links: [] }
-  } = leads;
+  const { leads = { data: [], meta: { links: [] } }, auth, leadStatuses = [] } = usePage().props;
+  const { data = [], meta: { links } = { links: [] } } = leads;
 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
@@ -25,13 +23,17 @@ const Index = () => {
   return (
     <div>
       <h1 className="mb-8 text-3xl font-bold">Leads</h1>
-      <div className="flex items-center justify-between mb-6">
-        <SearchFilter />
+      <div className="flex items-center justify-between mb-6 gap-4">
+        <div className="flex items-center gap-4">
+          <SearchFilter />
+          <StatusFilter
+            statuses={leadStatuses.map(s => ({ value: s.id, label: s.name }))}
+            currentStatus={new URLSearchParams(window.location.search).get('status')}
+            routeName="leads"
+          />
+        </div>
         {can('leads.create') && (
-          <Link
-            className="btn-indigo focus:outline-none"
-            href={route('leads.create')}
-          >
+          <Link className="btn-indigo focus:outline-none" href={route('leads.create')}>
             <span>Create</span>
             <span className="hidden md:inline"> Lead</span>
           </Link>

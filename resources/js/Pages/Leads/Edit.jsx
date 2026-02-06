@@ -10,7 +10,7 @@ import TrashedMessage from '@/Shared/TrashedMessage';
 import FileInput from '@/Shared/FileInput';
 
 const Edit = () => {
-  const { lead, leadSources = [], brokers = [], projects = [] } = usePage().props;
+  const { lead, leadSources = [], leadStatuses = [], brokers = [], projects = [] } = usePage().props;
   const { data, setData, errors, put, processing } = useForm({
     title: lead.title || '',
     first_name: lead.first_name || '',
@@ -18,6 +18,7 @@ const Edit = () => {
     national_id: lead.national_id || '',
     project_id: lead.project_id || '',
     lead_source_id: lead.lead_source_id || '',
+    status_id: lead.status_id || '',
     employee_id: lead.active_assignment?.employee_id || '',
     email: lead.email || '',
     phone: lead.phone || '',
@@ -77,6 +78,10 @@ const Edit = () => {
             <SelectInput className="w-full" label="Lead Source" name="lead_source_id" errors={errors.lead_source_id} value={data.lead_source_id} onChange={e => setData('lead_source_id', e.target.value)}>
               <option value=""></option>
               {leadSources.map(ls => <option key={ls.id} value={ls.id}>{ls.name}</option>)}
+            </SelectInput>
+            <SelectInput className="w-full" label="Status" name="status_id" errors={errors.status_id} value={data.status_id} onChange={e => setData('status_id', e.target.value)}>
+              <option value=""></option>
+              {leadStatuses.map(ls => <option key={ls.id} value={ls.id}>{ls.name}</option>)}
             </SelectInput>
             <SelectInput className="w-full" label="Sales Employee" name="employee_id" errors={errors.employee_id} value={data.employee_id} onChange={e => setData('employee_id', e.target.value)}>
               <option value=""></option>

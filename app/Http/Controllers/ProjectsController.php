@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
 use App\Repositories\ProjectRepository;
+use App\Models\ProjectStatus;
 
 class ProjectsController extends Controller
 {
@@ -35,11 +36,12 @@ class ProjectsController extends Controller
         $this->authorize('viewAny', Project::class);
 
         return Inertia::render('Projects/Index', [
-            'filters' => Request::all('search', 'trashed'),
+            'filters' => Request::all('search', 'trashed', 'status'),
             'projects' => $this->repo->getPaginatedProjects(
                 Auth::user(),
-                Request::only('search', 'trashed')
+                Request::only('search', 'trashed', 'status')
             ),
+            'projectStatuses' => ProjectStatus::orderBy('name')->get(),
         ]);
     }
 

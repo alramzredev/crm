@@ -4,14 +4,11 @@ import Layout from '@/Shared/Layout';
 import Icon from '@/Shared/Icon';
 import SearchFilter from '@/Shared/SearchFilter';
 import Pagination from '@/Shared/Pagination';
+import StatusFilter from '@/Shared/StatusFilter';
 
 const Index = () => {
-  const { projects, auth } = usePage().props;
-  const {
-    data,
-    meta: { links }
-  } = projects;
-
+  const { projects, auth, projectStatuses = [] } = usePage().props;
+  const { data, meta: { links } } = projects;
 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
@@ -26,13 +23,17 @@ const Index = () => {
   return (
     <div>
       <h1 className="mb-8 text-3xl font-bold">Projects</h1>
-      <div className="flex items-center justify-between mb-6">
-        <SearchFilter />
+      <div className="flex items-center justify-between mb-6 gap-4">
+        <div className="flex items-center gap-4">
+          <SearchFilter />
+          <StatusFilter
+            statuses={projectStatuses.map(s => ({ value: s.id, label: s.name }))}
+            currentStatus={new URLSearchParams(window.location.search).get('status')}
+            routeName="projects"
+          />
+        </div>
         {can('projects.create') && (
-          <Link
-            className="btn-indigo focus:outline-none"
-            href={route('projects.create')}
-          >
+          <Link className="btn-indigo focus:outline-none" href={route('projects.create')}>
             <span>Create</span>
             <span className="hidden md:inline"> Project</span>
           </Link>

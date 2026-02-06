@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
+import StatusFilter from '@/Shared/StatusFilter';
 import Pagination from '@/Shared/Pagination';
 
 const Index = () => {
@@ -11,9 +12,24 @@ const Index = () => {
     return auth.user?.permissions?.includes(permission) || false;
   };
 
+  const reservationStatuses = [
+    { value: 'draft', label: 'Draft' },
+    { value: 'active', label: 'Active' },
+    { value: 'confirmed', label: 'Confirmed' },
+    { value: 'expired', label: 'Expired' },
+    { value: 'canceled', label: 'Canceled' },
+  ];
+
   return (
     <div>
       <h1 className="mb-8 text-3xl font-bold">Reservations</h1>
+      <div className="flex items-center justify-between mb-6">
+        <StatusFilter
+          statuses={reservationStatuses}
+          currentStatus={new URLSearchParams(window.location.search).get('status')}
+          routeName="reservations"
+        />
+      </div>
       <div className="overflow-x-auto bg-white rounded shadow">
         <table className="w-full whitespace-nowrap">
           <thead>

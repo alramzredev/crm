@@ -13,16 +13,23 @@ export default function ApiSearchableSelectInput({
   disabled = false,
   apiUrl,
   searchParam = 'search',
-  minChars = 2,
+  minChars = 0,
   initialOptions = [],
+  fetchOnMount = true,
   ...props
 }) {
   const [query, setQuery] = useState('');
   const [options, setOptions] = useState(initialOptions);
   const [loading, setLoading] = useState(false);
 
-  const debouncedSearch = useDebouncedCallback((searchQuery) => {
-    if (!apiUrl || searchQuery.length < minChars) {
+  const fetchData = (searchQuery) => {
+    if (!apiUrl) {
+      setOptions(initialOptions);
+      setLoading(false);
+      return;
+    }
+
+    if (searchQuery.length > 0 && searchQuery.length < minChars) {
       setOptions(initialOptions);
       setLoading(false);
       return;
@@ -43,9 +50,21 @@ export default function ApiSearchableSelectInput({
       .finally(() => {
         setLoading(false);
       });
-  }, 300);
+  };
+
+  const debouncedSearch = useDebouncedCallback(fetchData, 300);
 
   useEffect(() => {
+    if (fetchOnMount && apiUrl) {
+      fetchData('');
+    }
+  }, [apiUrl, fetchOnMount]);
+
+  useEffect(() => {
+    if (query.length === 0 && !fetchOnMount) {
+      setOptions(initialOptions);
+      return;
+    }
     debouncedSearch(query);
   }, [query]);
 

@@ -40,11 +40,10 @@ class DashboardRepository
     public function getUserStats()
     {
         return [
-            'users_by_role' => User::select('roles.name', DB::raw('count(*) as count'))
-                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-                ->groupBy('roles.name')
-                ->get(),
+            'super_admins' => User::role('super_admin')->whereNull('deleted_at')->count(),
+            'project_managers' => User::role('project_manager')->whereNull('deleted_at')->count(),
+            'sales_supervisors' => User::role('sales_supervisor')->whereNull('deleted_at')->count(),
+            'sales_employees' => User::role('sales_employee')->whereNull('deleted_at')->count(),
             'active_users' => User::whereNull('deleted_at')->count(),
             'inactive_users' => User::whereNotNull('deleted_at')->count(),
         ];

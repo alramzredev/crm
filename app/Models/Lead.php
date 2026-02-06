@@ -20,7 +20,7 @@ class Lead extends Model
         'email',
         'phone',
         'lead_source_id',
-        // 'broker_id',
+        'status_id',
         'national_address_file',
         'national_id_file',
         'created_by',
@@ -65,6 +65,11 @@ class Lead extends Model
     public function leadSource()
     {
         return $this->belongsTo(LeadSource::class, 'lead_source_id');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(LeadStatus::class, 'status_id');
     }
 
     public function project()

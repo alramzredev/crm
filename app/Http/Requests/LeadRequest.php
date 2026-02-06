@@ -20,6 +20,7 @@ class LeadRequest extends FormRequest
             'national_id' => ['nullable', 'string', 'max:50'],
             'project_id' => ['nullable', 'integer', 'exists:projects,id'],
             'lead_source_id' => ['nullable', 'integer'],
+            'status_id' => ['nullable', 'integer', 'exists:lead_statuses,id'],
             'employee_id' => ['nullable', 'integer', 'exists:users,id'],
             'email' => ['nullable', 'email', 'max:50'],
             'phone' => ['nullable', 'string', 'max:50'],

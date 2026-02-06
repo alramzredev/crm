@@ -15,7 +15,7 @@ class SearchController extends Controller
     {
         $user = Auth::user();
         $search = $request->get('search', '');
-
+ 
         $query = Project::orderBy('name');
 
         if (!$user->hasRole('super_admin')) {
@@ -85,8 +85,7 @@ class SearchController extends Controller
 
         if ($search) {
             $query->where(function($q) use ($search) {
-                $q->where('unit_code', 'like', "%{$search}%")
-                  ->orWhere('unit_number', 'like', "%{$search}%");
+                $q->where('unit_code', 'like', "%{$search}%");
             });
         }
 
@@ -95,7 +94,7 @@ class SearchController extends Controller
         return response()->json(
             $units->map(fn($u) => [
                 'value' => $u->id,
-                'label' => $u->unit_code . ($u->unit_number ? " - {$u->unit_number}" : ''),
+                'label' => $u->unit_code,
             ])
         );
     }

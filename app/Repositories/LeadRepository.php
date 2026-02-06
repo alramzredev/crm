@@ -6,6 +6,7 @@ use App\Models\Lead;
 use App\Models\User;
 use App\Models\LeadSource;
 use App\Models\Project;
+use App\Models\LeadStatus;
 use Illuminate\Support\Facades\Request;
 
 class LeadRepository
@@ -24,25 +25,33 @@ class LeadRepository
     {
         $query = Lead::with('project');
 
-        // Sales employees: Only see leads assigned to them from their allowed projects
+        // Role-based filtering
         if ($user->hasRole('sales_employee')) {
-             $query->whereHas('activeAssignment', function ($q) use ($user) {
-                // Condition: Lead must be assigned to this employee
+            $query->whereHas('activeAssignment', function ($q) use ($user) {
                 $q->where('employee_id', $user->id);
             });
-        }
-        // Sales supervisors: See leads from their assigned projects
-        else if ($user->hasRole('sales_supervisor')) {
+        } else if ($user->hasRole('sales_supervisor')) {
             $query->whereHas('project', function ($q) use ($user) {
                 $q->whereIn('id', $user->activeProjects()->pluck('projects.id'));
             });
         }
-        // Project managers and above: See all leads
-        // (no additional filter needed)
 
+        // Search and status filtering
         return $query
+            ->when(Request::get('search'), fn ($q, $search) =>
+                $q->where(function ($q2) use ($search) {
+                    $q2->where('first_name', 'like', "%{$search}%")
+                       ->orWhere('last_name', 'like', "%{$search}%")
+                       ->orWhere('email', 'like', "%{$search}%");
+                })
+            )
+            ->when(Request::get('status'), fn ($q, $status) =>
+                $q->where('status_id', $status)
+            )
+            ->when(Request::get('trashed'), fn ($q, $trashed) =>
+                $trashed === 'with' ? $q->withTrashed() : ($trashed === 'only' ? $q->onlyTrashed() : $q)
+            )
             ->orderByName()
-            ->filter($filters)
             ->paginate()
             ->appends(Request::all());
     }
@@ -51,6 +60,7 @@ class LeadRepository
     {
         return [
             'leadSources' => LeadSource::orderBy('name')->get(),
+            'leadStatuses' => LeadStatus::orderBy('name')->get(),
             'projects' => Project::orderBy('name')->get(),
             'brokers' => User::role('sales_employee')->orderByName()->get(),
         ];
@@ -59,8 +69,9 @@ class LeadRepository
     public function getEditData(Lead $lead): array
     {
         return [
-            'lead' => $lead->load('activeAssignment'),
+            'lead' => $lead->load(['activeAssignment', 'status']),
             'leadSources' => LeadSource::orderBy('name')->get(),
+            'leadStatuses' => LeadStatus::orderBy('name')->get(),
             'projects' => Project::orderBy('name')->get(),
             'brokers' => User::role('sales_employee')->orderByName()->get(),
         ];

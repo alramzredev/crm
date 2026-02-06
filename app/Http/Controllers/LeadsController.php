@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Repositories\LeadRepository;
 use App\Http\Requests\LeadRequest;
 use App\Models\LeadAssignment;
+use App\Models\LeadStatus;
 
 class LeadsController extends Controller
 {
@@ -31,6 +32,7 @@ class LeadsController extends Controller
         return Inertia::render('Leads/Index', [
             'filters' => Request::all('search', 'trashed'),
             'leads' => $leads,
+            'leadStatuses' => LeadStatus::orderBy('name')->get(),
         ]);
     }
 
@@ -38,11 +40,7 @@ class LeadsController extends Controller
     {
         $this->authorize('create', Lead::class);
 
-        return Inertia::render('Leads/Create', [
-            'leadSources' => LeadSource::orderBy('name')->get(),
-            'projects' => Project::orderBy('name')->get(),
-            'brokers' => User::role('sales_employee')->orderByName()->get(),
-        ]);
+        return Inertia::render('Leads/Create', $this->repo->getCreateData());
     }
 
     public function store(LeadRequest $request)
@@ -72,12 +70,7 @@ class LeadsController extends Controller
     {
         $this->authorize('update', $lead);
 
-        return Inertia::render('Leads/Edit', [
-            'lead' => $lead->load('activeAssignment'),
-            'leadSources' => LeadSource::orderBy('name')->get(),
-            'projects' => Project::orderBy('name')->get(),
-            'brokers' => User::role('sales_employee')->orderByName()->get(),
-        ]);
+        return Inertia::render('Leads/Edit', $this->repo->getEditData($lead));
     }
 
     public function update(Lead $lead, LeadRequest $request)

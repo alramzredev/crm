@@ -65,8 +65,19 @@ class ProjectRepository
 
         return ProjectResource::collection(
             $query
+                ->when(Request::get('search'), fn ($q, $search) =>
+                    $q->where(function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%")
+                           ->orWhere('project_code', 'like', "%{$search}%");
+                    })
+                )
+                ->when(Request::get('status'), fn ($q, $status) =>
+                    $q->where('status_id', $status)
+                )
+                ->when(Request::get('trashed'), fn ($q, $trashed) =>
+                    $trashed === 'with' ? $q->withTrashed() : ($trashed === 'only' ? $q->onlyTrashed() : $q)
+                )
                 ->orderBy('name')
-                ->filter($filters)
                 ->paginate()
                 ->appends(Request::all())
         );
