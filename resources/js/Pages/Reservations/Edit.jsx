@@ -11,7 +11,6 @@ const Edit = () => {
   const { reservation } = usePage().props;
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(null);
-  const [payments, setPayments] = useState(reservation.payments || []);
 
   const { data, setData, errors, put, processing } = useForm({
     status: reservation.status || '',
@@ -168,7 +167,7 @@ const Edit = () => {
           </button>
         </div>
         <PaymentsTable
-          payments={payments}
+          payments={reservation.payments || []}
           onEdit={handleEditPayment}
           onDelete={handleDeletePayment}
         />

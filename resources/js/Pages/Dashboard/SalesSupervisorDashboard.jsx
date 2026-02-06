@@ -13,9 +13,9 @@ const SalesSupervisorDashboard = () => {
 
       {/* Sales KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <KPICard title="Total Leads" value={kpis.total_leads} icon="👥" color="indigo" />
-        <KPICard title="New Leads Today" value={kpis.new_leads_today} icon="✨" color="green" />
-        <KPICard title="Active Reservations" value={kpis.active_reservations} icon="📋" color="yellow" />
+        <KPICard title="Total Leads" value={kpis.total_leads} icon="users" color="indigo" />
+        <KPICard title="New Leads Today" value={kpis.new_leads_today} icon="dashboard" color="green" />
+        <KPICard title="Active Reservations" value={kpis.active_reservations} icon="book" color="yellow" />
       </div>
 
       {/* Alerts */}
@@ -66,8 +66,8 @@ const SalesSupervisorDashboard = () => {
       <div>
         <h2 className="text-xl font-semibold mb-4">Inventory Snapshot</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <KPICard title="Available Units" value={inventory.available_units} icon="🏠" color="green" />
-          <KPICard title="Reserved Today" value={inventory.reserved_today} icon="📝" color="yellow" />
+          <KPICard title="Available Units" value={inventory.available_units} icon="store-front" color="green" />
+          <KPICard title="Reserved Today" value={inventory.reserved_today} icon="shopping-cart" color="yellow" />
         </div>
       </div>
     </div>

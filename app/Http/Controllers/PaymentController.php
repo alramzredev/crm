@@ -7,35 +7,37 @@ use App\Models\Reservation;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\PaymentStoreRequest;
 use App\Http\Requests\PaymentUpdateRequest;
+use App\Repositories\PaymentRepository;
 
 class PaymentController extends Controller
 {
+    protected $repo;
+
+    public function __construct(PaymentRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
     public function store(PaymentStoreRequest $request, Reservation $reservation)
     {
-        $this->authorize('create', Payment::class);
+         $this->authorize('create', Payment::class);
 
         $validated = $request->validated();
+        $files = $request->file('payment_receipts', []);
 
-        Payment::create([
-            'reservation_id' => $reservation->id,
-            'customer_id' => $reservation->customer_id,
-            'amount' => $validated['amount'],
-            'currency' => $validated['currency'] ?? $reservation->currency ?? 'SAR',
-            'payment_method' => $validated['payment_method'],
-            'payment_date' => $validated['payment_date'] ?? now(),
-            'reference_no' => $validated['reference_no'],
-            'notes' => $validated['notes'],
-            'created_by' => auth()->id(),
-        ]);
+        $this->repo->createForReservation($reservation, $validated, $files);
 
         return Redirect::back()->with('success', 'Payment recorded.');
     }
 
     public function update(Payment $payment, PaymentUpdateRequest $request)
     {
-        $this->authorize('update', $payment);
+         $this->authorize('update', $payment);
 
-        $payment->update($request->validated());
+        $validated = $request->validated();
+        $files = $request->file('payment_receipts', []);
+
+        $this->repo->update($payment, $validated, $files);
 
         return Redirect::back()->with('success', 'Payment updated.');
     }
@@ -44,7 +46,7 @@ class PaymentController extends Controller
     {
         $this->authorize('delete', $payment);
 
-        $payment->delete();
+        $this->repo->delete($payment);
 
         return Redirect::back()->with('success', 'Payment deleted.');
     }

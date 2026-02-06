@@ -20,6 +20,7 @@ class PaymentResource extends JsonResource
             'notes' => $this->notes,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'receipts' => PaymentReceiptResource::collection($this->whenLoaded('receipts')),
         ];
     }
 }

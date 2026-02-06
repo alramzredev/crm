@@ -19,6 +19,8 @@ class PaymentStoreRequest extends FormRequest
             'payment_date' => 'required|date',
             'reference_no' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
+            'payment_receipts' => 'nullable|array',
+            'payment_receipts.*' => 'file|mimes:pdf,jpg,jpeg,png|max:5120',
         ];
     }
 }

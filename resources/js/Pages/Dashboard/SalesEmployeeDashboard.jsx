@@ -12,8 +12,8 @@ const SalesEmployeeDashboard = () => {
 
       {/* Personal Performance */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <KPICard title="Reservations This Month" value={performance.reservations_this_month} icon="📋" color="green" />
-        <KPICard title="Conversion Rate" value={`${performance.conversion_rate}%`} icon="📈" color="indigo" />
+        <KPICard title="Reservations This Month" value={performance.reservations_this_month} icon="book" color="green" />
+        <KPICard title="Conversion Rate" value={`${performance.conversion_rate}%`} icon="dashboard" color="indigo" />
       </div>
 
       {/* My Work */}

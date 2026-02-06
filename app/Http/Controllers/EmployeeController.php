@@ -68,7 +68,6 @@ class EmployeeController extends Controller
 
         $supervisor = Auth::user();
 
-
         $validated = Request::validate([
             'project_ids' => 'required|array',
             'project_ids.*' => 'exists:projects,id',

@@ -10,7 +10,6 @@ export default ({ className }) => {
     return auth.user.permissions.includes(permission);
   };
 
-  console.log(auth.user.roles);
 
 
   return (

@@ -1,4 +1,5 @@
 import React from 'react';
+import Icon from '@/Shared/Icon';
 
 export default function KPICard({ title, value, icon, color = 'indigo', trend }) {
   const colorClasses = {
@@ -23,8 +24,8 @@ export default function KPICard({ title, value, icon, color = 'indigo', trend })
           )}
         </div>
         {icon && (
-          <div className={`flex-shrink-0 w-12 h-12 rounded-full ${colorClasses[color]} flex items-center justify-center text-white text-xl`}>
-            {icon}
+          <div className={`flex-shrink-0 w-12 h-12 rounded-full ${colorClasses[color]} flex items-center justify-center`}>
+            <Icon name={icon} className="w-6 h-6 text-white fill-current" />
           </div>
         )}
       </div>

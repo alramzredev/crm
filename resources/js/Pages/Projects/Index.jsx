@@ -12,7 +12,6 @@ const Index = () => {
     meta: { links }
   } = projects;
 
-  console.log(projects);
 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;

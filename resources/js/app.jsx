@@ -20,6 +20,6 @@ createInertiaApp({
 })
 
 Sentry.init({
-  dsn: process.env.MIX_SENTRY_LARAVEL_DSN
+  dsn: import.meta.env.VITE_SENTRY_LARAVEL_DSN
 });
 

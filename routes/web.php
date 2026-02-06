@@ -108,7 +108,7 @@ Route::middleware('auth')->group(function () {
     
     // Payments
     Route::post('reservations/{reservation}/payments')->uses('PaymentController@store')->name('payments.store');
-    Route::put('payments/{payment}')->uses('PaymentController@update')->name('payments.update');
+    Route::post('payments/{payment}')->uses('PaymentController@update')->name('payments.update');
     Route::delete('payments/{payment}')->uses('PaymentController@destroy')->name('payments.destroy');
 });
 
