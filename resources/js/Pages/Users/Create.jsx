@@ -13,6 +13,7 @@ const Create = () => {
     first_name: '',
     last_name: '',
     email: '',
+    phone: '',
     password: '',
     role: '',
     photo: '',
@@ -89,6 +90,15 @@ const Create = () => {
               errors={errors.email}
               value={data.email}
               onChange={e => setData('email', e.target.value)}
+            />
+            <TextInput
+              className="w-full pb-8 pr-6 lg:w-1/2"
+              label="Phone"
+              name="phone"
+              type="text"
+              errors={errors.phone}
+              value={data.phone}
+              onChange={e => setData('phone', e.target.value)}
             />
             <TextInput
               className="w-full pb-8 pr-6 lg:w-1/2"

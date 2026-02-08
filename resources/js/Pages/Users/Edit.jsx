@@ -24,6 +24,7 @@ const Edit = () => {
     first_name: user.first_name || '',
     last_name: user.last_name || '',
     email: user.email || '',
+    phone: user.phone || '',
     password: '',
     role: userRoleId,
     photo: '',
@@ -123,6 +124,15 @@ const Edit = () => {
               errors={errors.email}
               value={data.email}
               onChange={e => setData('email', e.target.value)}
+            />
+            <TextInput
+              className="w-full pb-8 pr-6 lg:w-1/2"
+              label="Phone"
+              name="phone"
+              type="text"
+              errors={errors.phone}
+              value={data.phone}
+              onChange={e => setData('phone', e.target.value)}
             />
             <TextInput
               className="w-full pb-8 pr-6 lg:w-1/2"
