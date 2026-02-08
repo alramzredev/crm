@@ -10,7 +10,7 @@ import TrashedMessage from '@/Shared/TrashedMessage';
 import FileInput from '@/Shared/FileInput';
 
 const Edit = () => {
-  const { lead, leadSources = [], leadStatuses = [], brokers = [], projects = [] } = usePage().props;
+  const { lead, leadSources = [], leadStatuses = [], brokers = [], projects = [], auth } = usePage().props;
   const { data, setData, errors, put, processing } = useForm({
     title: lead.title || '',
     first_name: lead.first_name || '',
@@ -83,10 +83,12 @@ const Edit = () => {
               <option value=""></option>
               {leadStatuses.map(ls => <option key={ls.id} value={ls.id}>{ls.name}</option>)}
             </SelectInput>
-            <SelectInput className="w-full" label="Sales Employee" name="employee_id" errors={errors.employee_id} value={data.employee_id} onChange={e => setData('employee_id', e.target.value)}>
-              <option value=""></option>
-              {brokers.map(b => <option key={b.id} value={b.id}>{employeeLabel(b)}</option>)}
-            </SelectInput>
+            {!auth.user.roles?.includes('sales_employee') && (
+              <SelectInput className="w-full" label="Sales Employee" name="employee_id" errors={errors.employee_id} value={data.employee_id} onChange={e => setData('employee_id', e.target.value)}>
+                <option value=""></option>
+                {brokers.map(b => <option key={b.id} value={b.id}>{employeeLabel(b)}</option>)}
+              </SelectInput>
+            )}
           </div>
 
           {/* Personal */}

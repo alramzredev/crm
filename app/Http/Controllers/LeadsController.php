@@ -40,7 +40,7 @@ class LeadsController extends Controller
     {
         $this->authorize('create', Lead::class);
 
-        return Inertia::render('Leads/Create', $this->repo->getCreateData());
+        return Inertia::render('Leads/Create', $this->repo->getCreateData(auth()->user()));
     }
 
     public function store(LeadRequest $request)

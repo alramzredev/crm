@@ -23,18 +23,7 @@ class LeadRepository
      */
     public function getPaginatedLeads(User $user, array $filters = [])
     {
-        $query = Lead::with('project');
-
-        // Role-based filtering
-        if ($user->hasRole('sales_employee')) {
-            $query->whereHas('activeAssignment', function ($q) use ($user) {
-                $q->where('employee_id', $user->id);
-            });
-        } else if ($user->hasRole('sales_supervisor')) {
-            $query->whereHas('project', function ($q) use ($user) {
-                $q->whereIn('id', $user->activeProjects()->pluck('projects.id'));
-            });
-        }
+        $query = Lead::with('project')->filterByUserRole($user);
 
         // Search and status filtering
         return $query
@@ -51,17 +40,25 @@ class LeadRepository
             ->when(Request::get('trashed'), fn ($q, $trashed) =>
                 $trashed === 'with' ? $q->withTrashed() : ($trashed === 'only' ? $q->onlyTrashed() : $q)
             )
-            ->orderByName()
+            ->orderBy('created_at', 'desc')
             ->paginate()
             ->appends(Request::all());
     }
 
-    public function getCreateData(): array
+    public function getCreateData(User $user)
     {
+         
+        $projectsQuery = Project::orderBy('name');
+        
+        // Filter projects by user role if not super admin
+        if (!$user->hasRole('super_admin')) {
+            $projectsQuery->filterByUserRole($user);
+        }
+
         return [
             'leadSources' => LeadSource::orderBy('name')->get(),
             'leadStatuses' => LeadStatus::orderBy('name')->get(),
-            'projects' => Project::orderBy('name')->get(),
+            'projects' => $projectsQuery->get(),
             'brokers' => User::role('sales_employee')->orderByName()->get(),
         ];
     }

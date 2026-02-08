@@ -265,6 +265,20 @@ class Project extends Model
         });
     }
 
+    public function scopeFilterByUserRole($query, User $user)
+    {
+        // Super Admin: No restrictions
+        if ($user->hasRole('super_admin')) {
+            return $query;
+        }
+
+        // For all other roles, filter by active project assignments
+        return $query->whereHas('users', function ($q) use ($user) {
+            $q->where('project_user.user_id', $user->id)
+              ->where('project_user.is_active', true);
+        });
+    }
+
     /* ===========================
        VISIBILITY RULES
        =========================== 

@@ -24,6 +24,7 @@ class LeadPolicy
             // Check: Is this lead assigned to me?
             $isAssignedToMe = $lead->activeAssignment?->employee_id === $user->id;
 
+
             // Check: Is the lead's project in my allowed projects?
             $isInMyProject = $user->activeProjects()
                 ->where('projects.id', $lead->project_id)
@@ -54,15 +55,20 @@ class LeadPolicy
         if (!$user->hasPermissionTo('leads.edit')) {
             return false;
         }
+        
 
         // Sales employee: Can only edit leads assigned to them
         if ($user->hasRole('sales_employee')) {
             $isAssignedToMe = $lead->activeAssignment?->employee_id === $user->id;
-            $isInMyProject = $user->activeProjects()
-                ->where('projects.id', $lead->project_id)
-                ->exists();
 
-            return $isAssignedToMe && $isInMyProject;
+            // $isInMyProject = $user->activeProjects()
+            //     ->where('projects.id', $lead->project_id)
+            //     ->exists();
+
+ 
+
+            // return $isAssignedToMe && $isInMyProject;
+            return $isAssignedToMe;
         }
 
         // Supervisors and above: Can edit leads from their projects

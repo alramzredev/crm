@@ -30,7 +30,7 @@ class ReservationController extends Controller
         $this->authorize('viewAny', Reservation::class);
 
         return Inertia::render('Reservations/Index', [
-            'reservations' => $this->repo->getPaginatedReservations(Request::only('search', 'status')),
+            'reservations' => $this->repo->getPaginatedReservations(Auth::user(), Request::only('search', 'status')),
             'filters' => Request::all('search', 'status'),
         ]);
     }

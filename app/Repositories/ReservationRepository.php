@@ -101,10 +101,11 @@ class ReservationRepository
         return $reservation;
     }
 
-    public function getPaginatedReservations(array $filters = [])
+    public function getPaginatedReservations(User $user, array $filters = [])
     {
         return ReservationResource::collection(
             Reservation::with(['lead', 'unit', 'customer'])
+                ->filterByUserRole($user)
                 ->when(Request::get('search'), fn ($q, $search) =>
                     $q->where(function ($q2) use ($search) {
                         $q2->where('reservation_code', 'like', "%{$search}%")

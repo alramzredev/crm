@@ -62,6 +62,19 @@ class Lead extends Model
         });
     }
 
+    public function scopeFilterByUserRole($query, User $user)
+    {
+        if ($user->hasRole('sales_employee')) {
+            $query->whereHas('activeAssignment', function ($q) use ($user) {
+                $q->where('employee_id', $user->id);
+            });
+        } else if ($user->hasRole('sales_supervisor')) {
+            $query->whereHas('project', function ($q) use ($user) {
+                $q->whereIn('id', $user->activeProjects()->pluck('projects.id'));
+            });
+        }
+    }
+
     public function leadSource()
     {
         return $this->belongsTo(LeadSource::class, 'lead_source_id');

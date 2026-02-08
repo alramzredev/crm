@@ -5,7 +5,6 @@ import Icon from '@/Shared/Icon';
 export default () => {
   const { auth } = usePage().props;
   const [menuOpened, setMenuOpened] = useState(false);
-  console.log('Auth User:', auth.user.roles);
   
   const userRole = auth.user.roles?.[0] || '';
   const isSalesSupervisor = userRole === 'sales_supervisor';

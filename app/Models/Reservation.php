@@ -112,4 +112,40 @@ class Reservation extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    public function scopeFilterByUserRole($query, User $user)
+    {
+        // Super Admin: No restrictions
+        if ($user->hasRole('super_admin')) {
+            return $query;
+        }
+
+        // Project Manager: Reservations from their managed projects
+        if ($user->hasRole('project_manager')) {
+            return $query->whereHas('unit.project.users', function ($q) use ($user) {
+                $q->where('project_user.user_id', $user->id)
+                  ->wherePivot('role_in_project', 'project_manager')
+                  ->wherePivot('is_active', true);
+            });
+        }
+
+        // Sales Supervisor: Reservations from their supervised projects
+        if ($user->hasRole('sales_supervisor')) {
+            return $query->whereHas('unit.project.users', function ($q) use ($user) {
+                $q->where('project_user.user_id', $user->id)
+                  ->wherePivot('role_in_project', 'sales_supervisor')
+                  ->wherePivot('is_active', true);
+            });
+        }
+
+        // Sales Employee: Only their own reservations
+        if ($user->hasRole('sales_employee')) {
+            return $query->whereHas('lead.activeAssignment', function ($q) use ($user) {
+                $q->where('employee_id', $user->id);
+            });
+        }
+
+        // No access for unknown roles
+        return $query->whereRaw('1 = 0');
+    }
 }
