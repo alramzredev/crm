@@ -114,22 +114,34 @@ class PermissionSeeder extends Seeder
         // Create roles
         $superAdmin = Role::firstOrCreate(
             ['name' => 'super_admin', 'guard_name' => 'web'],
-            ['description' => 'Super Administrator - Full system access']
+            [
+                'label' => 'Super Admin',
+                'description' => 'Super Administrator - Full system access'
+            ]
         );
 
         $projectManager = Role::firstOrCreate(
             ['name' => 'project_manager', 'guard_name' => 'web'],
-            ['description' => 'Project Manager - Manages projects and properties']
+            [
+                'label' => 'Project Manager',
+                'description' => 'Project Manager - Manages projects and properties'
+            ]
         );
 
         $salesSupervisor = Role::firstOrCreate(
             ['name' => 'sales_supervisor', 'guard_name' => 'web'],
-            ['description' => 'Sales Supervisor - Manages sales team and leads']
+            [
+                'label' => 'Sales Supervisor',
+                'description' => 'Sales Supervisor - Manages sales team and leads'
+            ]
         );
 
         $salesEmployee = Role::firstOrCreate(
             ['name' => 'sales_employee', 'guard_name' => 'web'],
-            ['description' => 'Sales Employee - Creates and manages leads and reservations']
+            [
+                'label' => 'Sales Employee',
+                'description' => 'Sales Employee - Creates and manages leads and reservations'
+            ]
         );
 
         // ============================================

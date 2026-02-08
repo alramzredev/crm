@@ -26,11 +26,6 @@ class UnitRepository
 
     public function getCreateData(): array
     {
-        $neighborhoods = useMemo(() => {
-            if (!$defaults['municipality_id']) return Neighborhood::orderBy('name')->get();
-            return Neighborhood::where('municipality_id', $defaults['municipality_id'])->orderBy('name')->get();
-        }, []);
-
         return [
             'projects' => Project::orderBy('name')->get(),
             'properties' => Property::orderBy('property_code')->get(),

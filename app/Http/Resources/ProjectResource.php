@@ -40,7 +40,13 @@ class ProjectResource extends JsonResource
             'budget' => $this->budget,
             'no_of_floors' => $this->no_of_floors,
             'number_of_units' => $this->number_of_units,
+            'land_area' => $this->land_area,
+            'built_up_area' => $this->built_up_area,
+            'selling_space' => $this->selling_space,
+            'sellable_area_factor' => $this->sellable_area_factor,
+            'floor_area_ratio' => $this->floor_area_ratio,
             'warranty' => $this->warranty,
+            'status_reason' => $this->status_reason,
             'deleted_at' => $this->deleted_at,
             'properties' => PropertyResource::collection($this->whenLoaded('properties')),
         ];

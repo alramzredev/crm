@@ -142,7 +142,7 @@ const Edit = () => {
               onChange={e => setData('role', e.target.value)}
             >
               <option value="">Select a role</option>
-              {roles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+              {roles.map(r => <option key={r.id} value={r.id}>{r.label || r.name}</option>)}
             </SelectInput>
             <FileInput
               className="w-full pb-8 pr-6 lg:w-1/2"

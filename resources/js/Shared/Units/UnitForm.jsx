@@ -229,7 +229,7 @@ const UnitForm = ({
             value={data.price_base}
             onChange={e => setData('price_base', e.target.value)}
           />
-          <TextInput
+          {/* <TextInput
             className="w-full pb-8 pr-6 lg:w-1/3"
             label="Currency"
             name="currency"
@@ -246,7 +246,7 @@ const UnitForm = ({
             errors={errors.exchange_rate}
             value={data.exchange_rate}
             onChange={e => setData('exchange_rate', e.target.value)}
-          />
+          /> */}
           <TextInput
             className="w-full pb-8 pr-6 lg:w-1/3"
             label="Model"

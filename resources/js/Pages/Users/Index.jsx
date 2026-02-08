@@ -44,7 +44,7 @@ const Index = () => {
           </thead>
           <tbody>
             {data.map(({ id, name, photo, email, roles, deleted_at }) => {
-              const role = roles && roles.length > 0 ? roles[0].name : 'User';
+              const role = roles && roles.length > 0 ? (roles[0].label || roles[0].name) : 'User';
               return (
                 <tr
                   key={id}
