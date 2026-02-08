@@ -122,19 +122,24 @@ class Reservation extends Model
 
         // Project Manager: Reservations from their managed projects
         if ($user->hasRole('project_manager')) {
-            return $query->whereHas('unit.project.users', function ($q) use ($user) {
-                $q->where('project_user.user_id', $user->id)
-                  ->wherePivot('role_in_project', 'project_manager')
-                  ->wherePivot('is_active', true);
+            return $query->whereHas('unit.project', function ($q) use ($user) {
+                $q->whereHas('users', function ($q2) use ($user) {
+                    $q2->where('project_user.user_id', $user->id)
+                      ->where('project_user.role_in_project', 'project_manager')
+                      ->where('project_user.is_active', true);
+                });
             });
         }
 
-        // Sales Supervisor: Reservations from their supervised projects
+        // Sales Supervisor: Reservations created by them or their team members
         if ($user->hasRole('sales_supervisor')) {
-            return $query->whereHas('unit.project.users', function ($q) use ($user) {
-                $q->where('project_user.user_id', $user->id)
-                  ->wherePivot('role_in_project', 'sales_supervisor')
-                  ->wherePivot('is_active', true);
+            return $query->where(function ($q) use ($user) {
+                // Reservations created by the supervisor themselves
+                $q->where('created_by', $user->id)
+                  // OR reservations created by their team members
+                  ->orWhereHas('createdBy.supervisor', function ($q2) use ($user) {
+                      $q2->where('supervisor_id', $user->id);
+                  });
             });
         }
 
