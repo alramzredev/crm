@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Link, usePage, useForm } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
+import axios from 'axios';
+
 import {
   Stepper,
   Step,
@@ -14,9 +16,11 @@ import PaymentSummaryCard from './Components/PaymentSummaryCard';
 import UnitInformationCard from './Components/UnitInformationCard';
 
 const CreateReservation = () => {
-  const { lead, projects = [], properties = [], units = [] } = usePage().props;
+  const { lead } = usePage().props;
   const [activeStep, setActiveStep] = useState(0);
-  const { data, setData, post, processing } = useForm({
+  const [selectedUnit, setSelectedUnit] = useState(null);
+  
+  const { data, setData, post, processing, errors } = useForm({
     lead_id: lead?.id || '',
     first_name: lead?.first_name || '',
     last_name: lead?.last_name || '',
@@ -37,17 +41,16 @@ const CreateReservation = () => {
     notes: '',
     terms_accepted: false,
     privacy_accepted: false,
+    status: 'active',
   });
 
   const steps = ['Lead Information', 'Select Unit', 'Payment Information', 'Contract & Sign'];
 
-  // Get selected unit from units array
-  const selectedUnit = useMemo(() => {
-    return units.find(u => String(u.id) === String(data.unit_id));
-  }, [data.unit_id, units]);
+  
 
   // Auto-populate total_price and remaining_amount when unit is selected
   useMemo(() => {
+    console.log('Selected Unit changed:', selectedUnit);
     if (selectedUnit && selectedUnit.price) {
       setData(prev => {
         const newData = { ...prev, total_price: selectedUnit.price };
@@ -67,6 +70,10 @@ const CreateReservation = () => {
   }, [selectedUnit?.id]);
 
   const handleNext = () => {
+    if (activeStep === 2) {
+      post(route('reservations.store'), { forceFormData: true });
+      return;
+    }
     setActiveStep((prevStep) => prevStep + 1);
   };
 
@@ -74,7 +81,7 @@ const CreateReservation = () => {
     setActiveStep((prevStep) => prevStep - 1);
   };
 
-  const handleChange = (field, value) => {
+  const  handleChange = async (field, value) => {
     setData(field, value);
 
     if (field === 'project_id') {
@@ -82,10 +89,12 @@ const CreateReservation = () => {
       setData('unit_id', '');
       setData('total_price', '');
       setData('remaining_amount', '');
+      setSelectedUnit(null);
     } else if (field === 'property_id') {
       setData('unit_id', '');
       setData('total_price', '');
       setData('remaining_amount', '');
+      setSelectedUnit(null);
     } else if (field === 'down_payment') {
       // Auto-calculate remaining amount when down_payment changes
       if (data.total_price) {
@@ -97,7 +106,19 @@ const CreateReservation = () => {
       const downPayment = parseFloat(data.down_payment || 0);
       const remaining = Math.max(0, parseFloat(value || 0) - downPayment);
       setData('remaining_amount', remaining.toFixed(2));
+    } else if(field == 'unit_id' && value ){
+
+         try {
+      const response = await axios.get(
+        route('search.unit.show', value)
+      );
+       const unit = response.data;
+        setSelectedUnit(unit);
+    } catch (error) {
+      console.error('Failed to load unit details', error);
     }
+         
+   }
   };
 
   const handleCheckboxChange = (field) => {
@@ -112,14 +133,14 @@ const CreateReservation = () => {
   const renderStepContent = () => {
     switch (activeStep) {
       case 0:
-        return <LeadInformationStep data={data} handleChange={handleChange} />;
+        return <LeadInformationStep data={data} handleChange={handleChange} errors={errors} />;
       case 1:
         return (
           <>
             <UnitSelectionStep 
               data={data} 
-              handleChange={handleChange} 
-              selectedUnit={selectedUnit} 
+              handleChange={handleChange}
+              errors={errors}
             />
             {selectedUnit && <UnitInformationCard selectedUnit={selectedUnit} />}
           </>
@@ -127,12 +148,12 @@ const CreateReservation = () => {
       case 2:
         return (
           <>
-            <PaymentInformationStep data={data} handleChange={handleChange} />
+            <PaymentInformationStep data={data} handleChange={handleChange} errors={errors} />
             <PaymentSummaryCard data={data} />
           </>
         );
       case 3:
-        return <ContractTermsStep data={data} handleCheckboxChange={handleCheckboxChange} />;
+        return <ContractTermsStep data={data} handleCheckboxChange={handleCheckboxChange} errors={errors} />;
       default:
         return null;
     }
@@ -141,7 +162,7 @@ const CreateReservation = () => {
   const isStepValid = () => {
     switch (activeStep) {
       case 0:
-        return data.first_name && data.last_name;
+        return data.first_name && data.last_name && data.national_id;
       case 1:
         return data.unit_id;
       case 2:
@@ -167,6 +188,30 @@ const CreateReservation = () => {
       </div>
 
       <div className="max-w-4xl overflow-hidden bg-white rounded shadow">
+        {Object.keys(errors).length > 0 && (
+          <div className="p-4 bg-red-50 border-b border-red-200">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">
+                  There were errors with your submission
+                </h3>
+                <div className="mt-2 text-sm text-red-700">
+                  <ul className="list-disc pl-5 space-y-1">
+                    {Object.entries(errors).map(([key, value]) => (
+                      <li key={key}>{value}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className="p-8 border-b border-gray-200">
             <Stepper activeStep={activeStep}>
@@ -221,7 +266,7 @@ const CreateReservation = () => {
                     : 'bg-gray-300 cursor-not-allowed'
                 }`}
               >
-                {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+                {activeStep === 2 ? 'Submit' : (activeStep === steps.length - 1 ? 'Submit' : 'Next')}
               </button>
             </div>
           </div>

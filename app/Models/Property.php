@@ -17,6 +17,8 @@ class Property extends Model
         'property_no',
         'project_id',
         'owner_id',
+        'city_id',
+        'municipality_id',
         'neighborhood_id',
         'status_id',
         'property_type',
@@ -104,6 +106,11 @@ class Property extends Model
         return $this->belongsTo(Neighborhood::class);
     }
 
+    public function municipality()
+    {
+        return $this->belongsTo(Municipality::class);
+    }
+
     public function units()
     {
         return $this->hasMany(Unit::class);
@@ -145,5 +152,10 @@ class Property extends Model
     public function modifier()
     {
         return $this->belongsTo(User::class, 'modified_by');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
     }
 }

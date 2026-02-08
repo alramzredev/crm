@@ -2,7 +2,7 @@ import React from 'react';
 import SelectInput from '@/Shared/SelectInput';
 import TextInput from '@/Shared/TextInput';
 
-const PaymentInformationStep = ({ data, handleChange }) => {
+const PaymentInformationStep = ({ data, handleChange, errors = {} }) => {
   return (
     <div className="flex flex-wrap p-8 -mb-8 -mr-6">
       <SelectInput
@@ -11,6 +11,7 @@ const PaymentInformationStep = ({ data, handleChange }) => {
         name="payment_method"
         value={data.payment_method}
         onChange={e => handleChange('payment_method', e.target.value)}
+        errors={errors.payment_method}
       >
         <option value="">Select Payment Method</option>
         <option value="cash">Cash</option>
@@ -23,8 +24,11 @@ const PaymentInformationStep = ({ data, handleChange }) => {
         label="Down Payment"
         name="down_payment"
         type="number"
+        min="0"
+        step="0.01"
         value={data.down_payment}
         onChange={e => handleChange('down_payment', e.target.value)}
+        errors={errors.down_payment}
       />
 
       <SelectInput
@@ -33,6 +37,7 @@ const PaymentInformationStep = ({ data, handleChange }) => {
         name="payment_plan"
         value={data.payment_plan}
         onChange={e => handleChange('payment_plan', e.target.value)}
+        errors={errors.payment_plan}
       >
         <option value="cash">Cash</option>
         <option value="installment">Installment</option>
@@ -44,8 +49,11 @@ const PaymentInformationStep = ({ data, handleChange }) => {
         label="Total Price"
         name="total_price"
         type="number"
+        min="0"
+        step="0.01"
         value={data.total_price}
         onChange={e => handleChange('total_price', e.target.value)}
+        errors={errors.total_price}
       />
 
       <TextInput
@@ -53,8 +61,11 @@ const PaymentInformationStep = ({ data, handleChange }) => {
         label="Remaining Amount"
         name="remaining_amount"
         type="number"
+        min="0"
+        step="0.01"
         value={data.remaining_amount}
         onChange={e => handleChange('remaining_amount', e.target.value)}
+        errors={errors.remaining_amount}
       />
 
       <TextInput
@@ -63,6 +74,7 @@ const PaymentInformationStep = ({ data, handleChange }) => {
         name="currency"
         value={data.currency}
         onChange={e => handleChange('currency', e.target.value)}
+        errors={errors.currency}
       />
 
       <TextInput
@@ -71,6 +83,7 @@ const PaymentInformationStep = ({ data, handleChange }) => {
         name="notes"
         value={data.notes}
         onChange={e => handleChange('notes', e.target.value)}
+        errors={errors.notes}
       />
     </div>
   );

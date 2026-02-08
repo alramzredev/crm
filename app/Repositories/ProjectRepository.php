@@ -9,6 +9,8 @@ use App\Models\City;
 use App\Models\ProjectType;
 use App\Models\ProjectOwnership;
 use App\Models\ProjectStatus;
+use App\Models\Municipality;
+use App\Models\Neighborhood;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\PropertyResource;
 use Illuminate\Support\Facades\Request;
@@ -91,6 +93,8 @@ class ProjectRepository
         return [
             'owners' => Owner::orderBy('name')->get(),
             'cities' => City::orderBy('name')->get(),
+            'municipalities' => Municipality::orderBy('name')->get(), // added municipalities
+            'neighborhoods' => Neighborhood::orderBy('name')->get(), // added neighborhoods
             'projectTypes' => ProjectType::orderBy('name')->get(),
             'projectStatuses' => ProjectStatus::orderBy('name')->get(),
         ];
@@ -106,6 +110,7 @@ class ProjectRepository
                 $project->load([
                     'owner',
                     'city',
+                    'municipality',
                     'projectType',
                     'status',
                     'users'
@@ -113,6 +118,8 @@ class ProjectRepository
             ),
             'owners' => Owner::orderBy('name')->get(),
             'cities' => City::orderBy('name')->get(),
+            'municipalities' => Municipality::orderBy('name')->get(),
+            'neighborhoods' => Neighborhood::orderBy('name')->get(),
             'projectTypes' => ProjectType::orderBy('name')->get(),
             'projectStatuses' => ProjectStatus::orderBy('name')->get(),
         ];
@@ -126,6 +133,7 @@ class ProjectRepository
         $project->load([
             'owner.ownerType',
             'city',
+            'municipality',
             'projectType',
             'status',
             'users',

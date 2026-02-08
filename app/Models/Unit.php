@@ -19,7 +19,7 @@ class Unit extends Model
         'property_id',
         'property_type_id',
         'status_id',
-        'neighborhood',
+        'neighborhood_id',
         'status_reason',
         'floor',
         'area',
@@ -176,6 +176,21 @@ class Unit extends Model
         return $this->belongsTo(PropertyType::class);
     }
 
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
+    public function municipality()
+    {
+        return $this->belongsTo(Municipality::class);
+    }
+
+    public function neighborhood()
+    {
+        return $this->belongsTo(Neighborhood::class);
+    }
+
     public function status()
     {
         return $this->belongsTo(UnitStatus::class);
@@ -227,5 +242,10 @@ class Unit extends Model
     public function modifier()
     {
         return $this->belongsTo(User::class, 'modified_by');
+    }
+
+    public function scopeAvailable($query)
+    {
+        return $query->where('status_id', 1);
     }
 }

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import LoadingButton from '@/Shared/LoadingButton';
 import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
+import CityMunicipalityNeighborhoodSelector from '@/Shared/CityMunicipalityNeighborhoodSelector';
 
 const PropertyForm = ({
   data,
@@ -12,17 +13,13 @@ const PropertyForm = ({
   submitLabel,
   owners = [],
   projects = [],
+  cities = [],
   municipalities = [],
   neighborhoods = [],
   propertyStatuses = [],
   propertyTypes = [],
   propertyClasses = [],
 }) => {
-  const filteredNeighborhoods = useMemo(() => {
-    if (!data.municipality_id) return neighborhoods;
-    return neighborhoods.filter(n => String(n.municipality_id) === String(data.municipality_id));
-  }, [data.municipality_id, neighborhoods]);
-
   return (
     <form onSubmit={onSubmit}>
       <div className="flex flex-wrap p-8 -mb-8 -mr-6">
@@ -40,7 +37,8 @@ const PropertyForm = ({
           name="property_no"
           errors={errors.property_no}
           value={data.property_no}
-          onChange={e => setData('property_no', e.target.value)}
+          onChange={e => setData('property_no', String(e.target.value))}
+          maxLength={150}
         />
         <SelectInput
           className="w-full pb-8 pr-6 lg:w-1/3"
@@ -78,36 +76,17 @@ const PropertyForm = ({
           {propertyStatuses.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
         </SelectInput>
 
-        <SelectInput
-          className="w-full pb-8 pr-6 lg:w-1/2"
-          label="Municipality"
-          name="municipality_id"
-          errors={errors.municipality_id}
-          value={data.municipality_id}
-          onChange={e => {
-            setData('municipality_id', e.target.value);
-            setData('neighborhood_id', '');
-          }}
-        >
-          <option value=""></option>
-          {municipalities.map(m => (
-            <option key={m.id} value={m.id}>
-              {m.name}{m.city?.name ? ` (${m.city.name})` : ''}
-            </option>
-          ))}
-        </SelectInput>
-
-        <SelectInput
-          className="w-full pb-8 pr-6 lg:w-1/2"
-          label="Neighborhood"
-          name="neighborhood_id"
-          errors={errors.neighborhood_id}
-          value={data.neighborhood_id}
-          onChange={e => setData('neighborhood_id', e.target.value)}
-        >
-          <option value=""></option>
-          {filteredNeighborhoods.map(n => <option key={n.id} value={n.id}>{n.name}</option>)}
-        </SelectInput>
+        <CityMunicipalityNeighborhoodSelector
+          data={data}
+          setData={setData}
+          errors={errors}
+          cities={cities}
+          municipalities={municipalities}
+          neighborhoods={neighborhoods}
+          showCity={true}
+          showMunicipality={true}
+          showNeighborhood={true}
+        />
 
         <SelectInput
           className="w-full pb-8 pr-6 lg:w-1/2"

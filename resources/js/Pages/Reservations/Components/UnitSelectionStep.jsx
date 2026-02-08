@@ -1,7 +1,7 @@
 import React from 'react';
 import ApiSearchableSelectInput from '@/Shared/ApiSearchableSelectInput';
 
-const UnitSelectionStep = ({ data, handleChange, selectedUnit }) => {
+const UnitSelectionStep = ({ data, handleChange, errors = {} }) => {
   const handleProjectChange = (value) => {
     handleChange('project_id', value);
     handleChange('property_id', '');
@@ -21,6 +21,7 @@ const UnitSelectionStep = ({ data, handleChange, selectedUnit }) => {
         name="project_id"
         value={data.project_id}
         onChange={e => handleProjectChange(e.target.value)}
+        errors={errors.project_id}
         apiUrl={route('search.projects')}
         placeholder="Search project..."
         fetchOnMount={true}
@@ -32,6 +33,7 @@ const UnitSelectionStep = ({ data, handleChange, selectedUnit }) => {
         name="property_id"
         value={data.property_id}
         onChange={e => handlePropertyChange(e.target.value)}
+        errors={errors.property_id}
         disabled={!data.project_id}
         apiUrl={data.project_id ? route('search.properties') + `?project_id=${data.project_id}` : ''}
         placeholder="Search property..."
@@ -45,6 +47,7 @@ const UnitSelectionStep = ({ data, handleChange, selectedUnit }) => {
         name="unit_id"
         value={data.unit_id}
         onChange={e => handleChange('unit_id', e.target.value)}
+        errors={errors.unit_id}
         disabled={!data.property_id}
         apiUrl={data.property_id ? route('search.units') + `?property_id=${data.property_id}` : ''}
         placeholder="Search unit..."

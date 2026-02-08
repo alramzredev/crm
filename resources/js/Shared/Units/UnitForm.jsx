@@ -3,6 +3,7 @@ import LoadingButton from '@/Shared/LoadingButton';
 import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
 import CheckboxInput from '@/Shared/CheckboxInput';
+import CityMunicipalityNeighborhoodSelector from '@/Shared/CityMunicipalityNeighborhoodSelector';
 
 const UnitForm = ({
   data,
@@ -16,6 +17,9 @@ const UnitForm = ({
   propertyTypes = [],
   propertyStatuses = [],
   unitTypes = [],
+  cities = [],
+  municipalities = [],
+  neighborhoods = [],
   isPropertyPredefined = false,
   predefinedProperty = null,
 }) => {
@@ -115,13 +119,16 @@ const UnitForm = ({
             {propertyStatuses.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
           </SelectInput>
 
-          <TextInput
-            className="w-full pb-8 pr-6 lg:w-1/2"
-            label="Neighborhood"
-            name="neighborhood"
-            errors={errors.neighborhood}
-            value={data.neighborhood}
-            onChange={e => setData('neighborhood', e.target.value)}
+          <CityMunicipalityNeighborhoodSelector
+            data={data}
+            setData={setData}
+            errors={errors}
+            cities={cities}
+            municipalities={municipalities}
+            neighborhoods={neighborhoods}
+            showCity={true}
+            showMunicipality={true}
+            showNeighborhood={true}
           />
 
           <TextInput

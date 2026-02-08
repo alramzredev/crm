@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Helmet from 'react-helmet';
 import { Link, usePage, useForm, router } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
@@ -6,13 +6,26 @@ import PropertyForm from '@/Shared/Properties/PropertyForm';
 import TrashedMessage from '@/Shared/TrashedMessage';
 
 const Edit = () => {
-  const { property, projects = [], owners = [], municipalities = [], neighborhoods = [], propertyStatuses = [], propertyTypes = [], propertyClasses = [] } = usePage().props;
+  const { property, projects = [], owners = [], cities = [], municipalities = [], neighborhoods = [], propertyStatuses = [], propertyTypes = [], propertyClasses = [] } = usePage().props;
+
+  // Extract initial city_id from municipality if available
+  const initialCityId = useMemo(() => {
+    if (property.neighborhood?.municipality?.city_id) {
+      return property.neighborhood.municipality.city_id;
+    }
+    if (property.city_id) {
+      return property.city_id;
+    }
+    return '';
+  }, [property]);
+
   const { data, setData, errors, put, processing } = useForm({
     project_id: property.project_id || '',
     owner_id: property.owner_id || '',
     property_code: property.property_code || '',
     property_no: property.property_no || '',
-    municipality_id: property.neighborhood?.municipality_id || '',
+    city_id: initialCityId,
+    municipality_id: property.neighborhood?.municipality_id || property.municipality_id || '',
     neighborhood_id: property.neighborhood_id || '',
     property_type_id: property.property_type_id || '',
     property_class_id: property.property_class_id || '',
@@ -24,8 +37,18 @@ const Edit = () => {
     total_square_meter: property.total_square_meter || '',
     total_units: property.total_units || '',
     count_available: property.count_available || '',
-    notes: property.notes || ''
+    notes: property.notes || '',
   });
+
+  // Auto-sync city_id when municipality changes
+  useMemo(() => {
+    if (data.municipality_id) {
+      const selectedMunicipality = municipalities.find(m => String(m.id) === String(data.municipality_id));
+      if (selectedMunicipality && selectedMunicipality.city_id) {
+        setData('city_id', selectedMunicipality.city_id);
+      }
+    }
+  }, [data.municipality_id, municipalities]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -69,6 +92,7 @@ const Edit = () => {
           submitLabel="Update Property"
           owners={owners}
           projects={projects}
+          cities={cities}
           municipalities={municipalities}
           neighborhoods={neighborhoods}
           propertyStatuses={propertyStatuses}

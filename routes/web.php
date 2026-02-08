@@ -120,6 +120,8 @@ Route::middleware('auth')->group(function () {
     Route::get('search/projects')->uses('SearchController@projects')->name('search.projects');
     Route::get('search/properties')->uses('SearchController@properties')->name('search.properties');
     Route::get('search/units')->uses('SearchController@units')->name('search.units');
+    Route::get('search/units/{unit}')->uses('SearchController@showUnit')->name('search.unit.show');
+
 });
 
 // Employees (Sales Supervisor Management)

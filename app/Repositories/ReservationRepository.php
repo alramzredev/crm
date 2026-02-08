@@ -19,14 +19,14 @@ class ReservationRepository
     {
         $lead = Lead::findOrFail($leadId);
 
-        $projectsQuery = Project::orderBy('name');
+        // $projectsQuery = Project::orderBy('name');
 
-        if (!$user->hasRole('super_admin')) {
-            $projectsQuery->whereHas('users', function ($q) use ($user) {
-                $q->where('project_user.user_id', $user->id)
-                  ->where('project_user.is_active', true);
-            });
-        }
+        // if (!$user->hasRole('super_admin')) {
+        //     $projectsQuery->whereHas('users', function ($q) use ($user) {
+        //         $q->where('project_user.user_id', $user->id)
+        //           ->where('project_user.is_active', true);
+        //     });
+        // }
 
         // $projects = $projectsQuery->get();
 
@@ -42,11 +42,13 @@ class ReservationRepository
         //     ->where('status_id', 1)
         //     ->orderBy('unit_code')
         //     ->get();
-        $projects = [];
-        $properties = [];
-        $units = [];
 
-        return compact('lead', 'projects', 'properties', 'units');
+
+        // $projects = [];
+        // $properties = [];
+        // $units = [];
+
+        return compact('lead');
     }
 
     public function createReservation(array $validated, array $leadData, ReservationStoreRequest $request): Reservation
@@ -89,8 +91,8 @@ class ReservationRepository
         $reservation->down_payment = $validated['down_payment'] ?? null;
         $reservation->remaining_amount = $validated['remaining_amount'] ?? null;
         $reservation->currency = $validated['currency'] ?? 'SAR';
-        $reservation->terms_accepted = $validated['terms_accepted'];
-        $reservation->privacy_accepted = $validated['privacy_accepted'];
+        $reservation->terms_accepted = $validated['terms_accepted'] ?? false;
+        $reservation->privacy_accepted = $validated['privacy_accepted'] ?? false;
         $reservation->notes = $validated['notes'] ?? null;
         $reservation->created_by = auth()->id();
         $reservation->updated_by = auth()->id();

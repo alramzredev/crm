@@ -27,7 +27,7 @@ class PaymentRepository
                 continue;
             }
 
-            $path = $file->store('assets/peyment_receipts', 'public');
+            $path = $file->store('assets/payment_receipts', 'public');
 
             PaymentReceipt::create([
                 'payment_id' => $payment->id,
@@ -52,7 +52,7 @@ class PaymentRepository
                 continue;
             }
 
-            $path = $file->store('assets/peyment_receipts', 'public');
+            $path = $file->store('assets/payment_receipts', 'public');
 
             PaymentReceipt::create([
                 'payment_id' => $payment->id,

@@ -7,7 +7,7 @@ import TrashedMessage from '@/Shared/TrashedMessage';
 import UnitForm from '@/Shared/Units/UnitForm';
 
 const Edit = () => {
-  const { unit = {}, projects = [], properties = [], propertyTypes = [], propertyStatuses = [], unitTypes = [] } = usePage().props;
+  const { unit = {}, projects = [], properties = [], propertyTypes = [], propertyStatuses = [], unitTypes = [], cities = [], municipalities = [], neighborhoods = [] } = usePage().props;
   const { data, setData, errors, put, processing } = useForm({
     project_id: unit.project?.id || '',
     property_id: unit.property?.id || '',
@@ -15,7 +15,7 @@ const Edit = () => {
     unit_external_id: unit.unit_external_id || '',
     property_type_id: unit.property_type?.id || '',
     status_id: unit.status?.id || '',
-    neighborhood: unit.neighborhood || '',
+    neighborhood_id: unit.neighborhood?.id || '',
     status_reason: unit.status_reason || '',
     floor: unit.floor || '',
     area: unit.area || '',
@@ -77,6 +77,8 @@ const Edit = () => {
     unit_description_en: unit.unit_description_en || '',
     national_address: unit.national_address || '',
     water_meter_no: unit.water_meter_no || '',
+    city_id: unit.city?.id || unit.city_id || '',
+    municipality_id: unit.municipality?.id || unit.municipality_id || '',
   });
 
   function handleSubmit(e) {
@@ -126,6 +128,9 @@ const Edit = () => {
           propertyTypes={propertyTypes}
           propertyStatuses={propertyStatuses}
           unitTypes={unitTypes}
+          cities={cities}
+          municipalities={municipalities}
+          neighborhoods={neighborhoods}
         />
         <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
           {!unit.deleted_at && (

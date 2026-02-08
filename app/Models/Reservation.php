@@ -15,6 +15,7 @@ class Reservation extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        'uuid',
         'reservation_code',
         'lead_id',
         'unit_id',
@@ -45,15 +46,29 @@ class Reservation extends Model
         'terms_accepted' => 'boolean',
         'privacy_accepted' => 'boolean',
         'down_payment' => 'decimal:2',
+        'total_price' => 'decimal:2',
+        'remaining_amount' => 'decimal:2',
         'started_at' => 'datetime',
         'expires_at' => 'datetime',
     ];
 
+    /**
+     * Bootstrap the model and its events.
+     * 
+     * Automatically generates unique identifiers when creating a new reservation.
+     */
     protected static function booted()
     {
         static::creating(function ($reservation) {
+            // Generate UUID for unique identification
+            if (empty($reservation->uuid)) {
+                $reservation->uuid = (string) Str::uuid();
+            }
+            
+            // Generate human-readable reservation code if not provided
             if (empty($reservation->reservation_code)) {
-                $reservation->reservation_code = (string) Str::uuid();
+                $nextId = (static::withTrashed()->max('id') ?? 0) + 1;
+                $reservation->reservation_code = 'Res-' . str_pad((string) $nextId, 6, '0', STR_PAD_LEFT);
             }
         });
     }

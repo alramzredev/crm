@@ -4,18 +4,20 @@ import Layout from '@/Shared/Layout';
 import LoadingButton from '@/Shared/LoadingButton';
 import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
+import CityMunicipalityNeighborhoodSelector from '@/Shared/CityMunicipalityNeighborhoodSelector';
 
 const Create = () => {
-  const { owners = [], cities = [], projectTypes = [], projectStatuses = [] } = usePage().props;
+  const { owners = [], cities = [], projectTypes = [], projectStatuses = [], municipalities = [], neighborhoods = [] } = usePage().props;
   const { data, setData, errors, post, processing } = useForm({
     project_code: '',
     name: '',
     reservation_period_days: '30',
     owner_id: '',
     city_id: '',
+    municipality_id: '',
+    neighborhood_id: '',
     project_type_id: '',
     status_id: '',
-    neighborhood: '',
     location: '',
     budget: '',
     no_of_floors: '',
@@ -49,7 +51,7 @@ const Create = () => {
         <form onSubmit={handleSubmit}>
           <div className="flex flex-wrap p-8 -mb-8 -mr-6">
             <TextInput
-              className="w-full pb-8 pr-6"
+              className="w-full pb-8 pr-6 lg:w-1/2"
               label="Project Code"
               name="project_code"
               errors={errors.project_code}
@@ -86,17 +88,7 @@ const Create = () => {
               <option value=""></option>
               {owners.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
             </SelectInput>
-            <SelectInput
-              className="w-full pb-8 pr-6 lg:w-1/2"
-              label="City"
-              name="city_id"
-              errors={errors.city_id}
-              value={data.city_id}
-              onChange={e => setData('city_id', e.target.value)}
-            >
-              <option value=""></option>
-              {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </SelectInput>
+
             <SelectInput
               className="w-full pb-8 pr-6 lg:w-1/3"
               label="Type"
@@ -108,6 +100,7 @@ const Create = () => {
               <option value=""></option>
               {projectTypes.map(pt => <option key={pt.id} value={pt.id}>{pt.name}</option>)}
             </SelectInput>
+
             <SelectInput
               className="w-full pb-8 pr-6 lg:w-1/3"
               label="Status"
@@ -128,6 +121,19 @@ const Create = () => {
               value={data.budget}
               onChange={e => setData('budget', e.target.value)}
             />
+
+            <CityMunicipalityNeighborhoodSelector
+              data={data}
+              setData={setData}
+              errors={errors}
+              cities={cities}
+              municipalities={municipalities}
+              neighborhoods={neighborhoods}
+              showCity={true}
+              showMunicipality={true}
+              showNeighborhood={true}
+            />
+
             <TextInput
               className="w-full pb-8 pr-6 lg:w-1/3"
               label="Floors"
@@ -147,11 +153,66 @@ const Create = () => {
 
             <TextInput
               className="w-full pb-8 pr-6"
-              label="Neighborhood"
-              name="neighborhood"
-              errors={errors.neighborhood}
-              value={data.neighborhood}
-              onChange={e => setData('neighborhood', e.target.value)}
+              label="Location"
+              name="location"
+              errors={errors.location}
+              value={data.location}
+              onChange={e => setData('location', e.target.value)}
+            />
+
+            <TextInput
+              className="w-full pb-8 pr-6 lg:w-1/3"
+              label="Land Area"
+              name="land_area"
+              type="number"
+              step="0.01"
+              errors={errors.land_area}
+              value={data.land_area}
+              onChange={e => setData('land_area', e.target.value)}
+            />
+
+            <TextInput
+              className="w-full pb-8 pr-6 lg:w-1/3"
+              label="Built Up Area"
+              name="built_up_area"
+              type="number"
+              step="0.01"
+              errors={errors.built_up_area}
+              value={data.built_up_area}
+              onChange={e => setData('built_up_area', e.target.value)}
+            />
+
+            <TextInput
+              className="w-full pb-8 pr-6 lg:w-1/3"
+              label="Selling Space"
+              name="selling_space"
+              type="number"
+              step="0.01"
+              errors={errors.selling_space}
+              value={data.selling_space}
+              onChange={e => setData('selling_space', e.target.value)}
+            />
+
+            <TextInput
+              className="w-full pb-8 pr-6 lg:w-1/2"
+              label="Sellable Area Factor"
+              name="sellable_area_factor"
+              type="number"
+              step="0.01"
+              errors={errors.sellable_area_factor}
+              value={data.sellable_area_factor}
+              onChange={e => setData('sellable_area_factor', e.target.value)}
+            />
+
+            <TextInput
+              className="w-full pb-8 pr-6 lg:w-1/2"
+              label="Floor Area Ratio"
+              name="floor_area_ratio"
+              type="number"
+              step="0.01"
+              errors={errors.floor_area_ratio}
+              value={data.floor_area_ratio}
+              onChange={e => setData('floor_area_ratio', e.target.value)}
             />
 
             <SelectInput

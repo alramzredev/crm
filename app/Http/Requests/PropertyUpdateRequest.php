@@ -13,18 +13,17 @@ class PropertyUpdateRequest extends FormRequest
 
     public function rules()
     {
-        $propertyId = $this->route('property')->id ?? null;
-
         return [
-            'property_code' => ['required', 'string', 'max:50', 'unique:properties,property_code,' . $propertyId],
-            'property_no' => ['nullable', 'integer'],
-            'project_id' => ['required', 'integer', 'exists:projects,id'],
-            'owner_id' => ['required', 'integer', 'exists:owners,id'],
+            'property_code' => ['nullable', 'string', 'max:100', 'unique:properties,property_code,' . $this->route('property')->id],
+            'property_no' => ['nullable', 'string', 'max:150'],
+            'project_id' => ['nullable', 'integer', 'exists:projects,id'],
+            'owner_id' => ['nullable', 'integer', 'exists:owners,id'],
+            'city_id' => ['nullable', 'integer', 'exists:cities,id'],
+            'municipality_id' => ['nullable', 'integer', 'exists:municipalities,id'],
             'neighborhood_id' => ['nullable', 'integer', 'exists:neighborhoods,id'],
             'status_id' => ['nullable', 'integer', 'exists:property_statuses,id'],
             'property_type_id' => ['nullable', 'integer', 'exists:property_types,id'],
             'property_class_id' => ['nullable', 'integer', 'exists:property_classes,id'],
-            'property_class' => ['nullable', 'string', 'max:50'],
             'diagram_number' => ['nullable', 'string', 'max:100'],
             'instrument_no' => ['nullable', 'string', 'max:100'],
             'license_no' => ['nullable', 'string', 'max:100'],

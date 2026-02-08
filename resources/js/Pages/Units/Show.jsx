@@ -14,6 +14,7 @@ const Show = () => {
   const propertyLabel = unit.property?.property_code || '—';
   const propertyTypeLabel = unit.property_type?.name || '—';
   const statusLabel = unit.status?.name || '—';
+  const neighborhoodLabel = unit.neighborhood?.name || '—';
 
   const featureItems = [
     ['Balcony', unit.has_balcony],
@@ -123,7 +124,7 @@ const Show = () => {
             </div>
             <div>
               <div className="text-sm font-semibold text-gray-600">Neighborhood</div>
-              <div className="mt-1">{unit.neighborhood || '—'}</div>
+              <div className="mt-1">{neighborhoodLabel}</div>
             </div>
             <div>
               <div className="text-sm font-semibold text-gray-600">Floor</div>

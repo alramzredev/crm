@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ContractTermsStep = ({ data, handleCheckboxChange }) => {
+const ContractTermsStep = ({ data, handleCheckboxChange, errors = {} }) => {
   return (
     <div className="flex flex-wrap p-8 -mb-8 -mr-6">
       <div className="w-full pb-8 pr-6">
@@ -17,28 +17,43 @@ const ContractTermsStep = ({ data, handleCheckboxChange }) => {
           </p>
         </div>
 
-        <div className="space-y-3 mb-6">
-          <label className="flex items-center">
+        <div className="mt-6 space-y-4">
+          <div className="flex items-start">
             <input
+              id="terms_accepted"
+              name="terms_accepted"
               type="checkbox"
               checked={data.terms_accepted}
               onChange={() => handleCheckboxChange('terms_accepted')}
-              className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500"
+              className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
             />
-            <span className="ml-2 text-sm text-gray-700">I agree to the terms and conditions</span>
-          </label>
-          <label className="flex items-center">
+            <label htmlFor="terms_accepted" className="ml-3 text-sm text-gray-700">
+              I accept the terms and conditions
+            </label>
+          </div>
+          {errors.terms_accepted && (
+            <div className="text-red-500 text-sm">{errors.terms_accepted}</div>
+          )}
+
+          <div className="flex items-start">
             <input
+              id="privacy_accepted"
+              name="privacy_accepted"
               type="checkbox"
               checked={data.privacy_accepted}
               onChange={() => handleCheckboxChange('privacy_accepted')}
-              className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500"
+              className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
             />
-            <span className="ml-2 text-sm text-gray-700">I agree to the privacy policy</span>
-          </label>
+            <label htmlFor="privacy_accepted" className="ml-3 text-sm text-gray-700">
+              I accept the privacy policy
+            </label>
+          </div>
+          {errors.privacy_accepted && (
+            <div className="text-red-500 text-sm">{errors.privacy_accepted}</div>
+          )}
         </div>
 
-        <div className="bg-green-50 rounded border border-green-200 p-4">
+        <div className="bg-green-50 rounded border border-green-200 p-4 mt-6">
           <p className="text-sm text-green-800 font-medium">
             ✓ All information has been verified. Please review the details above before submitting.
           </p>

@@ -6,7 +6,7 @@ import LoadingButton from '@/Shared/LoadingButton';
 import MultiFileInput from '@/Shared/MultiFileInput';
 
 const PaymentFormModal = ({ isOpen, payment, reservationId, onClose }) => {
-  const { data, setData, errors, post, put, processing, reset } = useForm({
+  const { data, setData, errors, post, processing, reset } = useForm({
     amount: '',
     payment_method: '',
     payment_date: '',

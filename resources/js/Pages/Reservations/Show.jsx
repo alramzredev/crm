@@ -27,6 +27,8 @@ const Show = () => {
           <div><strong>Down Payment:</strong> {reservation.currency || 'SAR'} {reservation.down_payment || '—'}</div>
           <div><strong>Remaining:</strong> {reservation.currency || 'SAR'} {reservation.remaining_amount || '—'}</div>
           <div><strong>Notes:</strong> {reservation.notes || '—'}</div>
+          <div><strong>Payment Method:</strong> {reservation.payment_method || '—'}</div>
+          <div><strong>Payment Plan:</strong> {reservation.payment_plan || '—'}</div>
         </div>
       </div>
 

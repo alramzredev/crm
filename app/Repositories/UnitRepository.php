@@ -10,6 +10,7 @@ use App\Models\UnitStatus;
 use App\Models\UnitType;
 use App\Http\Resources\UnitResource;
 use Illuminate\Support\Facades\Request;
+use App\Models\Neighborhood;
 
 class UnitRepository
 {
@@ -25,12 +26,18 @@ class UnitRepository
 
     public function getCreateData(): array
     {
+        $neighborhoods = useMemo(() => {
+            if (!$defaults['municipality_id']) return Neighborhood::orderBy('name')->get();
+            return Neighborhood::where('municipality_id', $defaults['municipality_id'])->orderBy('name')->get();
+        }, []);
+
         return [
             'projects' => Project::orderBy('name')->get(),
             'properties' => Property::orderBy('property_code')->get(),
             'propertyTypes' => PropertyType::orderBy('name')->get(),
             'propertyStatuses' => UnitStatus::orderBy('name')->get(),
             'unitTypes' => UnitType::where('is_active', true)->orderBy('name')->get(),
+            'neighborhoods' => Neighborhood::orderBy('name')->get(),
             'defaults' => [
                 'project_id' => Request::get('project_id'),
                 'property_id' => Request::get('property_id'),
@@ -43,13 +50,14 @@ class UnitRepository
     {
         return [
             'unit' => new UnitResource(
-                $unit->load(['project', 'property', 'propertyType', 'status'])
+                $unit->load(['project', 'property', 'propertyType', 'status', 'neighborhood'])
             ),
             'projects' => Project::orderBy('name')->get(),
             'properties' => Property::orderBy('property_code')->get(),
             'propertyTypes' => PropertyType::orderBy('name')->get(),
             'propertyStatuses' => UnitStatus::orderBy('name')->get(),
             'unitTypes' => UnitType::where('is_active', true)->orderBy('name')->get(),
+            'neighborhoods' => Neighborhood::orderBy('name')->get(),
             'defaults' => [
                 'project_id' => $unit->project_id,
                 'property_id' => $unit->property_id,
@@ -61,7 +69,7 @@ class UnitRepository
     public function getShowResource(Unit $unit)
     {
         return new UnitResource(
-            $unit->load(['project', 'property', 'propertyType', 'status'])
+            $unit->load(['project', 'property', 'propertyType', 'status', 'neighborhood'])
         );
     }
 }

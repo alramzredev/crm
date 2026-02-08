@@ -38,6 +38,7 @@ const Show = () => {
   const statusLabel = project.status?.name || project.status || '';
   const typeLabel = project.project_type?.name || project.project_type || '';
   const cityLabel = project.city?.name || project.city || '';
+  const neighborhoodLabel = project.neighborhood?.name || '—';
 
   return (
     <div>
@@ -100,7 +101,7 @@ const Show = () => {
                 </div>
                 <div>
                   <div className="text-sm font-semibold text-gray-600">Neighborhood</div>
-                  <div className="mt-1">{project.neighborhood || '—'}</div>
+                  <div className="mt-1">{neighborhoodLabel}</div>
                 </div>
                 <div>
                   <div className="text-sm font-semibold text-gray-600">Location</div>

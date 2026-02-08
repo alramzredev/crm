@@ -20,7 +20,8 @@ class Project extends Model
         'reservation_period_days',
         'owner_id',
         'city_id',
-        'neighborhood',
+        'municipality_id',
+        'neighborhood_id',
         'location',
         'project_type_id',
         'status_id',
@@ -82,6 +83,16 @@ class Project extends Model
     public function city()
     {
         return $this->belongsTo(City::class);
+    }
+
+    public function municipality()
+    {
+        return $this->belongsTo(Municipality::class);
+    }
+
+    public function neighborhood()
+    {
+        return $this->belongsTo(Neighborhood::class);
     }
 
     public function projectType()

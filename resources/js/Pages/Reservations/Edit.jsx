@@ -55,7 +55,7 @@ const Edit = () => {
           Reservations
         </Link>
         <span className="mx-2 font-medium text-indigo-600">/</span>
-        Edit
+        {reservation.reservation_code || 'Edit'}
       </h1>
 
       {/* Reservation Form */}

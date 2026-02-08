@@ -4,7 +4,7 @@ import Layout from '@/Shared/Layout';
 import UnitForm from '@/Shared/Units/UnitForm';
 
 const Create = () => {
-  const { projects = [], properties = [], propertyTypes = [], propertyStatuses = [], unitTypes = [], defaults = {}, property = null } = usePage().props;
+  const { projects = [], properties = [], propertyTypes = [], propertyStatuses = [], unitTypes = [], cities = [], municipalities = [], neighborhoods = [], defaults = {}, property = null } = usePage().props;
 
   // Determine if fields should be read-only
   const isPropertyPredefined = Boolean(property);
@@ -78,6 +78,7 @@ const Create = () => {
     unit_description_en: '',
     national_address: '',
     water_meter_no: '',
+    neighborhood_id: '',
   });
 
   function handleSubmit(e) {
@@ -112,6 +113,9 @@ const Create = () => {
           propertyTypes={propertyTypes}
           propertyStatuses={propertyStatuses}
           unitTypes={unitTypes}
+          cities={cities}
+          municipalities={municipalities}
+          neighborhoods={neighborhoods}
           isPropertyPredefined={isPropertyPredefined}
           predefinedProperty={property}
         />

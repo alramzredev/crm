@@ -14,10 +14,12 @@ class PropertyStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'property_code' => ['required', 'string', 'max:50', 'unique:properties,property_code'],
-            'property_no' => ['nullable', 'integer'],
-            'project_id' => ['required', 'integer', 'exists:projects,id'],
-            'owner_id' => ['required', 'integer', 'exists:owners,id'],
+            'property_code' => ['nullable', 'string', 'max:100', 'unique:properties,property_code'],
+            'property_no' => ['nullable', 'string', 'max:150'],
+            'project_id' => ['nullable', 'integer', 'exists:projects,id'],
+            'owner_id' => ['nullable', 'integer', 'exists:owners,id'],
+            'city_id' => ['nullable', 'integer', 'exists:cities,id'],
+            'municipality_id' => ['nullable', 'integer', 'exists:municipalities,id'],
             'neighborhood_id' => ['nullable', 'integer', 'exists:neighborhoods,id'],
             'status_id' => ['nullable', 'integer', 'exists:property_statuses,id'],
             'property_type_id' => ['nullable', 'integer', 'exists:property_types,id'],

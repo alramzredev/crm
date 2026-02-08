@@ -22,7 +22,7 @@ class UnitUpdateRequest extends FormRequest
             'property_id' => ['required', 'integer', 'exists:properties,id'],
             'property_type_id' => ['nullable', 'integer', 'exists:property_types,id'],
             'status_id' => ['nullable', 'integer', 'exists:unit_statuses,id'],
-            'neighborhood' => ['nullable', 'string', 'max:150'],
+            'neighborhood_id' => ['nullable', 'integer', 'exists:neighborhoods,id'],
             'status_reason' => ['nullable', 'string', 'max:255'],
             'floor' => ['nullable', 'string', 'max:50'],
             'area' => ['nullable', 'numeric'],

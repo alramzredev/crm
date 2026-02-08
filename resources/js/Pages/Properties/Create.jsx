@@ -4,12 +4,13 @@ import Layout from '@/Shared/Layout';
 import PropertyForm from '@/Shared/Properties/PropertyForm';
 
 const Create = () => {
-  const { projects = [], owners = [], municipalities = [], neighborhoods = [], propertyStatuses = [], propertyTypes = [], propertyClasses = [], defaults = {} } = usePage().props;
+  const { projects = [], owners = [], cities = [], municipalities = [], neighborhoods = [], propertyStatuses = [], propertyTypes = [], propertyClasses = [], defaults = {} } = usePage().props;
   const { data, setData, errors, post, processing } = useForm({
     project_id: defaults.project_id || '',
     owner_id: defaults.owner_id || '',
     property_code: '',
     property_no: '',
+    city_id: defaults.city_id || '',
     municipality_id: defaults.municipality_id || '',
     neighborhood_id: defaults.neighborhood_id || '',
     property_type_id: '',
@@ -48,6 +49,7 @@ const Create = () => {
           submitLabel="Create Property"
           owners={owners}
           projects={projects}
+          cities={cities}
           municipalities={municipalities}
           neighborhoods={neighborhoods}
           propertyStatuses={propertyStatuses}

@@ -38,9 +38,7 @@ class ReservationController extends Controller
     public function create()
     {
         $this->authorize('create', Reservation::class);
-
         $leadId = (int) Request::get('lead_id');
-
         return Inertia::render('Reservations/CreateReservation', $this->repo->getCreateData($leadId, Auth::user()));
     }
 
@@ -77,15 +75,17 @@ class ReservationController extends Controller
 
         $validated['customer_id'] = $customer?->id;
         
-        $this->repo->createReservation($validated, $leadData, $request);
+        $reservation = $this->repo->createReservation($validated, $leadData, $request);
 
-        return Redirect::route('reservations')->with('success', 'Reservation created.');
+        return Redirect::route('reservations.edit', $reservation->id)
+            ->with('success', 'Reservation created.');
+ 
+        // return Redirect::route('reservations')->with('success', 'Reservation created.');
     }
 
     public function show(Reservation $reservation)
     {
         $this->authorize('view', $reservation);
-
         return Inertia::render('Reservations/Show', [
             'reservation' => $this->repo->getShowData($reservation),
         ]);
