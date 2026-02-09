@@ -41,4 +41,9 @@ class UnitPolicy
     {
         return $user->hasPermissionTo('units.delete');
     }
+
+    public function import(User $user)
+    {
+        return $user->hasPermissionTo('units.import');
+    }
 }

@@ -41,4 +41,9 @@ class ProjectPolicy
     {
         return $user->hasPermissionTo('projects.delete');
     }
+
+    public function import(User $user)
+    {
+        return $user->hasPermissionTo('projects.import');
+    }
 }

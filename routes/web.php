@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::put('projects/{project}')->name('projects.update')->uses('ProjectsController@update');
     Route::delete('projects/{project}')->name('projects.destroy')->uses('ProjectsController@destroy');
     Route::put('projects/{project}/restore')->name('projects.restore')->uses('ProjectsController@restore');
+    Route::post('projects/import')->name('projects.import')->uses('ProjectImportController@store');
 });
 
 // Properties
@@ -61,6 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::put('properties/{property}')->name('properties.update')->uses('PropertiesController@update');
     Route::delete('properties/{property}')->name('properties.destroy')->uses('PropertiesController@destroy');
     Route::put('properties/{property}/restore')->name('properties.restore')->uses('PropertiesController@restore');
+    Route::post('properties/import')->name('properties.import')->uses('PropertyImportController@store');
 });
 
 // Units
@@ -73,6 +75,7 @@ Route::middleware('auth')->group(function () {
     Route::put('units/{unit}')->name('units.update')->uses('UnitsController@update');
     Route::delete('units/{unit}')->name('units.destroy')->uses('UnitsController@destroy');
     Route::put('units/{unit}/restore')->name('units.restore')->uses('UnitsController@restore');
+    Route::post('units/import')->name('units.import')->uses('UnitImportController@store');
 });
 
 // Owners
@@ -130,6 +133,46 @@ Route::middleware('auth')->group(function () {
     Route::get('employees/{employee}')->name('employees.show')->uses('EmployeeController@show');
     Route::post('employees/{employee}/assign-project')->name('employees.assign-project')->uses('EmployeeController@assignProject');
     Route::delete('employees/{employee}/remove-project')->name('employees.remove-project')->uses('EmployeeController@removeProject');
+});
+
+// Staging Projects (rows)
+Route::middleware('auth')->group(function () {
+    Route::get('staging-projects')->name('staging-projects')->uses('StagingProjectController@index');
+    Route::post('staging-projects/{rowId}/revalidate')->name('staging-projects.revalidate')->uses('StagingProjectController@revalidate');
+    Route::post('staging-projects/{rowId}/import')->name('staging-projects.import-row')->uses('StagingProjectController@importRow');
+    Route::put('staging-projects/{rowId}')->name('staging-projects.update')->uses('StagingProjectController@update');
+});
+
+// Staging Properties (rows)
+Route::middleware('auth')->group(function () {
+    Route::get('staging-properties')->name('staging-properties')->uses('StagingPropertyController@index');
+    Route::post('staging-properties/{rowId}/revalidate')->name('staging-properties.revalidate')->uses('StagingPropertyController@revalidate');
+    Route::post('staging-properties/{rowId}/import')->name('staging-properties.import-row')->uses('StagingPropertyController@importRow');
+    Route::put('staging-properties/{rowId}')->name('staging-properties.update')->uses('StagingPropertyController@update');
+});
+
+// Staging Units (rows)
+Route::middleware('auth')->group(function () {
+    Route::get('staging-units')->name('staging-units')->uses('StagingUnitController@index');
+    Route::post('staging-units/{rowId}/revalidate')->name('staging-units.revalidate')->uses('StagingUnitController@revalidate');
+    Route::post('staging-units/{rowId}/import')->name('staging-units.import-row')->uses('StagingUnitController@importRow');
+    Route::put('staging-units/{rowId}')->name('staging-units.update')->uses('StagingUnitController@update');
+});
+
+// Import Batches
+Route::middleware('auth')->group(function () {
+    Route::get('import-batches')->name('import-batches')->uses('ImportBatchController@index');
+    Route::get('import-batches/{batchId}')->name('import-batches.show')->uses('ImportBatchController@show');
+    Route::post('import-batches/{batchId}/retry')->name('import-batches.retry')->uses('ImportBatchController@retry');
+    Route::delete('import-batches/{batchId}')->name('import-batches.destroy')->uses('ImportBatchController@destroy');
+});
+
+// Import Pages
+Route::middleware('auth')->group(function () {
+    Route::get('imports/projects')->name('imports.projects')->uses('ImportsController@projectsForm');
+    Route::get('imports/properties')->name('imports.properties')->uses('ImportsController@propertiesForm');
+    Route::get('imports/units')->name('imports.units')->uses('ImportsController@unitsForm');
+    Route::get('imports/sample')->name('imports.sample')->uses('ImportsController@sample');
 });
 
 // 500 error

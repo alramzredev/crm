@@ -41,4 +41,9 @@ class PropertyPolicy
     {
         return $user->hasPermissionTo('properties.delete');
     }
+
+    public function import(User $user)
+    {
+        return $user->hasPermissionTo('properties.import');
+    }
 }

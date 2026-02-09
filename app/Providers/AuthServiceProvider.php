@@ -11,6 +11,9 @@ use App\Models\Lead;
 use App\Models\Reservation;
 use App\Models\User;
 use App\Models\Owner;
+use App\Models\StagingProject;
+use App\Models\StagingProperty;
+use App\Models\StagingUnit;
 use App\Policies\ProjectPolicy;
 use App\Policies\PropertyPolicy;
 use App\Policies\UnitPolicy;
@@ -18,6 +21,9 @@ use App\Policies\LeadPolicy;
 use App\Policies\ReservationPolicy;
 use App\Policies\UserPolicy;
 use App\Policies\OwnerPolicy;
+use App\Policies\StagingProjectPolicy;
+use App\Policies\StagingPropertyPolicy;
+use App\Policies\StagingUnitPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -29,6 +35,9 @@ class AuthServiceProvider extends ServiceProvider
         Reservation::class => ReservationPolicy::class,
         User::class => UserPolicy::class,
         Owner::class => OwnerPolicy::class,
+        StagingProject::class => StagingProjectPolicy::class,
+        StagingProperty::class => StagingPropertyPolicy::class,
+        StagingUnit::class => StagingUnitPolicy::class,
     ];
 
     public function boot()

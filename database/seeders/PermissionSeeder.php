@@ -44,6 +44,7 @@ class PermissionSeeder extends Seeder
                 'projects.edit',
                 'projects.delete',
                 'projects.restore',
+                'projects.import',
             ],
 
             'Property Management' => [
@@ -52,6 +53,7 @@ class PermissionSeeder extends Seeder
                 'properties.edit',
                 'properties.delete',
                 'properties.restore',
+                'properties.import',
             ],
 
             'Unit Management' => [
@@ -60,6 +62,7 @@ class PermissionSeeder extends Seeder
                 'units.edit',
                 'units.delete',
                 'units.restore',
+                'units.import',
             ],
 
             'Lead Management' => [
@@ -159,16 +162,19 @@ class PermissionSeeder extends Seeder
             'projects.edit',
             'projects.delete',
             'projects.restore',
+            'projects.import',
             'properties.view',
             'properties.create',
             'properties.edit',
             'properties.delete',
             'properties.restore',
+            'properties.import',
             'units.view',
             'units.create',
             'units.edit',
             'units.delete',
             'units.restore',
+            'units.import',
             'leads.view',
             'reservations.view',
             'payments.view',
