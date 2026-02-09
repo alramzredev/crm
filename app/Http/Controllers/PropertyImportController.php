@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\PropertyImport;
 use App\Models\Property;
+use App\Exports\PropertiesExport;
 
 class PropertyImportController extends Controller
 {
@@ -39,6 +40,6 @@ class PropertyImportController extends Controller
 
     public function export()
     {
-        return Excel::download(new \App\Exports\PropertiesExport, 'properties.xlsx');
+        return Excel::download(new PropertiesExport, 'properties.xlsx');
     }
 }

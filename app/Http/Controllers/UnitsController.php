@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Unit;
 use App\Models\Property;
+use App\Models\City;
+use App\Models\Municipality;
+use App\Models\Neighborhood;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -40,6 +43,10 @@ class UnitsController extends Controller
         if (request('property_id')) {
             $property = Property::with('project')->find(request('property_id'));
             $createData['property'] = $property;
+            $createData['cities'] = City::orderBy('name')->get();
+            $createData['municipalities'] = Municipality::with('city')->orderBy('name')->get();
+            $createData['neighborhoods'] = Neighborhood::orderBy('name')->get();
+            
             
             // Override defaults with property's project
             if ($property) {

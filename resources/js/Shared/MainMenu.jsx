@@ -1,34 +1,31 @@
 import React from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import Icon from '@/Shared/Icon';
+import MainMenuItem from '@/Shared/MainMenuItem';
 
 export default ({ className }) => {
   const { auth } = usePage().props;
+
+  // console.log(auth.user?.permissions);
 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
   };
 
+  const hasRole = (role) => {
+    return auth.user?.roles?.some(r => r.name === role) || false;
+  };
+
   return (
     <div className={className}>
       <div className="mb-4">
-        <Link
-          href={route('dashboard')}
-          className="block px-4 py-2 text-indigo-100 hover:bg-indigo-700 rounded"
-        >
-          Dashboard
-        </Link>
+        <MainMenuItem text="Dashboard" link="dashboard" icon="dashboard" />
       </div>
 
       {/* Projects Section */}
       {can('projects.view') && (
         <div className="mb-4">
-          <Link
-            href={route('projects')}
-            className="block px-4 py-2 text-indigo-100 hover:bg-indigo-700 rounded"
-          >
-            Projects
-          </Link>
+          <MainMenuItem text="Projects" link="projects" icon="office" />
         </div>
       )}
 
@@ -67,98 +64,60 @@ export default ({ className }) => {
       )}
 
       {/* Properties */}
-      {can('properties.view') && (
+      {/* {can('properties.view') && (
         <div className="mb-4">
-          <Link
-            href={route('properties')}
-            className="block px-4 py-2 text-indigo-100 hover:bg-indigo-700 rounded"
-          >
-            Properties
-          </Link>
+          <MainMenuItem text="Properties" link="properties" icon="location" />
         </div>
-      )}
+      )} */}
 
       {/* Units */}
-      {can('units.view') && (
+      {/* {can('units.view') && (
         <div className="mb-4">
-          <Link
-            href={route('units')}
-            className="block px-4 py-2 text-indigo-100 hover:bg-indigo-700 rounded"
-          >
-            Units
-          </Link>
+          <MainMenuItem text="Units" link="units" icon="store-front" />
         </div>
-      )}
+      )} */}
 
       {/* Leads */}
       {can('leads.view') && (
         <div className="mb-4">
-          <Link
-            href={route('leads')}
-            className="block px-4 py-2 text-indigo-100 hover:bg-indigo-700 rounded"
-          >
-            Leads
-          </Link>
+          <MainMenuItem text="Leads" link="leads" icon="users" />
         </div>
       )}
 
       {/* Reservations */}
       {can('reservations.view') && (
         <div className="mb-4">
-          <Link
-            href={route('reservations')}
-            className="block px-4 py-2 text-indigo-100 hover:bg-indigo-700 rounded"
-          >
-            Reservations
-          </Link>
+          <MainMenuItem text="Reservations" link="reservations" icon="book" />
         </div>
       )}
 
       {/* Owners */}
       {can('owners.view') && (
         <div className="mb-4">
-          <Link
-            href={route('owners')}
-            className="block px-4 py-2 text-indigo-100 hover:bg-indigo-700 rounded"
-          >
-            Owners
-          </Link>
+          <MainMenuItem text="Owners" link="owners" icon="users" />
         </div>
       )}
 
-      {/* Users */}
+      {/* Users - Only for Super Admin */}
       {can('users.view') && (
         <div className="mb-4">
-          <Link
-            href={route('users')}
-            className="block px-4 py-2 text-indigo-100 hover:bg-indigo-700 rounded"
-          >
-            Users
-          </Link>
+          <MainMenuItem text="Users" link="users" icon="users" />
         </div>
       )}
 
-      {/* Employees */}
-      <div className="mb-4">
-        <Link
-          href={route('employees')}
-          className="block px-4 py-2 text-indigo-100 hover:bg-indigo-700 rounded"
-        >
-          My Sales Team
-        </Link>
-      </div>
+      {/* Employees - Only for Sales Supervisor */}
+      {auth.user.roles.includes('sales_supervisor') && (
+        <div className="mb-4">
+          <MainMenuItem text="Team" link="employees" icon="users" />
+        </div>
+      )}
 
       {/* Reports */}
-      {can('reports.view') && (
+      {/* {can('reports.view') && (
         <div className="mb-4">
-          <Link
-            href={route('reports')}
-            className="block px-4 py-2 text-indigo-100 hover:bg-indigo-700 rounded"
-          >
-            Reports
-          </Link>
+          <MainMenuItem text="Reports" link="reports" icon="printer" />
         </div>
-      )}
+      )} */}
     </div>
   );
 };
