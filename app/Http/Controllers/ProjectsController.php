@@ -27,7 +27,7 @@ class ProjectsController extends Controller
      * Display paginated projects based on user visibility rules
      * 
      * ✅ Super Admin → All projects
-     * ✅ Project Manager → Only assigned projects
+     * ✅ Project Admin → Only assigned projects
      * ✅ Sales Supervisor → Only assigned projects
      * ✅ Sales Employee → Only assigned projects
      */

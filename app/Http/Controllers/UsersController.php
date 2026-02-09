@@ -61,9 +61,9 @@ class UsersController extends Controller
                 $this->repo->attachProjectsWithRole($user, $request->input('project_ids'), 'sales_supervisor');
             }
 
-            // Project Manager: Assign projects
-            if ($role->name === 'project_manager' && $request->filled('project_ids')) {
-                $this->repo->attachProjectsWithRole($user, $request->input('project_ids'), 'project_manager');
+            // Project Admin: Assign projects
+            if ($role->name === 'project_admin' && $request->filled('project_ids')) {
+                $this->repo->attachProjectsWithRole($user, $request->input('project_ids'), 'project_admin');
             }
         }
 
@@ -103,9 +103,9 @@ class UsersController extends Controller
                 $user->supervisor()->detach();
                 $this->repo->syncProjectsWithRole($user, $request->input('project_ids') ?? [], 'sales_supervisor');
             }
-            else if ($role->name === 'project_manager') {
+            else if ($role->name === 'project_admin') {
                 $user->supervisor()->detach();
-                $this->repo->syncProjectsWithRole($user, $request->input('project_ids') ?? [], 'project_manager');
+                $this->repo->syncProjectsWithRole($user, $request->input('project_ids') ?? [], 'project_admin');
             }
             else {
                 // Only detach if changing to a role that doesn't use projects

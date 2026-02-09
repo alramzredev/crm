@@ -205,12 +205,12 @@ class Project extends Model
     }
 
     /**
-     * Get project managers
+     * Get project admins
      */
     public function projectManagers()
     {
         return $this->users()
-            ->wherePivot('role_in_project', 'project_manager')
+            ->wherePivot('role_in_project', 'project_admin')
             ->wherePivot('is_active', true);
     }
 
@@ -289,9 +289,9 @@ class Project extends Model
           Sees: ALL projects
           SQL: No filter
        
-       2️⃣ Project Manager
-          Sees: Projects where assigned as project_manager
-          SQL: JOIN project_user WHERE role_in_project = 'project_manager'
+       2️⃣ Project Admin
+          Sees: Projects where assigned as project_admin
+          SQL: JOIN project_user WHERE role_in_project = 'project_admin'
        
        3️⃣ Sales Supervisor
           Sees: Projects where assigned as sales_supervisor

@@ -22,8 +22,8 @@ class DashboardController extends Controller
         // Route to appropriate dashboard based on role
         if ($user->hasRole('super_admin')) {
             return $this->adminDashboard($user);
-        } elseif ($user->hasRole('project_manager')) {
-            return $this->projectManagerDashboard($user);
+        } elseif ($user->hasRole('project_admin')) {
+            return $this->projectAdminDashboard($user);
         } elseif ($user->hasRole('sales_supervisor')) {
             return $this->salesSupervisorDashboard($user);
         } elseif ($user->hasRole('sales_employee')) {
@@ -44,10 +44,10 @@ class DashboardController extends Controller
         ]);
     }
 
-    protected function projectManagerDashboard($user)
+    protected function projectAdminDashboard($user)
     {
         return Inertia::render('Dashboard/ProjectManagerDashboard', [
-            'inventory' => $this->repo->getProjectManagerInventory($user),
+            'inventory' => $this->repo->getProjectAdminInventory($user),
             'alerts' => $this->repo->getProjectManagerAlerts($user),
         ]);
     }

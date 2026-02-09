@@ -24,7 +24,7 @@ class ProjectRepository
      *
      * ✅ VISIBILITY RULES:
      * 1️⃣ Super Admin → Sees ALL projects
-     * 2️⃣ Project Manager → Sees projects where assigned as project_manager
+     * 2️⃣ Project Admin → Sees projects where assigned as project_admin
      * 3️⃣ Sales Supervisor → Sees projects where assigned as sales_supervisor
      * 4️⃣ Sales Employee → Sees projects where assigned as sales_employee
      */
@@ -36,11 +36,11 @@ class ProjectRepository
         if ($user->hasRole('super_admin')) {
             // Sees all projects
         }
-        // Project Manager: Only assigned projects with project_manager role
-        else if ($user->hasRole('project_manager')) {
+        // Project Admin: Only assigned projects with project_admin role
+        else if ($user->hasRole('project_admin')) {
             $query->whereHas('users', function ($q) use ($user) {
                 $q->where('project_user.user_id', $user->id)
-                  ->where('project_user.role_in_project', 'project_manager')
+                  ->where('project_user.role_in_project', 'project_admin')
                   ->where('project_user.is_active', true);
             });
         }
@@ -161,11 +161,11 @@ class ProjectRepository
             return true;
         }
 
-        // Project Manager: Must be assigned as project_manager
-        if ($user->hasRole('project_manager')) {
+        // Project Admin: Must be assigned as project_admin
+        if ($user->hasRole('project_admin')) {
             return $project->users()
                 ->where('project_user.user_id', $user->id)
-                ->where('project_user.role_in_project', 'project_manager')
+                ->where('project_user.role_in_project', 'project_admin')
                 ->where('project_user.is_active', true)
                 ->exists();
         }

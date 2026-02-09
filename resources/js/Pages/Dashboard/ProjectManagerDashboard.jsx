@@ -8,7 +8,7 @@ const ProjectManagerDashboard = () => {
 
   return (
     <div>
-      <h1 className="mb-8 text-3xl font-bold">Project Manager Dashboard</h1>
+      <h1 className="mb-8 text-3xl font-bold">Project Admin Dashboard</h1>
 
       {/* Alerts Section */}
       <div className="mb-8">

@@ -120,12 +120,12 @@ class Reservation extends Model
             return $query;
         }
 
-        // Project Manager: Reservations from their managed projects
-        if ($user->hasRole('project_manager')) {
+        // Project Admin: Reservations from their managed projects
+        if ($user->hasRole('project_admin')) {
             return $query->whereHas('unit.project', function ($q) use ($user) {
                 $q->whereHas('users', function ($q2) use ($user) {
                     $q2->where('project_user.user_id', $user->id)
-                      ->where('project_user.role_in_project', 'project_manager')
+                      ->where('project_user.role_in_project', 'project_admin')
                       ->where('project_user.is_active', true);
                 });
             });

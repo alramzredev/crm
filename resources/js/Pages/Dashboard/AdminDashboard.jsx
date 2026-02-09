@@ -58,8 +58,8 @@ const AdminDashboard = () => {
                   <span className="font-bold text-purple-700">{userStats.super_admins}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                  <span className="text-gray-700 font-medium">Project Managers</span>
-                  <span className="font-bold text-blue-700">{userStats.project_managers}</span>
+                  <span className="text-gray-700 font-medium">Project Admins</span>
+                  <span className="font-bold text-blue-700">{userStats.project_admins}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-indigo-50 rounded-lg">
                   <span className="text-gray-700 font-medium">Sales Supervisors</span>

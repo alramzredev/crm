@@ -40,7 +40,7 @@ class LeadPolicy
                 ->exists();
         }
 
-        // Project manager and above: Can view all leads
+        // Project admin and above: Can view all leads
         return true;
     }
 

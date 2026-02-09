@@ -27,7 +27,7 @@ const Create = () => {
 
   const isSalesEmployee = selectedRole?.name === 'sales_employee';
   const isSalesSupervisor = selectedRole?.name === 'sales_supervisor';
-  const isProjectManager = selectedRole?.name === 'project_manager';
+  const isProjectManager = selectedRole?.name === 'project_admin';
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -192,7 +192,7 @@ const Create = () => {
               </div>
             )}
 
-            {/* Project Manager: Assign Projects */}
+            {/* Project Admin: Assign Projects */}
             {isProjectManager && (
               <div className="w-full pb-8 pr-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">

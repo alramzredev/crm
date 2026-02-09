@@ -120,11 +120,11 @@ class PermissionSeeder extends Seeder
             ]
         );
 
-        $projectManager = Role::firstOrCreate(
-            ['name' => 'project_manager', 'guard_name' => 'web'],
+        $projectAdmin = Role::firstOrCreate(
+            ['name' => 'project_admin', 'guard_name' => 'web'],
             [
-                'label' => 'Project Manager',
-                'description' => 'Project Manager - Manages projects and properties'
+                'label' => 'Project Admin',
+                'description' => 'Project Admin - Manages projects and properties'
             ]
         );
 
@@ -152,7 +152,7 @@ class PermissionSeeder extends Seeder
         // ============================================
         // PROJECT MANAGER
         // ============================================
-        $projectManager->syncPermissions([
+        $projectAdmin->syncPermissions([
             'dashboard.view',
             'projects.view',
             'projects.create',

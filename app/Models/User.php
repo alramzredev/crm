@@ -152,12 +152,12 @@ public function activeProjects()
 
 
     /**
-     * Get projects where user is project manager
+     * Get projects where user is project admin
      */
     public function managedProjects()
     {
         return $this->projects()
-            ->wherePivot('role_in_project', 'project_manager')
+            ->wherePivot('role_in_project', 'project_admin')
             ->wherePivot('is_active', true);
     }
 

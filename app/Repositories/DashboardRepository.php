@@ -41,7 +41,7 @@ class DashboardRepository
     {
         return [
             'super_admins' => User::role('super_admin')->whereNull('deleted_at')->count(),
-            'project_managers' => User::role('project_manager')->whereNull('deleted_at')->count(),
+            'project_admins' => User::role('project_admin')->whereNull('deleted_at')->count(),
             'sales_supervisors' => User::role('sales_supervisor')->whereNull('deleted_at')->count(),
             'sales_employees' => User::role('sales_employee')->whereNull('deleted_at')->count(),
             'active_users' => User::whereNull('deleted_at')->count(),
@@ -62,14 +62,14 @@ class DashboardRepository
     }
 
     // ==========================================
-    // PROJECT MANAGER DASHBOARD
+    // PROJECT ADMIN DASHBOARD
     // ==========================================
 
-    public function getProjectManagerInventory(User $user)
+    public function getProjectAdminInventory(User $user)
     {
         $projects = Project::whereHas('users', function($q) use ($user) {
             $q->where('project_user.user_id', $user->id)
-              ->where('project_user.role_in_project', 'project_manager')
+              ->where('project_user.role_in_project', 'project_admin')
               ->where('project_user.is_active', true);
         })->withCount([
             'properties',
@@ -86,7 +86,7 @@ class DashboardRepository
     {
         $projectIds = Project::whereHas('users', function($q) use ($user) {
             $q->where('project_user.user_id', $user->id)
-              ->where('project_user.role_in_project', 'project_manager')
+              ->where('project_user.role_in_project', 'project_admin')
               ->where('project_user.is_active', true);
         })->pluck('id');
 
