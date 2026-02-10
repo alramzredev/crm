@@ -5,6 +5,9 @@ namespace App\Services;
 use App\Models\StagingUnit;
 use App\Models\Unit;
 use App\Models\Owner;
+use App\Models\Project;
+use App\Models\Property;
+use App\Models\UnitStatus;
 
 class StagingUnitValidator
 {
@@ -27,6 +30,12 @@ class StagingUnitValidator
 
         if (empty($row->status_name)) {
             $errors[] = 'Status is required';
+        } else {
+            // Validate status exists in unit_statuses
+            $statusExists = UnitStatus::where('name', $row->status_name)->exists();
+            if (!$statusExists) {
+                $errors[] = "Unit status '{$row->status_name}' does not exist in the database";
+            }
         }
 
         // Validate owner if provided
@@ -56,20 +65,30 @@ class StagingUnitValidator
             }
         }
 
-        // Uniqueness check in main units table
-        if (!empty($row->unit_code)) {
-            $exists = Unit::where('unit_code', $row->unit_code)->exists();
-            if ($exists) {
-                $errors[] = 'Unit code already exists in database';
-            }
+        // Uniqueness check: unit_code must be unique per property
+        if (!empty($row->unit_code) && !empty($row->property_code)) {
+            $property = Property::where('property_code', $row->property_code)->first();
 
-            $duplicateInStaging = StagingUnit::where('unit_code', $row->unit_code)
-                ->where('import_batch_id', $row->import_batch_id)
-                ->where('id', '!=', $row->id)
-                ->exists();
+            if ($property) {
+                // Check if unit code already exists for this property in main table
+                $exists = Unit::where('unit_code', $row->unit_code)
+                    ->where('property_id', $property->id)
+                    ->exists();
 
-            if ($duplicateInStaging) {
-                $errors[] = 'Duplicate unit code found in this import batch';
+                if ($exists) {
+                    $errors[] = 'Unit code already exists for this property in database';
+                }
+
+                // Check for duplicates within staging batch for same property
+                $duplicateInStaging = StagingUnit::where('unit_code', $row->unit_code)
+                    ->where('property_code', $row->property_code)
+                    ->where('import_batch_id', $row->import_batch_id)
+                    ->where('id', '!=', $row->id)
+                    ->exists();
+
+                if ($duplicateInStaging) {
+                    $errors[] = 'Duplicate unit code found for this property in this import batch';
+                }
             }
         }
 

@@ -38,7 +38,7 @@ const ImportProperties = () => {
             </div>
             <div className="ml-3">
               <p className="text-sm text-yellow-700">
-                <strong>Important:</strong> Projects must exist before importing properties. Make sure all project codes in your file match existing projects.
+                <strong>Important:</strong> Projects must exist before importing properties. Owner and status must also exist in the system.
               </p>
             </div>
           </div>
@@ -87,11 +87,10 @@ const ImportProperties = () => {
               </button>
               {showRules && (
                 <ul className="mt-3 text-sm text-blue-800 space-y-1 list-disc list-inside">
-                  <li>Property code is required and must be unique</li>
+                  <li>Property code is required and must be unique per project</li>
                   <li>Project code is required (must exist)</li>
-                  <li>City name is required (must exist)</li>
-                  <li>Owner name is required</li>
-                  <li>Property type must match existing types</li>
+                  <li>Owner name is required (must exist)</li>
+                  <li>Status is required (must exist)</li>
                 </ul>
               )}
             </div>

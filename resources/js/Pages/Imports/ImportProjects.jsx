@@ -5,7 +5,7 @@ import LoadingButton from '@/Shared/LoadingButton';
 
 const ImportProjects = () => {
   const [showRules, setShowRules] = useState(false);
-  const { data, setData, post, processing, errors, reset } = useForm({
+  const { data, setData, post, processing, errors } = useForm({
     file: null,
     update_existing: false,
     skip_duplicates: true,
@@ -73,11 +73,13 @@ const ImportProjects = () => {
               </button>
               {showRules && (
                 <ul className="mt-3 text-sm text-blue-800 space-y-1 list-disc list-inside">
-                  <li>Project code is required and must be unique</li>
-                  <li>Project name is required</li>
-                  <li>Owner name is required</li>
-                  <li>City name must match existing cities</li>
-                  <li>Project type name must match existing types</li>
+                  <li><strong>project_code</strong> — Required, must be unique</li>
+                  <li><strong>name</strong> — Required, string</li>
+                  <li><strong>owner_name</strong> — Required, must exist in system</li>
+                  <li><strong>city_name</strong> — Required, must exist in system</li>
+                  <li><strong>status_name</strong> — Required, must exist in system</li>
+                  <li><strong>project_type_name</strong> — Required, must exist in system</li>
+                  <li><strong>reservation_period_days</strong> — Optional, 1-365 days</li>
                 </ul>
               )}
             </div>

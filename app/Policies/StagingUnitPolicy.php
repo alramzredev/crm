@@ -17,6 +17,11 @@ class StagingUnitPolicy
         return $user->hasPermissionTo('units.import');
     }
 
+    public function create(User $user)
+    {
+        return $user->hasPermissionTo('units.import');
+    }
+
     public function revalidate(User $user, StagingUnit $stagingUnit)
     {
         return $user->hasPermissionTo('units.import');

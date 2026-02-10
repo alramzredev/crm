@@ -87,8 +87,15 @@ class StagingPropertyController extends Controller
         $row = StagingProperty::findOrFail($rowId);
         $this->authorize('importRow', $row);
 
-        if ($row->import_status !== 'valid') {
-            return Redirect::back()->with('error', 'Only valid rows can be imported.');
+        $errors = $this->validator->validate($row);
+
+        if (count($errors) > 0) {
+            $row->update([
+                'import_status' => 'error',
+                'error_message' => implode('; ', $errors),
+            ]);
+
+            return Redirect::back()->with('error', 'Row has validation errors: ' . implode('; ', $errors));
         }
 
         try {

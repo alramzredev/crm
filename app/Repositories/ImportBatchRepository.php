@@ -26,6 +26,7 @@ class ImportBatchRepository
             $query->where('status', Request::get('status'));
         }
 
+        // Do NOT filter by import_type — show all batches
         return $query->orderByDesc('created_at')->paginate(25)->appends(Request::all());
     }
 

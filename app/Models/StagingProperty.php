@@ -40,6 +40,8 @@ class StagingProperty extends Model
     ];
 
     protected $casts = [
+        'row_number' => 'integer',
+        'property_no' => 'integer',
         'total_square_meter' => 'decimal:2',
         'total_units' => 'integer',
         'count_available' => 'integer',

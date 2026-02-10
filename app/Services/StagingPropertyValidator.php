@@ -6,6 +6,7 @@ use App\Models\StagingProperty;
 use App\Models\Property;
 use App\Models\Owner;
 use App\Models\Project;
+use App\Models\PropertyStatus;
 
 class StagingPropertyValidator
 {
@@ -44,6 +45,11 @@ class StagingPropertyValidator
 
         if (empty($row->status_name)) {
             $errors[] = 'Status is required';
+        } else {
+            $statusExists = PropertyStatus::where('name', $row->status_name)->exists();
+            if (!$statusExists) {
+                $errors[] = "Status '{$row->status_name}' does not exist in the database";
+            }
         }
 
         // Format validations
@@ -60,19 +66,27 @@ class StagingPropertyValidator
         }
 
         // Uniqueness check in main properties table
-        if (!empty($row->property_code)) {
-            $exists = Property::where('property_code', $row->property_code)->exists();
-            if ($exists) {
-                $errors[] = 'Property code already exists in database';
-            }
+        if (!empty($row->property_code) && !empty($row->project_code)) {
+            $project = Project::where('project_code', $row->project_code)->first();
 
-            $duplicateInStaging = StagingProperty::where('property_code', $row->property_code)
-                ->where('import_batch_id', $row->import_batch_id)
-                ->where('id', '!=', $row->id)
-                ->exists();
+            if ($project) {
+                $exists = Property::where('property_code', $row->property_code)
+                    ->where('project_id', $project->id)
+                    ->exists();
 
-            if ($duplicateInStaging) {
-                $errors[] = 'Duplicate property code found in this import batch';
+                if ($exists) {
+                    $errors[] = 'Property code already exists for this project in database';
+                }
+
+                $duplicateInStaging = StagingProperty::where('property_code', $row->property_code)
+                    ->where('project_code', $row->project_code)
+                    ->where('import_batch_id', $row->import_batch_id)
+                    ->where('id', '!=', $row->id)
+                    ->exists();
+
+                if ($duplicateInStaging) {
+                    $errors[] = 'Duplicate property code found for this project in this import batch';
+                }
             }
         }
 

@@ -73,6 +73,12 @@ class StagingProjectRepository
 
     public function importRow(StagingProject $row)
     {
+        // Skip if project code already exists
+        $existingProject = Project::where('project_code', $row->project_code)->first();
+        if ($existingProject) {
+            throw new \Exception("Project with code '{$row->project_code}' already exists in the system");
+        }
+
         // Find or create owner
         $owner = Owner::firstOrCreate(
             ['name' => $row->owner_name],

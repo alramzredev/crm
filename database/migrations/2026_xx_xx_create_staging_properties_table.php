@@ -40,6 +40,7 @@ return new class extends Migration
             $table->index('import_batch_id', 'idx_staging_properties_batch');
             $table->index('import_status', 'idx_staging_properties_status');
             $table->index('property_code', 'idx_staging_properties_code');
+            $table->index(['project_code', 'property_code'], 'idx_staging_properties_project_code');
         });
     }
 

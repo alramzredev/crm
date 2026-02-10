@@ -98,8 +98,16 @@ class StagingProjectController extends Controller
         $stagingProject = StagingProject::findOrFail($rowId);
         $this->authorize('importRow', $stagingProject);
 
-        if ($stagingProject->import_status !== 'valid') {
-            return Redirect::back()->with('error', 'Only valid rows can be imported.');
+        // Validate fresh before import
+        $errors = $this->validator->validate($stagingProject);
+        
+        if (count($errors) > 0) {
+            $stagingProject->update([
+                'import_status' => 'error',
+                'error_message' => implode('; ', $errors),
+            ]);
+
+            return Redirect::back()->with('error', 'Row has validation errors: ' . implode('; ', $errors));
         }
 
         try {

@@ -89,10 +89,10 @@ const ImportUnits = () => {
               </button>
               {showRules && (
                 <ul className="mt-3 text-sm text-blue-800 space-y-1 list-disc list-inside">
-                  <li>Unit code is required and must be unique</li>
+                  <li>Unit code is required and must be unique per property</li>
                   <li>Project code is required (must exist)</li>
                   <li>Property code is required (must exist under project)</li>
-                  <li>Status is required</li>
+                  <li>Status is required (must exist in unit_statuses)</li>
                   <li>Area must be a positive number</li>
                 </ul>
               )}

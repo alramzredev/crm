@@ -60,6 +60,12 @@ class StagingPropertyRepository
 
     public function importRow(StagingProperty $row)
     {
+        // Skip if property code already exists
+        $existingProperty = Property::where('property_code', $row->property_code)->first();
+        if ($existingProperty) {
+            throw new \Exception("Property with code '{$row->property_code}' already exists in the system");
+        }
+
         // Find project by code
         $project = Project::where('project_code', $row->project_code)->first();
         if (!$project) {

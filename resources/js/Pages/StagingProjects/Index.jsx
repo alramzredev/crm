@@ -24,6 +24,7 @@ const Index = () => {
           <thead>
             <tr className="font-bold text-left bg-gray-50">
               <th className="px-6 pt-5 pb-4">Row #</th>
+              <th className="px-6 pt-5 pb-4">Batch ID</th>
               <th className="px-6 pt-5 pb-4">Project Code</th>
               <th className="px-6 pt-5 pb-4">Name</th>
               <th className="px-6 pt-5 pb-4">Owner</th>
@@ -37,6 +38,7 @@ const Index = () => {
             {data.map(row => (
               <tr key={row.id} className="border-t hover:bg-gray-50">
                 <td className="px-6 py-4">{row.row_number}</td>
+                <td className="px-6 py-4 font-mono text-xs">{row.import_batch_id?.slice(0, 8)}</td>
                 <td className="px-6 py-4">{row.project_code || '—'}</td>
                 <td className="px-6 py-4">{row.name || '—'}</td>
                 <td className="px-6 py-4">{row.owner_name || '—'}</td>
@@ -57,7 +59,7 @@ const Index = () => {
             ))}
             {data.length === 0 && (
               <tr>
-                <td className="px-6 py-4 border-t text-center text-gray-500" colSpan="8">
+                <td className="px-6 py-4 border-t text-center text-gray-500" colSpan="9">
                   No staging rows found.
                 </td>
               </tr>

@@ -40,6 +40,8 @@ class Property extends Model
 
     protected $casts = [
         'total_square_meter' => 'decimal:2',
+        'total_units' => 'integer',
+        'count_available' => 'integer',
     ];
 
     protected static function booted()

@@ -2,47 +2,53 @@
 
 namespace App\Imports;
 
-use App\Models\Unit;
 use App\Models\StagingUnit;
+use App\Models\ImportBatch;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Illuminate\Support\Str;
 
 class UnitImport implements ToCollection, WithHeadingRow
 {
-    protected $batchId;
-    protected $fileName;
-    protected $userEmail;
+    protected $batch;
 
-    public function __construct($batchId, $fileName, $userEmail)
-    {
-        $this->batchId = $batchId;
-        $this->fileName = $fileName;
-        $this->userEmail = $userEmail;
+    public function __construct(
+        protected string $batchId,
+        protected string $fileName,
+        protected string $actor
+    ) {
+        // Create import batch record
+        $this->batch = ImportBatch::create([
+            'batch_uuid' => $this->batchId,
+            'import_type' => 'units',
+            'file_name' => $this->fileName,
+            'status' => 'pending',
+            'created_by' => auth()->id(),
+        ]);
     }
 
     public function collection(Collection $rows)
     {
-        foreach ($rows as $row) {
+        $this->batch->update(['total_rows' => $rows->count()]);
+        $this->batch->markAsProcessing();
+
+        foreach ($rows as $index => $row) {
             if (empty($row['unit_code'])) {
                 continue;
             }
 
-            // Prepare validated data from row
-            $data = [
+            StagingUnit::create([
+                'import_batch_id' => $this->batchId,
+                'row_number' => $index + 2,
+                'import_status' => 'pending',
+                'error_message' => null,
                 'unit_code' => $row['unit_code'] ?? null,
                 'unit_external_id' => $row['unit_external_id'] ?? null,
-                'project_id' => $row['project_id'] ?? null,
-                'project_name' => $row['project_name'] ?? null,
-                'property_id' => $row['property_id'] ?? null,
+                'project_code' => $row['project_code'] ?? null,
                 'property_code' => $row['property_code'] ?? null,
-                'property_type_id' => $row['property_type_id'] ?? null,
-                'property_type' => $row['property_type'] ?? null,
-                'status_id' => $row['status_id'] ?? null,
+                'property_type_name' => $row['property_type_name'] ?? null,
                 'status_name' => $row['status_name'] ?? null,
-                'neighborhood_id' => $row['neighborhood_id'] ?? null,
-                'neighborhood_name' => $row['neighborhood_name'] ?? null,
+                'neighborhood' => $row['neighborhood'] ?? null,
                 'status_reason' => $row['status_reason'] ?? null,
                 'floor' => $row['floor'] ?? null,
                 'area' => $row['area'] ?? null,
@@ -57,14 +63,13 @@ class UnitImport implements ToCollection, WithHeadingRow
                 'model' => $row['model'] ?? null,
                 'purpose' => $row['purpose'] ?? null,
                 'unit_type' => $row['unit_type'] ?? null,
-                'owner' => $row['owner'] ?? null,
+                'owner_name' => $row['owner_name'] ?? null,
                 'instrument_no' => $row['instrument_no'] ?? null,
                 'instrument_hijri_date' => $row['instrument_hijri_date'] ?? null,
                 'instrument_no_after_sales' => $row['instrument_no_after_sales'] ?? null,
                 'unit_description_en' => $row['unit_description_en'] ?? null,
                 'national_address' => $row['national_address'] ?? null,
                 'water_meter_no' => $row['water_meter_no'] ?? null,
-                // Boolean features
                 'has_balcony' => $this->toBool($row['has_balcony'] ?? null),
                 'has_basement' => $this->toBool($row['has_basement'] ?? null),
                 'has_basement_parking' => $this->toBool($row['has_basement_parking'] ?? null),
@@ -104,17 +109,12 @@ class UnitImport implements ToCollection, WithHeadingRow
                 'has_drivers_room' => $this->toBool($row['has_drivers_room'] ?? null),
                 'has_terrace' => $this->toBool($row['has_terrace'] ?? null),
                 'has_outdoor' => $this->toBool($row['has_outdoor'] ?? null),
-            ];
-
-            StagingUnit::create([
-                'batch_id' => $this->batchId,
-                'file_name' => $this->fileName,
-                'user_email' => $this->userEmail,
-                'data' => $data,
-                'status' => 'pending',
-                'row_number' => $row->getKey() + 2,
+                'created_by' => $this->actor,
+                'modified_by' => $this->actor,
             ]);
         }
+
+        $this->batch->markAsCompleted();
     }
 
     /**
@@ -132,6 +132,6 @@ class UnitImport implements ToCollection, WithHeadingRow
             return (bool) $value;
         }
         $lowered = strtolower((string) $value);
-        return in_array($lowered, ['true', 'yes', '1', 'y', 'true'], true);
+        return in_array($lowered, ['true', 'yes', '1', 'y'], true);
     }
 }

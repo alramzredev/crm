@@ -58,6 +58,12 @@ class StagingUnitRepository
 
     public function importRow(StagingUnit $row)
     {
+        // Skip if unit code already exists
+        $existingUnit = Unit::where('unit_code', $row->unit_code)->first();
+        if ($existingUnit) {
+            throw new \Exception("Unit with code '{$row->unit_code}' already exists in the system");
+        }
+
         // Find or create unit status
         $unitStatus = UnitStatus::firstOrCreate(
             ['name' => $row->status_name]
