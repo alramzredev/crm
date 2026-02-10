@@ -39,7 +39,7 @@ class ImportBatchController extends Controller
 
         return Inertia::render('ImportBatches/Show', [
             'batch' => $batch,
-            'stagingProjects' => $dynamicRepo->getPaginatedRows($batchId, Request::only('search', 'status')),
+            'stagingRows' => $dynamicRepo->getPaginatedRows($batchId, Request::only('search', 'status')),
         ]);
     }
 
