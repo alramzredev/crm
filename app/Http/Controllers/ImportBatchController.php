@@ -2,50 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StagingProject;
-use App\Repositories\StagingProjectRepository;
+use App\Models\ImportBatch;
+use App\Repositories\ImportBatchRepository;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
 
 class ImportBatchController extends Controller
 {
-    protected $repo;
+    protected $batchRepo;
 
     public function __construct()
     {
-        $this->repo = new StagingProjectRepository();
+        $this->batchRepo = new ImportBatchRepository();
     }
 
     public function index()
     {
-        $this->authorize('viewAny', StagingProject::class);
+        $this->authorize('viewAny', ImportBatch::class);
 
         return Inertia::render('ImportBatches/Index', [
-            'batches' => $this->repo->getPaginatedBatches(Request::only('search', 'status')),
+            'batches' => $this->batchRepo->getPaginatedBatches(Request::only('search', 'status')),
         ]);
     }
 
     public function show($batchId)
     {
-        $this->authorize('viewAny', StagingProject::class);
-
-        $batch = $this->repo->getBatchInfo($batchId);
+        $batch = $this->batchRepo->getBatchInfo($batchId);
         if (!$batch) {
             abort(404);
         }
 
+        $this->authorize('view', $batch);
+
+        $dynamicRepo = $this->batchRepo->getRepositoryInstance($batch->import_type);
+
         return Inertia::render('ImportBatches/Show', [
             'batch' => $batch,
-            'stagingProjects' => $this->repo->getPaginatedRows($batchId, Request::only('search', 'status')),
+            'stagingProjects' => $dynamicRepo->getPaginatedRows($batchId, Request::only('search', 'status')),
         ]);
     }
 
     public function retry($batchId)
     {
-        $this->authorize('update', StagingProject::class);
+        $batch = $this->batchRepo->getBatchInfo($batchId);
+        if (!$batch) {
+            abort(404);
+        }
 
-        $failedRows = StagingProject::where('import_batch_id', $batchId)
+        $this->authorize('retry', $batch);
+
+        $stagingModel = $this->batchRepo->getStagingModel($batch->import_type);
+        $failedRows = $stagingModel::where('import_batch_id', $batchId)
             ->where('import_status', 'error')
             ->get();
 
@@ -58,9 +66,16 @@ class ImportBatchController extends Controller
 
     public function destroy($batchId)
     {
-        $this->authorize('delete', StagingProject::class);
+        $batch = $this->batchRepo->getBatchInfo($batchId);
+        if (!$batch) {
+            abort(404);
+        }
 
-        StagingProject::where('import_batch_id', $batchId)->delete();
+        $this->authorize('delete', $batch);
+
+        $stagingModel = $this->batchRepo->getStagingModel($batch->import_type);
+        $stagingModel::where('import_batch_id', $batchId)->delete();
+        $batch->delete();
 
         return Redirect::route('import-batches')->with('success', 'Batch deleted.');
     }

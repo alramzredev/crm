@@ -138,6 +138,7 @@ Route::middleware('auth')->group(function () {
 // Staging Projects (rows)
 Route::middleware('auth')->group(function () {
     Route::get('staging-projects')->name('staging-projects')->uses('StagingProjectController@index');
+    Route::post('staging-projects')->name('projects.import')->uses('StagingProjectController@store');
     Route::post('staging-projects/{rowId}/revalidate')->name('staging-projects.revalidate')->uses('StagingProjectController@revalidate');
     Route::post('staging-projects/{rowId}/import')->name('staging-projects.import-row')->uses('StagingProjectController@importRow');
     Route::put('staging-projects/{rowId}')->name('staging-projects.update')->uses('StagingProjectController@update');
@@ -146,6 +147,7 @@ Route::middleware('auth')->group(function () {
 // Staging Properties (rows)
 Route::middleware('auth')->group(function () {
     Route::get('staging-properties')->name('staging-properties')->uses('StagingPropertyController@index');
+    Route::post('staging-properties')->name('properties.import')->uses('StagingPropertyController@store');
     Route::post('staging-properties/{rowId}/revalidate')->name('staging-properties.revalidate')->uses('StagingPropertyController@revalidate');
     Route::post('staging-properties/{rowId}/import')->name('staging-properties.import-row')->uses('StagingPropertyController@importRow');
     Route::put('staging-properties/{rowId}')->name('staging-properties.update')->uses('StagingPropertyController@update');
@@ -154,6 +156,7 @@ Route::middleware('auth')->group(function () {
 // Staging Units (rows)
 Route::middleware('auth')->group(function () {
     Route::get('staging-units')->name('staging-units')->uses('StagingUnitController@index');
+    Route::post('staging-units')->name('units.import')->uses('StagingUnitController@store');
     Route::post('staging-units/{rowId}/revalidate')->name('staging-units.revalidate')->uses('StagingUnitController@revalidate');
     Route::post('staging-units/{rowId}/import')->name('staging-units.import-row')->uses('StagingUnitController@importRow');
     Route::put('staging-units/{rowId}')->name('staging-units.update')->uses('StagingUnitController@update');

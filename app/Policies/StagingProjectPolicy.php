@@ -17,6 +17,11 @@ class StagingProjectPolicy
         return $user->hasPermissionTo('projects.import');
     }
 
+    public function create(User $user)
+    {
+        return $user->hasPermissionTo('projects.import');
+    }
+
     public function revalidate(User $user, StagingProject $stagingProject)
     {
         return $user->hasPermissionTo('projects.import');

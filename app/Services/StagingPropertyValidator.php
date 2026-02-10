@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\StagingProperty;
 use App\Models\Property;
+use App\Models\Owner;
+use App\Models\Project;
 
 class StagingPropertyValidator
 {
@@ -18,10 +20,22 @@ class StagingPropertyValidator
 
         if (empty($row->project_code)) {
             $errors[] = 'Project code is required';
+        } else {
+            // Validate project exists
+            $projectExists = Project::where('project_code', $row->project_code)->exists();
+            if (!$projectExists) {
+                $errors[] = "Project with code '{$row->project_code}' does not exist in the database";
+            }
         }
 
         if (empty($row->owner_name)) {
             $errors[] = 'Owner name is required';
+        } else {
+            // Validate owner exists
+            $ownerExists = Owner::where('name', $row->owner_name)->exists();
+            if (!$ownerExists) {
+                $errors[] = "Owner '{$row->owner_name}' does not exist in the database";
+            }
         }
 
         if (empty($row->city_name)) {
@@ -45,11 +59,20 @@ class StagingPropertyValidator
             }
         }
 
-        // Uniqueness check
+        // Uniqueness check in main properties table
         if (!empty($row->property_code)) {
             $exists = Property::where('property_code', $row->property_code)->exists();
             if ($exists) {
                 $errors[] = 'Property code already exists in database';
+            }
+
+            $duplicateInStaging = StagingProperty::where('property_code', $row->property_code)
+                ->where('import_batch_id', $row->import_batch_id)
+                ->where('id', '!=', $row->id)
+                ->exists();
+
+            if ($duplicateInStaging) {
+                $errors[] = 'Duplicate property code found in this import batch';
             }
         }
 

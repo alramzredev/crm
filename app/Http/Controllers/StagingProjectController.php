@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\StagingProject;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use App\Repositories\StagingProjectRepository;
 use App\Services\StagingProjectValidator;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ProjectImport;
 
 class StagingProjectController extends Controller
 {
@@ -93,7 +96,6 @@ class StagingProjectController extends Controller
     public function importRow($rowId)
     {
         $stagingProject = StagingProject::findOrFail($rowId);
-        
         $this->authorize('importRow', $stagingProject);
 
         if ($stagingProject->import_status !== 'valid') {
@@ -110,10 +112,30 @@ class StagingProjectController extends Controller
         }
     }
 
+    public function store()
+    {
+        $this->authorize('create', StagingProject::class);
+
+        Request::validate([
+            'file' => ['required', 'file', 'mimes:xlsx,csv'],
+        ]);
+
+        $user = Request::user();
+        $batchId = (string) Str::uuid();
+        $fileName = Request::file('file')->getClientOriginalName();
+
+        Excel::import(
+            new ProjectImport($batchId, $fileName, (string) $user->email),
+            Request::file('file')
+        );
+
+        return Redirect::route('import-batches')
+            ->with('success', 'Import queued.')
+            ->with('batch_id', $batchId);
+    }
+
     public function retry($batchId)
     {
-        $this->authorize('update', StagingProject::class);
-
         $failedRows = StagingProject::where('import_batch_id', $batchId)
             ->where('import_status', 'error')
             ->get();
@@ -131,7 +153,11 @@ class StagingProjectController extends Controller
 
     public function destroy($batchId)
     {
-        $this->authorize('delete', StagingProject::class);
+        $stagingProjects = StagingProject::where('import_batch_id', $batchId)->get();
+
+        foreach ($stagingProjects as $project) {
+            $this->authorize('delete', $project);
+        }
 
         StagingProject::where('import_batch_id', $batchId)->delete();
 

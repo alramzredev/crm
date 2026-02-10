@@ -8,6 +8,9 @@ use App\Services\StagingUnitValidator;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\UnitImport;
 
 class StagingUnitController extends Controller
 {
@@ -34,9 +37,9 @@ class StagingUnitController extends Controller
 
     public function update($rowId)
     {
-        $this->authorize('update', StagingUnit::class);
-
         $row = StagingUnit::findOrFail($rowId);
+        $this->authorize('update', $row);
+
         $validated = Request::validate([
             'unit_code' => ['nullable', 'string', 'max:100'],
             'property_code' => ['nullable', 'string', 'max:50'],
@@ -62,9 +65,9 @@ class StagingUnitController extends Controller
 
     public function revalidate($rowId)
     {
-        $this->authorize('update', StagingUnit::class);
-
         $row = StagingUnit::findOrFail($rowId);
+        $this->authorize('revalidate', $row);
+
         $errors = $this->validator->validate($row);
 
         $row->update([
@@ -77,9 +80,8 @@ class StagingUnitController extends Controller
 
     public function importRow($rowId)
     {
-        $this->authorize('create', StagingUnit::class);
-
         $row = StagingUnit::findOrFail($rowId);
+        $this->authorize('importRow', $row);
 
         if ($row->import_status !== 'valid') {
             return Redirect::back()->with('error', 'Only valid rows can be imported.');
@@ -93,5 +95,27 @@ class StagingUnitController extends Controller
         } catch (\Exception $e) {
             return Redirect::back()->with('error', 'Import failed: ' . $e->getMessage());
         }
+    }
+
+    public function store()
+    {
+        $this->authorize('create', StagingUnit::class);
+
+        Request::validate([
+            'file' => ['required', 'file', 'mimes:xlsx,csv'],
+        ]);
+
+        $user = Request::user();
+        $batchId = (string) Str::uuid();
+        $fileName = Request::file('file')->getClientOriginalName();
+
+        Excel::import(
+            new UnitImport($batchId, $fileName, (string) $user->email),
+            Request::file('file')
+        );
+
+        return Redirect::route('import-batches')
+            ->with('success', 'Import queued.')
+            ->with('batch_id', $batchId);
     }
 }

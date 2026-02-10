@@ -24,6 +24,8 @@ use App\Policies\OwnerPolicy;
 use App\Policies\StagingProjectPolicy;
 use App\Policies\StagingPropertyPolicy;
 use App\Policies\StagingUnitPolicy;
+use App\Models\ImportBatch;
+use App\Policies\ImportBatchPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -38,6 +40,7 @@ class AuthServiceProvider extends ServiceProvider
         StagingProject::class => StagingProjectPolicy::class,
         StagingProperty::class => StagingPropertyPolicy::class,
         StagingUnit::class => StagingUnitPolicy::class,
+        ImportBatch::class => ImportBatchPolicy::class,
     ];
 
     public function boot()

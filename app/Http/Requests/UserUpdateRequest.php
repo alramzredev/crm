@@ -23,7 +23,7 @@ class UserUpdateRequest extends FormRequest
                 'email',
                 Rule::unique('users', 'email')->ignore($this->route('user')->id)
             ],
-            'phone' => ['nullable', 'string', 'max:50'],
+            'phone' => ['nullable', 'string', 'max:50', Rule::unique('users', 'phone')->ignore($this->route('user')->id)],
             'password' => ['nullable'],
             'role' => ['nullable', 'exists:roles,id'],
             'photo' => ['nullable', 'image'],

@@ -100,6 +100,36 @@ class PermissionSeeder extends Seeder
                 'owners.delete',
                 'owners.restore',
             ],
+
+            'Staging Projects' => [
+                'staging-projects.view',
+                'staging-projects.create',
+                'staging-projects.update',
+                'staging-projects.revalidate',
+                'staging-projects.delete',
+            ],
+
+            'Staging Properties' => [
+                'staging-properties.view',
+                'staging-properties.create',
+                'staging-properties.update',
+                'staging-properties.revalidate',
+                'staging-properties.delete',
+            ],
+
+            'Staging Units' => [
+                'staging-units.view',
+                'staging-units.create',
+                'staging-units.update',
+                'staging-units.revalidate',
+                'staging-units.delete',
+            ],
+
+            'Import Batches' => [
+                'import-batches.view',
+                'import-batches.retry',
+                'import-batches.delete',
+            ],
         ];
 
         // Flatten the permissions array and create them
@@ -175,10 +205,28 @@ class PermissionSeeder extends Seeder
             'units.delete',
             'units.restore',
             'units.import',
+            'staging-projects.view',
+            'staging-projects.create',
+            'staging-projects.update',
+            'staging-projects.revalidate',
+            'staging-projects.delete',
+            'staging-properties.view',
+            'staging-properties.create',
+            'staging-properties.update',
+            'staging-properties.revalidate',
+            'staging-properties.delete',
+            'staging-units.view',
+            'staging-units.create',
+            'staging-units.update',
+            'staging-units.revalidate',
+            'staging-units.delete',
             'leads.view',
             'reservations.view',
             'payments.view',
             'owners.view',
+            'import-batches.view',
+            'import-batches.retry',
+            'import-batches.delete',
         ]);
 
         // ============================================

@@ -9,6 +9,7 @@ use App\Models\City;
 use App\Models\PropertyType;
 use App\Models\PropertyStatus;
 use App\Models\PropertyClass;
+use App\Models\Project;
 use Illuminate\Support\Facades\Request;
 
 class StagingPropertyRepository
@@ -59,6 +60,12 @@ class StagingPropertyRepository
 
     public function importRow(StagingProperty $row)
     {
+        // Find project by code
+        $project = Project::where('project_code', $row->project_code)->first();
+        if (!$project) {
+            throw new \Exception("Project with code '{$row->project_code}' not found");
+        }
+
         // Find or create owner
         $owner = Owner::firstOrCreate(
             ['name' => $row->owner_name]
@@ -85,10 +92,11 @@ class StagingPropertyRepository
             ['name' => $row->status_name]
         );
 
-        // Create property
+        // Create property with project_id
         Property::create([
             'property_code' => $row->property_code,
             'property_no' => $row->property_no,
+            'project_id' => $project->id,
             'owner_id' => $owner->id,
             'city_id' => $city->id,
             'property_type_id' => $propertyType->id,
