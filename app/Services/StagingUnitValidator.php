@@ -38,6 +38,22 @@ class StagingUnitValidator
             }
         }
 
+        // Validate project_code exists
+        if (!empty($row->project_code)) {
+            $projectExists = Project::where('project_code', $row->project_code)->exists();
+            if (!$projectExists) {
+                $errors[] = "Project code '{$row->project_code}' does not exist in the database";
+            }
+        }
+
+        // Validate property_code exists
+        if (!empty($row->property_code)) {
+            $propertyExists = Property::where('property_code', $row->property_code)->exists();
+            if (!$propertyExists) {
+                $errors[] = "Property code '{$row->property_code}' does not exist in the database";
+            }
+        }
+
         // Validate owner if provided
         if (!empty($row->owner_name)) {
             $ownerExists = Owner::where('name', $row->owner_name)->exists();

@@ -87,7 +87,11 @@ class StagingPropertyController extends Controller
         $row = StagingProperty::findOrFail($rowId);
         $this->authorize('importRow', $row);
 
+
+
         $errors = $this->validator->validate($row);
+                        // dd($errors);
+
 
         if (count($errors) > 0) {
             $row->update([

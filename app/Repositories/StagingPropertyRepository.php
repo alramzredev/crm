@@ -88,10 +88,10 @@ class StagingPropertyRepository
             ['name' => $row->property_type_name]
         );
 
-        // Find or create property class
-        $propertyClass = PropertyClass::firstOrCreate(
-            ['name' => $row->property_class_name]
-        );
+        // // Find or create property class
+        // $propertyClass = PropertyClass::firstOrCreate(
+        //     ['name' => $row->property_class_name]
+        // );
 
         // Find or create property status
         $propertyStatus = PropertyStatus::firstOrCreate(
@@ -106,7 +106,7 @@ class StagingPropertyRepository
             'owner_id' => $owner->id,
             'city_id' => $city->id,
             'property_type_id' => $propertyType->id,
-            'property_class_id' => $propertyClass->id,
+            // 'property_class_id' => $propertyClass->id,
             'status_id' => $propertyStatus->id,
             'diagram_number' => $row->diagram_number,
             'instrument_no' => $row->instrument_no,

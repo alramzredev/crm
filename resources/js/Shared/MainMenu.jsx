@@ -33,7 +33,7 @@ export default ({ className }) => {
         {/* Projects Section */}
       {can('projects.import') && (
         <div className="mb-4">
-          <MainMenuItem text="Import Batches" link="import-batches" icon="office" />
+          <MainMenuItem text="Import Batches" link="import-batches" icon="import-batch" />
         </div>
       )}
 
