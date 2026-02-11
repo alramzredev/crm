@@ -17,7 +17,7 @@ const ImportProperties = () => {
   }
 
   function downloadSample() {
-    window.location.href = route('imports.sample', { type: 'properties' });
+    window.location.href = route('imports.template', { type: 'properties_template' });
   }
 
   return (

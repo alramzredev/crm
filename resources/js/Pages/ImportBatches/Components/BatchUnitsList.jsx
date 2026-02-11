@@ -56,12 +56,14 @@ const BatchUnitsList = ({ data = [] }) => {
                 {row.error_message || '—'}
               </td>
               <td className="px-4 py-3 text-center space-x-2">
-                <button
-                  onClick={() => handleRevalidate(row.id)}
-                  className="text-blue-600 hover:text-blue-800 text-xs font-medium"
-                >
-                  Revalidate
-                </button>
+                {row.import_status !== 'imported' && (
+                  <button
+                    onClick={() => handleRevalidate(row.id)}
+                    className="text-blue-600 hover:text-blue-800 text-xs font-medium"
+                  >
+                    Revalidate
+                  </button>
+                )}
                 {row.import_status === 'valid' && (
                   <button
                     onClick={() => handleImport(row.id)}
@@ -69,6 +71,9 @@ const BatchUnitsList = ({ data = [] }) => {
                   >
                     Import
                   </button>
+                )}
+                {row.import_status === 'imported' && (
+                  <span className="text-green-700 text-xs font-medium">✓ Imported</span>
                 )}
               </td>
             </tr>

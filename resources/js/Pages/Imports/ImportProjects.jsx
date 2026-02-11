@@ -17,7 +17,7 @@ const ImportProjects = () => {
   }
 
   function downloadSample() {
-    window.location.href = route('imports.sample', { type: 'projects' });
+    window.location.href = route('imports.template', { type: 'projects_template' });
   }
 
   return (

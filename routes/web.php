@@ -175,7 +175,7 @@ Route::middleware('auth')->group(function () {
     Route::get('imports/projects')->name('imports.projects')->uses('ImportsController@projectsForm');
     Route::get('imports/properties')->name('imports.properties')->uses('ImportsController@propertiesForm');
     Route::get('imports/units')->name('imports.units')->uses('ImportsController@unitsForm');
-    Route::get('imports/sample')->name('imports.sample')->uses('ImportsController@sample');
+    Route::get('imports/template')->name('imports.template')->uses('ImportsController@template');
 });
 
 // 500 error

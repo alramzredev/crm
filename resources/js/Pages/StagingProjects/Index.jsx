@@ -46,13 +46,18 @@ const Index = () => {
                 <td className="px-6 py-4">{row.import_status}</td>
                 <td className="px-6 py-4 text-red-600">{row.error_message || '—'}</td>
                 <td className="px-6 py-4 space-x-2">
-                  <button onClick={() => revalidateRow(row.id)} className="text-blue-600 hover:text-blue-800">
-                    Revalidate
-                  </button>
+                  {row.import_status !== 'imported' && (
+                    <button onClick={() => revalidateRow(row.id)} className="text-blue-600 hover:text-blue-800">
+                      Revalidate
+                    </button>
+                  )}
                   {row.import_status === 'valid' && (
                     <button onClick={() => importRow(row.id)} className="text-green-600 hover:text-green-800">
                       Import
                     </button>
+                  )}
+                  {row.import_status === 'imported' && (
+                    <span className="text-green-700 font-medium">✓ Imported</span>
                   )}
                 </td>
               </tr>

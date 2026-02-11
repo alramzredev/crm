@@ -102,7 +102,7 @@ class StagingProjectRepository
         );
 
         // Create project
-        Project::create([
+        $project = Project::create([
             'project_code' => $row->project_code,
             'name' => $row->name,
             'owner_id' => $owner->id,
@@ -121,6 +121,12 @@ class StagingProjectRepository
             'warranty' => $row->warranty,
             'created_by' => auth()->id(),
             'updated_by' => auth()->id(),
+        ]);
+
+        // mark staging row as imported
+        $row->update([
+            'import_status' => 'imported',
+            'error_message' => null,
         ]);
     }
 }

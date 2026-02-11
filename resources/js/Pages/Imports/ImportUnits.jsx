@@ -17,7 +17,7 @@ const ImportUnits = () => {
   }
 
   function downloadSample() {
-    window.location.href = route('imports.sample', { type: 'units' });
+    window.location.href = route('imports.template', { type: 'units_template' });
   }
 
   return (

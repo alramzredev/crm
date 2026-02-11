@@ -79,7 +79,7 @@ class ProjectRepository
                 ->when(Request::get('trashed'), fn ($q, $trashed) =>
                     $trashed === 'with' ? $q->withTrashed() : ($trashed === 'only' ? $q->onlyTrashed() : $q)
                 )
-                ->orderBy('name')
+                ->orderBy('created_at', 'desc')
                 ->paginate()
                 ->appends(Request::all())
         );

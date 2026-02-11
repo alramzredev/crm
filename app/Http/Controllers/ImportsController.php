@@ -29,14 +29,14 @@ class ImportsController extends Controller
         return Inertia::render('Imports/ImportUnits');
     }
 
-    public function sample(Request $request): BinaryFileResponse
+    public function template(Request $request): BinaryFileResponse
     {
-        $type = $request->get('type', 'projects');
-        $fileName = "sample_{$type}.xlsx";
-        $filePath = storage_path("samples/{$fileName}");
+        $type = $request->get('type', 'projects_template');
+        $fileName = "{$type}.xlsx";
+        $filePath = storage_path("templates/{$fileName}");
 
         if (!file_exists($filePath)) {
-            abort(404, "Sample file not found for type: {$type}");
+            abort(404, "Template file not found for type: {$type}");
         }
 
         return response()->download($filePath, $fileName);

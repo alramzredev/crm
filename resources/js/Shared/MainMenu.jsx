@@ -29,8 +29,17 @@ export default ({ className }) => {
         </div>
       )}
 
-      {/* Data Imports */}
+
+        {/* Projects Section */}
       {can('projects.import') && (
+        <div className="mb-4">
+          <MainMenuItem text="Import Batches" link="import-batches" icon="office" />
+        </div>
+      )}
+
+      {/* Data Imports */}
+  
+      {/* {can('projects.import') && (
         <div className="mb-4">
           <div className="px-4 py-2 text-xs uppercase tracking-wide text-indigo-200">
             Data Imports
@@ -61,7 +70,8 @@ export default ({ className }) => {
             Staging Units
           </Link>
         </div>
-      )}
+      )} */}
+
 
       {/* Properties */}
       {/* {can('properties.view') && (

@@ -86,7 +86,7 @@ class StagingUnitRepository
         }
 
         // Create unit with all features
-        Unit::create([
+        $created = Unit::create([
             'unit_code' => $row->unit_code,
             'unit_external_id' => $row->unit_external_id,
             'project_id' => $project->id,
@@ -154,6 +154,12 @@ class StagingUnitRepository
             'water_meter_no' => $row->water_meter_no,
             'created_by' => auth()->id(),
             'modified_by' => auth()->id(),
+        ]);
+
+        // mark staging row as imported
+        $row->update([
+            'import_status' => 'imported',
+            'error_message' => null,
         ]);
     }
 }
