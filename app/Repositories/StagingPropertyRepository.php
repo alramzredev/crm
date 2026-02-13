@@ -66,6 +66,20 @@ class StagingPropertyRepository
             throw new \Exception("Property with code '{$row->property_code}' already exists in the system");
         }
 
+        // Validate required fields
+        if (!$row->owner_name) {
+            throw new \Exception("Owner name is required");
+        }
+        if (!$row->city_name) {
+            throw new \Exception("City name is required");
+        }
+        if (!$row->property_type_name) {
+            throw new \Exception("Property type name is required");
+        }
+        if (!$row->status_name) {
+            throw new \Exception("Status name is required");
+        }
+
         // Find project by code
         $project = Project::where('project_code', $row->project_code)->first();
         if (!$project) {
@@ -88,10 +102,14 @@ class StagingPropertyRepository
             ['name' => $row->property_type_name]
         );
 
-        // // Find or create property class
-        // $propertyClass = PropertyClass::firstOrCreate(
-        //     ['name' => $row->property_class_name]
-        // );
+        // Find or create property class
+        if ($row->property_class_name) {
+             $propertyClass = PropertyClass::firstOrCreate(
+                ['name' => $row->property_class_name]
+            );
+        } else {
+            $propertyClass = null;
+        }
 
         // Find or create property status
         $propertyStatus = PropertyStatus::firstOrCreate(
@@ -106,7 +124,7 @@ class StagingPropertyRepository
             'owner_id' => $owner->id,
             'city_id' => $city->id,
             'property_type_id' => $propertyType->id,
-            // 'property_class_id' => $propertyClass->id,
+            'property_class_id' => $propertyClass ? $propertyClass->id : null,
             'status_id' => $propertyStatus->id,
             'diagram_number' => $row->diagram_number,
             'instrument_no' => $row->instrument_no,
