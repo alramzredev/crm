@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ReservationStoreRequest;
 use App\Http\Requests\ReservationUpdateRequest;
 use App\Http\Requests\ReservationApprovalRequest;
-use App\Http\Requests\ReservationRejectRequest;
 use App\Services\ReservationApprovalService;
 
 class ReservationController extends Controller
@@ -81,6 +80,11 @@ class ReservationController extends Controller
         
         $reservation = $this->repo->createReservation($validated, $leadData, $request);
 
+        // Update unit status to Reserved (status_id = 2)
+        if ($reservation->unit) {
+            $reservation->unit->update(['status_id' => 2]);
+        }
+
         return Redirect::route('reservations.edit', $reservation->id)
             ->with('success', 'Reservation created.');
  
@@ -134,7 +138,7 @@ class ReservationController extends Controller
         }
     }
 
-    public function rejectReservation(Reservation $reservation, ReservationRejectRequest $request)
+    public function rejectReservation(Reservation $reservation, ReservationApprovalRequest $request)
     {
         $this->authorize('approve', $reservation);
 
@@ -147,6 +151,12 @@ class ReservationController extends Controller
                 $validated['cancel_reason_id'],
                 $validated['notes'] ?? null
             );
+
+            // Update unit status back to Available (status_id = 1)
+            if ($reservation->unit) {
+                $reservation->unit->update(['status_id' => 1]);
+            }
+
             return Redirect::back()->with('success', 'Reservation rejected successfully.');
         } catch (\Exception $e) {
             return Redirect::back()->with('error', $e->getMessage());
