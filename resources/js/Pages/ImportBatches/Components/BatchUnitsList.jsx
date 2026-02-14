@@ -15,7 +15,12 @@ const StatusPill = ({ status }) => {
   );
 };
 
-const BatchUnitsList = ({ data = [] }) => {
+const BatchUnitsList = ({ 
+  data = [], 
+  selectedRows = [],
+  onSelectAll,
+  onSelectRow
+}) => {
   function handleRevalidate(rowId) {
     router.post(route('staging-units.revalidate', rowId), {}, { preserveScroll: true });
   }
@@ -26,11 +31,21 @@ const BatchUnitsList = ({ data = [] }) => {
     }
   }
 
+  const allSelected = data.length > 0 && selectedRows.length === data.length;
+
   return (
     <div className="overflow-x-auto bg-white rounded shadow">
       <table className="w-full whitespace-nowrap text-sm">
         <thead>
           <tr className="font-bold text-left bg-gray-50 border-b">
+            <th className="px-4 py-3 w-12">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={onSelectAll}
+                className="rounded"
+              />
+            </th>
             <th className="px-4 py-3">Row</th>
             <th className="px-4 py-3">Unit Code</th>
             <th className="px-4 py-3">Property</th>
@@ -43,7 +58,15 @@ const BatchUnitsList = ({ data = [] }) => {
         </thead>
         <tbody>
           {data.map(row => (
-            <tr key={row.id} className="border-t hover:bg-gray-50">
+            <tr key={row.id} className={`border-t hover:bg-gray-50 ${selectedRows.includes(row.id) ? 'bg-indigo-50' : ''}`}>
+              <td className="px-4 py-3 w-12">
+                <input
+                  type="checkbox"
+                  checked={selectedRows.includes(row.id)}
+                  onChange={(e) => onSelectRow(row.id, e)}
+                  className="rounded"
+                />
+              </td>
               <td className="px-4 py-3 text-gray-600">{row.row_number}</td>
               <td className="px-4 py-3 font-mono">{row.unit_code || '—'}</td>
               <td className="px-4 py-3">{row.property_code || '—'}</td>

@@ -108,6 +108,8 @@ Route::middleware('auth')->group(function () {
     Route::get('reservations/{reservation}')->uses('ReservationController@show')->name('reservations.show');
     Route::get('reservations/{reservation}/edit')->uses('ReservationController@edit')->name('reservations.edit');
     Route::put('reservations/{reservation}')->uses('ReservationController@update')->name('reservations.update');
+    Route::post('reservations/{reservation}/approve')->uses('ReservationController@approveReservation')->name('reservations.approve');
+    Route::post('reservations/{reservation}/reject')->uses('ReservationController@rejectReservation')->name('reservations.reject');
     
     // Payments
     Route::post('reservations/{reservation}/payments')->uses('PaymentController@store')->name('payments.store');
@@ -167,6 +169,12 @@ Route::middleware('auth')->group(function () {
     Route::get('import-batches')->name('import-batches')->uses('ImportBatchController@index');
     Route::get('import-batches/{batchId}')->name('import-batches.show')->uses('ImportBatchController@show');
     Route::post('import-batches/{batchId}/retry')->name('import-batches.retry')->uses('ImportBatchController@retry');
+    Route::post('import-batches/{batchId}/bulk-validate')->name('import-batches.bulk-validate')->uses('ImportBatchController@bulkValidate');
+    Route::post('import-batches/{batchId}/bulk-import')->name('import-batches.bulk-import')->uses('ImportBatchController@bulkImport');
+    Route::post('import-batches/{batchId}/bulk-validate-rows')->name('import-batches.bulk-validate-rows')->uses('ImportBatchController@bulkValidateRows');
+    Route::post('import-batches/{batchId}/bulk-import-rows')->name('import-batches.bulk-import-rows')->uses('ImportBatchController@bulkImportRows');
+    Route::post('import-batches/{batchId}/retry-failed')->name('import-batches.retry-failed')->uses('ImportBatchController@retryFailedImports');
+    Route::post('import-batches/{batchId}/clear-errors')->name('import-batches.clear-errors')->uses('ImportBatchController@clearErrors');
     Route::delete('import-batches/{batchId}')->name('import-batches.destroy')->uses('ImportBatchController@destroy');
 });
 

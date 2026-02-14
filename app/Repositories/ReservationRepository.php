@@ -130,14 +130,14 @@ class ReservationRepository
     public function getShowData(Reservation $reservation): ReservationResource
     {
         return new ReservationResource(
-            $reservation->load(['lead', 'unit', 'customer', 'payments.receipts'])
+            $reservation->load(['lead', 'unit', 'customer', 'payments.receipts', 'cancelReason'])
         );
     }
 
     public function getEditData(Reservation $reservation): ReservationResource
     {
         return new ReservationResource(
-            $reservation->load(['lead', 'unit', 'customer', 'payments.receipts'])
+            $reservation->load(['lead', 'unit', 'customer', 'payments.receipts', 'cancelReason'])
         );
     }
 }

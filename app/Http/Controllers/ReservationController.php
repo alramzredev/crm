@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\Project;
 use App\Models\Property;
 use App\Models\Unit;
+use App\Models\ReservationCancelReason;
 use App\Repositories\ReservationRepository;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,9 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ReservationStoreRequest;
 use App\Http\Requests\ReservationUpdateRequest;
+use App\Http\Requests\ReservationApprovalRequest;
+use App\Http\Requests\ReservationRejectRequest;
+use App\Services\ReservationApprovalService;
 
 class ReservationController extends Controller
 {
@@ -86,8 +90,14 @@ class ReservationController extends Controller
     public function show(Reservation $reservation)
     {
         $this->authorize('view', $reservation);
+        
+        $approvalService = new ReservationApprovalService();
+        $canApprove = $approvalService->canApproveReservation($reservation);
+        
         return Inertia::render('Reservations/Show', [
             'reservation' => $this->repo->getShowData($reservation),
+            'cancelReasons' => \App\Models\ReservationCancelReason::active()->ordered()->get(),
+            'canApprove' => $canApprove,
         ]);
     }
 
@@ -107,5 +117,39 @@ class ReservationController extends Controller
         $reservation->update($request->validated());
 
         return Redirect::back()->with('success', 'Reservation updated.');
+    }
+
+    public function approveReservation(Reservation $reservation, ReservationApprovalRequest $request)
+    {
+        $this->authorize('approve', $reservation);
+
+        $service = new ReservationApprovalService();
+        $validated = $request->validated();
+
+        try {
+            $service->confirmReservation($reservation, $validated['notes'] ?? null);
+            return Redirect::back()->with('success', 'Reservation approved successfully.');
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function rejectReservation(Reservation $reservation, ReservationRejectRequest $request)
+    {
+        $this->authorize('approve', $reservation);
+
+        $service = new ReservationApprovalService();
+        $validated = $request->validated();
+
+        try {
+            $service->rejectReservation(
+                $reservation,
+                $validated['cancel_reason_id'],
+                $validated['notes'] ?? null
+            );
+            return Redirect::back()->with('success', 'Reservation rejected successfully.');
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error', $e->getMessage());
+        }
     }
 }

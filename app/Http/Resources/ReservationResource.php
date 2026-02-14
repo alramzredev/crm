@@ -26,6 +26,8 @@ class ReservationResource extends JsonResource
             'terms_accepted' => $this->terms_accepted,
             'privacy_accepted' => $this->privacy_accepted,
             'notes' => $this->notes,
+            'cancel_reason_id' => $this->cancel_reason_id,
+            'cancel_reason' => $this->whenLoaded('cancelReason'),
             'lead' => new LeadResource($this->whenLoaded('lead')),
             'unit' => new UnitResource($this->whenLoaded('unit')),
             'customer' => new CustomerResource($this->whenLoaded('customer')),

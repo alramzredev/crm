@@ -41,4 +41,20 @@ class ReservationPolicy
     {
         return $user->hasPermissionTo('reservations.delete');
     }
+
+    public function approve(User $user, Reservation $reservation)
+    {
+        // Super admin can always approve
+        if ($user->hasRole('super_admin') || $user->hasRole('superadmin')) {
+            return true;
+        }
+
+        // Sales supervisor can approve reservations from their team
+        if ($user->hasRole('sales_supervisor')) {
+            $creator = $reservation->creator;
+            return $creator && $user->id === $creator->supervisor_id;
+        }
+
+        return false;
+    }
 }

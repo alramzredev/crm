@@ -1,10 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import PaymentsTable from './Components/PaymentsTable';
+import StatusPill from './Components/StatusPill';
+import ApprovalModal from './Components/ApprovalModal';
 
 const Show = () => {
-  const { reservation } = usePage().props;
+  const { reservation, cancelReasons = [], canApprove = false } = usePage().props;
+  const [showApprovalModal, setShowApprovalModal] = useState(false);
+  const [approvalAction, setApprovalAction] = useState('confirm');
+  const [selectedReason, setSelectedReason] = useState('');
+  const [approvalNotes, setApprovalNotes] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleModalClose = () => {
+    setShowApprovalModal(false);
+    setApprovalNotes('');
+    setSelectedReason('');
+    setApprovalAction('confirm');
+  };
+
+  const isApprovalAllowed = canApprove && reservation.status === 'active';
 
   return (
     <div>
@@ -18,7 +34,23 @@ const Show = () => {
 
       <div className="max-w-3xl bg-white rounded shadow mb-8">
         <div className="p-8 space-y-4">
-          <div><strong>Status:</strong> {reservation.status || '—'}</div>
+          <div className="flex items-center justify-between">
+            <div>
+              <strong>Status:</strong>
+              <div className="mt-2">
+                <StatusPill status={reservation.status} />
+              </div>
+            </div>
+            {isApprovalAllowed && (
+              <button
+                onClick={() => setShowApprovalModal(true)}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm"
+              >
+                Approve/Reject
+              </button>
+            )}
+          </div>
+
           <div><strong>Started At:</strong> {reservation.started_at ? new Date(reservation.started_at).toLocaleString() : '—'}</div>
           <div><strong>Expires At:</strong> {reservation.expires_at ? new Date(reservation.expires_at).toLocaleString() : '—'}</div>
           <div><strong>Lead:</strong> {reservation.lead ? `${reservation.lead.first_name} ${reservation.lead.last_name}` : '—'}</div>
@@ -44,6 +76,21 @@ const Show = () => {
           readOnly={true}
         />
       </div>
+
+      {/* Approval Modal */}
+      <ApprovalModal
+        isOpen={showApprovalModal}
+        onClose={handleModalClose}
+        reservation={reservation}
+        cancelReasons={cancelReasons}
+        approvalAction={approvalAction}
+        setApprovalAction={setApprovalAction}
+        selectedReason={selectedReason}
+        setSelectedReason={setSelectedReason}
+        approvalNotes={approvalNotes}
+        setApprovalNotes={setApprovalNotes}
+        isSubmitting={isSubmitting}
+      />
     </div>
   );
 };

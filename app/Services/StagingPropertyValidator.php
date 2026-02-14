@@ -7,6 +7,8 @@ use App\Models\Property;
 use App\Models\Owner;
 use App\Models\Project;
 use App\Models\PropertyStatus;
+use App\Models\PropertyType;
+use App\Models\PropertyClass;
 
 class StagingPropertyValidator
 {
@@ -41,6 +43,22 @@ class StagingPropertyValidator
 
         if (empty($row->city_name)) {
             $errors[] = 'City name is required';
+        }
+
+        // Property type name validation
+        if (!empty($row->property_type_name)) {
+            $typeExists = PropertyType::where('name', $row->property_type_name)->exists();
+            if (!$typeExists) {
+                $errors[] = "Property type '{$row->property_type_name}' does not exist in the database";
+            }
+        }
+
+        // Property class name validation
+        if (!empty($row->property_class_name)) {
+            $classExists = PropertyClass::where('name', $row->property_class_name)->exists();
+            if (!$classExists) {
+                $errors[] = "Property class '{$row->property_class_name}' does not exist in the database";
+            }
         }
 
         if (empty($row->status_name)) {
