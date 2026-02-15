@@ -1,17 +1,29 @@
 import React, { useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import PaymentsTable from './Components/PaymentsTable';
+import DiscountRequestsTable from './Components/DiscountRequestsTable';
+import DiscountRequestModal from './Components/DiscountRequestModal';
+import PaymentFormModal from './Components/PaymentFormModal';
 import StatusPill from './Components/StatusPill';
 import ApprovalModal from './Components/ApprovalModal';
 
 const Show = () => {
-  const { reservation, cancelReasons = [], canApprove = false } = usePage().props;
+  const { reservation, cancelReasons = [], canApprove = false, auth, discountRequests = [] } = usePage().props;
   const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [approvalAction, setApprovalAction] = useState('confirm');
   const [selectedReason, setSelectedReason] = useState('');
   const [approvalNotes, setApprovalNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+
+  // Discount Request Modal State
+  const [showDiscountModal, setShowDiscountModal] = useState(false);
+  const [requestedPrice, setRequestedPrice] = useState('');
+  const [discountReason, setDiscountReason] = useState('');
+  const [discountSubmitting, setDiscountSubmitting] = useState(false);
 
   const handleModalClose = () => {
     setShowApprovalModal(false);
@@ -21,6 +33,65 @@ const Show = () => {
   };
 
   const isApprovalAllowed = canApprove && reservation.status === 'active';
+
+  // Sales employee can add payments to their own active reservations
+  const canAddPayment =
+    auth?.roles?.includes('sales_employee')
+      ? reservation.created_by === auth.user?.id && reservation.status === 'active'
+      : (auth.user?.permissions?.includes('payments.create') || false);
+
+  const can = (permission) => {
+    return auth.user?.permissions?.includes(permission) || false;
+  };
+
+  // Can request discount based on permissions
+  const canRequestDiscount = can('discount-requests.create');
+
+  // Can approve/reject discount requests based on permissions
+  const canApproveDiscount = can('discount-requests.approve') || can('discount-requests.reject');
+
+  const canEditPayment = can('payments.edit');
+  const canDeletePayment = can('payments.delete');
+  const canManagePayments = canAddPayment || canEditPayment || canDeletePayment;
+ 
+  // Submit Discount Request
+  const handleDiscountSubmit = (e) => {
+    e.preventDefault();
+    setDiscountSubmitting(true);
+    router.post(
+      route('reservations.discount-requests.store', reservation.id),
+      {
+        requested_price: requestedPrice,
+        reason: discountReason,
+      },
+      {
+        onSuccess: () => {
+          setShowDiscountModal(false);
+          setRequestedPrice('');
+          setDiscountReason('');
+        },
+        onFinish: () => setDiscountSubmitting(false),
+      }
+    );
+  };
+
+  const handleEditPayment = (payment) => {
+    if (!canEditPayment) return;
+    setSelectedPayment(payment);
+    setShowPaymentModal(true);
+  };
+
+  const handleDeletePayment = (paymentId) => {
+    if (!canDeletePayment) return;
+    if (confirm('Are you sure you want to delete this payment?')) {
+      router.delete(route('payments.destroy', paymentId));
+    }
+  };
+
+  const handlePaymentModalClose = () => {
+    setShowPaymentModal(false);
+    setSelectedPayment(null);
+  };
 
   return (
     <div>
@@ -65,17 +136,67 @@ const Show = () => {
       </div>
 
       {/* Payments Section */}
-      <div className="bg-white rounded shadow overflow-hidden">
+      <div className="bg-white rounded shadow overflow-hidden mb-8">
         <div className="px-8 py-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">Payment History</h2>
         </div>
         <PaymentsTable
           payments={reservation.payments || []}
-          onEdit={() => {}}
-          onDelete={() => {}}
-          readOnly={true}
+          onEdit={handleEditPayment}
+          onDelete={handleDeletePayment}
+          readOnly={!canManagePayments}
         />
+        {canAddPayment && (
+          <div className="px-8 py-4 bg-gray-50 border-t">
+            <button
+              onClick={() => setShowPaymentModal(true)}
+              className="inline-block px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm"
+            >
+              Record Payment
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Discount Requests Section */}
+      <div className="bg-white rounded shadow overflow-hidden mb-8">
+        <div className="px-8 py-6 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">Discount Requests</h2>
+        </div>
+        <DiscountRequestsTable
+          discountRequests={discountRequests}
+          canApprove={canApproveDiscount}
+        />
+        {canRequestDiscount && (
+          <div className="px-8 py-4 bg-gray-50 border-t">
+            <button
+              className="inline-block px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-medium text-sm"
+              onClick={() => setShowDiscountModal(true)}
+            >
+              Request Discount
+            </button>
+          </div>
+        )}
+      </div>
+
+      <DiscountRequestModal
+        isOpen={showDiscountModal}
+        reservation={reservation}
+        requestedPrice={requestedPrice}
+        setRequestedPrice={setRequestedPrice}
+        discountReason={discountReason}
+        setDiscountReason={setDiscountReason}
+        discountSubmitting={discountSubmitting}
+        onSubmit={handleDiscountSubmit}
+        onClose={() => setShowDiscountModal(false)}
+      />
+
+      <PaymentFormModal
+        isOpen={showPaymentModal}
+        payment={selectedPayment}
+        reservationId={reservation.id}
+        onClose={handlePaymentModalClose}
+      />
 
       {/* Approval Modal */}
       <ApprovalModal

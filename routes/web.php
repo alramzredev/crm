@@ -5,6 +5,7 @@ use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use App\Http\Controllers\PropertiesController;
+use App\Http\Controllers\ReservationDiscountRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -115,6 +116,9 @@ Route::middleware('auth')->group(function () {
     Route::post('reservations/{reservation}/payments')->uses('PaymentController@store')->name('payments.store');
     Route::post('payments/{payment}')->uses('PaymentController@update')->name('payments.update');
     Route::delete('payments/{payment}')->uses('PaymentController@destroy')->name('payments.destroy');
+
+    // Discount requests for specific reservations
+    Route::post('reservations/{reservation}/discount-requests')->uses('ReservationDiscountRequestController@store')->name('reservations.discount-requests.store');
 });
 
 // Reports
@@ -189,4 +193,18 @@ Route::middleware('auth')->group(function () {
 // 500 error
 Route::get('500', function () {
     //
+});
+
+// Reservation Discount Requests
+Route::middleware('auth')->group(function () {
+    Route::get('discount-requests')->name('discount-requests')->uses('ReservationDiscountRequestController@index');
+    Route::get('discount-requests/create')->name('discount-requests.create')->uses('ReservationDiscountRequestController@create');
+    Route::post('discount-requests')->name('discount-requests.store')->uses('ReservationDiscountRequestController@store');
+    Route::get('discount-requests/{discountRequest}')->name('discount-requests.show')->uses('ReservationDiscountRequestController@show');
+    Route::get('discount-requests/{discountRequest}/edit')->name('discount-requests.edit')->uses('ReservationDiscountRequestController@edit');
+    Route::put('discount-requests/{discountRequest}')->name('discount-requests.update')->uses('ReservationDiscountRequestController@update');
+    Route::delete('discount-requests/{discountRequest}')->name('discount-requests.destroy')->uses('ReservationDiscountRequestController@destroy');
+    Route::put('discount-requests/{discountRequest}/restore')->name('discount-requests.restore')->uses('ReservationDiscountRequestController@restore');
+    Route::post('discount-requests/{discountRequest}/approve')->name('discount-requests.approve')->uses('ReservationDiscountRequestController@approve');
+    Route::post('discount-requests/{discountRequest}/reject')->name('discount-requests.reject')->uses('ReservationDiscountRequestController@reject');
 });

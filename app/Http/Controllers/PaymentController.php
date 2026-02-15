@@ -20,7 +20,7 @@ class PaymentController extends Controller
 
     public function store(PaymentStoreRequest $request, Reservation $reservation)
     {
-         $this->authorize('create', Payment::class);
+        $this->authorize('addPayment', $reservation);
 
         $validated = $request->validated();
         $files = $request->file('payment_receipts', []);

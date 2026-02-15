@@ -88,6 +88,13 @@ class PermissionSeeder extends Seeder
                 'payments.delete',
             ],
 
+            'Discount Requests' => [
+                'discount-requests.view',
+                'discount-requests.create',
+                'discount-requests.approve',
+                'discount-requests.reject',
+            ],
+
             'Reports' => [
                 'reports.view',
                 'reports.export',
@@ -248,6 +255,10 @@ class PermissionSeeder extends Seeder
             'payments.create',
             'payments.edit',
             'payments.delete',
+            'discount-requests.view',
+            'discount-requests.create',
+            'discount-requests.approve',
+            'discount-requests.reject',
             'reports.view',
             'reports.export',
             'projects.view',
@@ -265,8 +276,10 @@ class PermissionSeeder extends Seeder
             'leads.edit',
             'reservations.view',
             'reservations.create',
+            'reservations.edit',
             'payments.view',
             'payments.create',
+            'discount-requests.create',
             'projects.view',
             'properties.view',
             'units.view',

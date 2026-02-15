@@ -24,7 +24,7 @@ class EmployeeController extends Controller
     public function index()
     {
         $user = Auth::user();
-
+ 
         // Only sales supervisors can access this
         if (!$user->hasRole('sales_supervisor')) {
             return Redirect::back()->with('error', 'Unauthorized access.');

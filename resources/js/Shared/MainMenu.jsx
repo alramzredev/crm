@@ -12,6 +12,8 @@ export default ({ className }) => {
     return auth.user?.permissions?.includes(permission) || false;
   };
 
+  console.log(auth.user?.permissions);
+
   const hasRole = (role) => {
     return auth.user?.roles?.some(r => r.name === role) || false;
   };
@@ -116,7 +118,7 @@ export default ({ className }) => {
       )}
 
       {/* Employees - Only for Sales Supervisor */}
-      {auth.user.roles.includes('sales_supervisor') && (
+      {auth.roles && auth.roles.includes('sales_supervisor') && (
         <div className="mb-4">
           <MainMenuItem text="Team" link="employees" icon="users" />
         </div>

@@ -5,10 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Reservation;
 use App\Models\Lead;
 use App\Models\Customer;
-use App\Models\Project;
-use App\Models\Property;
-use App\Models\Unit;
-use App\Models\ReservationCancelReason;
+  use App\Models\ReservationCancelReason;
 use App\Repositories\ReservationRepository;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -66,6 +63,7 @@ class ReservationController extends Controller
             ]
         );
 
+
         // Update customer if needed
         if ($customer->wasRecentlyCreated === false) {
             $customer->update([
@@ -76,9 +74,14 @@ class ReservationController extends Controller
             ]);
         }
 
+
         $validated['customer_id'] = $customer?->id;
+
+
         
         $reservation = $this->repo->createReservation($validated, $leadData, $request);
+
+
 
         // Update unit status to Reserved (status_id = 2)
         if ($reservation->unit) {
@@ -94,14 +97,18 @@ class ReservationController extends Controller
     public function show(Reservation $reservation)
     {
         $this->authorize('view', $reservation);
-        
+
         $approvalService = new ReservationApprovalService();
         $canApprove = $approvalService->canApproveReservation($reservation);
-        
+
+        // Fetch discount requests for this reservation
+        $discountRequests = $reservation->discountRequests()->with('requester')->orderByDesc('created_at')->get();
+
         return Inertia::render('Reservations/Show', [
             'reservation' => $this->repo->getShowData($reservation),
-            'cancelReasons' => \App\Models\ReservationCancelReason::active()->ordered()->get(),
+            'cancelReasons' => ReservationCancelReason::active()->ordered()->get(),
             'canApprove' => $canApprove,
+            'discountRequests' => $discountRequests,
         ]);
     }
 

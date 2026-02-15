@@ -118,6 +118,11 @@ class Reservation extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function discountRequests()
+    {
+        return $this->hasMany(ReservationDiscountRequest::class);
+    }
+
     public function scopeFilterByUserRole($query, User $user)
     {
         // Super Admin: No restrictions

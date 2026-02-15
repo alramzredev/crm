@@ -1,16 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import LoadingButton from '@/Shared/LoadingButton';
 import SelectInput from '@/Shared/SelectInput';
 import TextInput from '@/Shared/TextInput';
-import PaymentsTable from './Components/PaymentsTable';
-import PaymentFormModal from './Components/PaymentFormModal';
 
 const Edit = () => {
   const { reservation } = usePage().props;
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState(null);
 
   const { data, setData, errors, put, processing } = useForm({
     status: reservation.status || '',
@@ -27,26 +23,6 @@ const Edit = () => {
     e.preventDefault();
     put(route('reservations.update', reservation.id));
   }
-
-  const handleEditPayment = (payment) => {
-    setSelectedPayment(payment);
-    setShowPaymentModal(true);
-  };
-
-  const handleDeletePayment = (paymentId) => {
-    if (confirm('Are you sure you want to delete this payment?')) {
-      // Delete via Inertia
-      const link = document.createElement('a');
-      link.href = route('payments.destroy', paymentId);
-      link.method = 'DELETE';
-      link.click();
-    }
-  };
-
-  const handlePaymentModalClose = () => {
-    setShowPaymentModal(false);
-    setSelectedPayment(null);
-  };
 
   return (
     <div>
@@ -155,30 +131,6 @@ const Edit = () => {
         </form>
       </div>
 
-      {/* Payments Section */}
-      <div className="bg-white rounded shadow overflow-hidden">
-        <div className="px-8 py-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Payments</h2>
-          <button
-            onClick={() => setShowPaymentModal(true)}
-            className="btn-indigo"
-          >
-            Record Payment
-          </button>
-        </div>
-        <PaymentsTable
-          payments={reservation.payments || []}
-          onEdit={handleEditPayment}
-          onDelete={handleDeletePayment}
-        />
-      </div>
-
-      <PaymentFormModal
-        isOpen={showPaymentModal}
-        payment={selectedPayment}
-        reservationId={reservation.id}
-        onClose={handlePaymentModalClose}
-      />
     </div>
   );
 };

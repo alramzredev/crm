@@ -12,6 +12,12 @@ const Index = () => {
     return auth.user?.permissions?.includes(permission) || false;
   };
 
+  const canEdit = (reservation) => {
+    return can('reservations.edit')
+      && reservation?.created_by === auth.user?.id
+      && reservation?.status === 'active';
+  };
+
   const reservationStatuses = [
     { value: 'draft', label: 'Draft' },
     { value: 'active', label: 'Active' },
@@ -55,7 +61,7 @@ const Index = () => {
                   {r.expires_at ? new Date(r.expires_at).toLocaleDateString() : '—'}
                 </td>
                 <td className="border-t px-6 py-4 space-x-3">
-                  {can('reservations.edit') && (
+                  {(can('reservations.edit') || canEdit(r)) && (
                     <Link href={route('reservations.edit', r.id)} className="text-indigo-600 hover:text-indigo-800">
                       Edit
                     </Link>
