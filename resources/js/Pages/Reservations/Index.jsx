@@ -3,6 +3,7 @@ import { Link, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import StatusFilter from '@/Shared/StatusFilter';
 import Pagination from '@/Shared/Pagination';
+import StatusPill from './Components/StatusPill';
 
 const Index = () => {
   const { reservations, auth } = usePage().props;
@@ -56,7 +57,9 @@ const Index = () => {
                   {r.lead ? `${r.lead.first_name} ${r.lead.last_name}` : '—'}
                 </td>
                 <td className="border-t px-6 py-4">{r.unit?.unit_code || '—'}</td>
-                <td className="border-t px-6 py-4">{r.status || '—'}</td>
+                <td className="border-t px-6 py-4">
+                  <StatusPill status={r.status} />
+                </td>
                 <td className="border-t px-6 py-4">
                   {r.expires_at ? new Date(r.expires_at).toLocaleDateString() : '—'}
                 </td>

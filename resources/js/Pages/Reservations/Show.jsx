@@ -143,14 +143,6 @@ const Show = () => {
                 <StatusPill status={reservation.status} />
               </div>
             </div>
-            {isApprovalAllowed && (
-              <button
-                onClick={() => setShowApprovalModal(true)}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm"
-              >
-                Approve/Reject
-              </button>
-            )}
           </div>
 
           <div><strong>Started At:</strong> {reservation.started_at ? new Date(reservation.started_at).toLocaleString() : '—'}</div>
@@ -268,6 +260,22 @@ const Show = () => {
         setApprovalNotes={setApprovalNotes}
         isSubmitting={isSubmitting}
       />
+
+      {/* Elegant Approval Button at the bottom (not sticky) */}
+      {isApprovalAllowed && (
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={() => setShowApprovalModal(true)}
+            className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-full shadow-lg hover:from-indigo-700 hover:to-indigo-800 font-semibold text-lg transition-all duration-200 flex items-center gap-2"
+            style={{ minWidth: 200 }}
+          >
+            <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2l4-4"></path>
+            </svg>
+            Approve / Reject Reservation
+          </button>
+        </div>
+      )}
     </div>
   );
 };

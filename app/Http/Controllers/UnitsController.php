@@ -13,14 +13,15 @@ use Illuminate\Support\Facades\Redirect;
 use App\Repositories\UnitRepository;
 use App\Http\Requests\UnitStoreRequest;
 use App\Http\Requests\UnitUpdateRequest;
+use App\Services\UnitService;
 
 class UnitsController extends Controller
 {
-    protected $repo;
+     protected $service;
 
-    public function __construct()
+    public function __construct(UnitService $service)
     {
-        $this->repo = new UnitRepository();
+         $this->service = $service;
     }
 
     public function index()
@@ -29,7 +30,7 @@ class UnitsController extends Controller
         
         return Inertia::render('Units/Index', [
             'filters' => Request::all('search', 'trashed'),
-            'units' => $this->repo->getPaginatedUnits(Request::only('search', 'trashed')),
+            'units' => $this->service->getPaginatedUnits(Request::only('search', 'trashed')),
         ]);
     }
 
@@ -37,7 +38,7 @@ class UnitsController extends Controller
     {
         $this->authorize('create', Unit::class);
 
-        $createData = $this->repo->getCreateData();
+        $createData = $this->service->getCreateData();
         
         // If property_id is provided, load the property with project
         if (request('property_id')) {
@@ -71,7 +72,7 @@ class UnitsController extends Controller
     {
         $this->authorize('update', $unit);
         
-        return Inertia::render('Units/Edit', $this->repo->getEditData($unit));
+        return Inertia::render('Units/Edit', $this->service->getEditData($unit));
     }
 
     public function update(Unit $unit, UnitUpdateRequest $request)
@@ -106,7 +107,7 @@ class UnitsController extends Controller
         $this->authorize('view', $unit);
         
         return Inertia::render('Units/Show', [
-            'unit' => $this->repo->getShowResource($unit),
+            'unit' => $this->service->getShowResource($unit),
         ]);
     }
 }

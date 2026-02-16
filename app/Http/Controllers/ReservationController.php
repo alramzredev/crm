@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Reservation;
 use App\Models\Lead;
 use App\Models\Customer;
-  use App\Models\ReservationCancelReason;
+use App\Models\ReservationCancelReason;
 use App\Repositories\ReservationRepository;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -15,14 +15,17 @@ use App\Http\Requests\ReservationStoreRequest;
 use App\Http\Requests\ReservationUpdateRequest;
 use App\Http\Requests\ReservationApprovalRequest;
 use App\Services\ReservationApprovalService;
+use App\Services\ReservationService;
 
 class ReservationController extends Controller
 {
     protected $repo;
+    protected $service;
 
-    public function __construct()
+    public function __construct(ReservationRepository $repo, ReservationService $service)
     {
-        $this->repo = new ReservationRepository();
+        $this->repo = $repo;
+        $this->service = $service;
     }
 
     public function index()
@@ -30,7 +33,7 @@ class ReservationController extends Controller
         $this->authorize('viewAny', Reservation::class);
 
         return Inertia::render('Reservations/Index', [
-            'reservations' => $this->repo->getPaginatedReservations(Auth::user(), Request::only('search', 'status')),
+            'reservations' => $this->service->getPaginatedReservations(Auth::user(), Request::only('search', 'status')),
             'filters' => Request::all('search', 'status'),
         ]);
     }
@@ -39,7 +42,7 @@ class ReservationController extends Controller
     {
         $this->authorize('create', Reservation::class);
         $leadId = (int) Request::get('lead_id');
-        return Inertia::render('Reservations/CreateReservation', $this->repo->getCreateData($leadId, Auth::user()));
+        return Inertia::render('Reservations/CreateReservation', $this->service->getCreateData($leadId, Auth::user()));
     }
 
     public function store(ReservationStoreRequest $request)
@@ -63,7 +66,6 @@ class ReservationController extends Controller
             ]
         );
 
-
         // Update customer if needed
         if ($customer->wasRecentlyCreated === false) {
             $customer->update([
@@ -74,14 +76,9 @@ class ReservationController extends Controller
             ]);
         }
 
-
         $validated['customer_id'] = $customer?->id;
 
-
-        
-        $reservation = $this->repo->createReservation($validated, $leadData, $request);
-
-
+        $reservation = $this->service->createReservation($validated, $leadData, $request);
 
         // Update unit status to Reserved (status_id = 2)
         if ($reservation->unit) {
@@ -90,8 +87,6 @@ class ReservationController extends Controller
 
         return Redirect::route('reservations.edit', $reservation->id)
             ->with('success', 'Reservation created.');
- 
-        // return Redirect::route('reservations')->with('success', 'Reservation created.');
     }
 
     public function show(Reservation $reservation)
@@ -105,7 +100,7 @@ class ReservationController extends Controller
         $discountRequests = $reservation->discountRequests()->with('requester')->orderByDesc('created_at')->get();
 
         return Inertia::render('Reservations/Show', [
-            'reservation' => $this->repo->getShowData($reservation),
+            'reservation' => $this->service->getShowData($reservation),
             'cancelReasons' => ReservationCancelReason::active()->ordered()->get(),
             'canApprove' => $canApprove,
             'discountRequests' => $discountRequests,
@@ -117,7 +112,7 @@ class ReservationController extends Controller
         $this->authorize('update', $reservation);
 
         return Inertia::render('Reservations/Edit', [
-            'reservation' => $this->repo->getEditData($reservation),
+            'reservation' => $this->service->getEditData($reservation),
         ]);
     }
 
