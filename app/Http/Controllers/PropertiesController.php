@@ -6,40 +6,40 @@ use App\Models\Property;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
-use App\Repositories\PropertyRepository;
+use App\Services\PropertyService;
 use App\Http\Requests\PropertyStoreRequest;
 use App\Http\Requests\PropertyUpdateRequest;
 
 class PropertiesController extends Controller
 {
-    protected $repo;
+    protected $service;
 
-    public function __construct()
+    public function __construct(PropertyService $service)
     {
-        $this->repo = new PropertyRepository();
+        $this->service = $service;
     }
 
     public function index()
     {
         $this->authorize('viewAny', Property::class);
-        
+
         return Inertia::render('Properties/Index', [
             'filters' => Request::all('search', 'trashed'),
-            'properties' => $this->repo->getPaginatedProperties(Request::only('search', 'trashed')),
+            'properties' => $this->service->getPaginatedProperties(Request::only('search', 'trashed')),
         ]);
     }
 
     public function create()
     {
         $this->authorize('create', Property::class);
-        
-        return Inertia::render('Properties/Create', $this->repo->getCreateData());
+
+        return Inertia::render('Properties/Create', $this->service->getCreateData());
     }
 
     public function store(PropertyStoreRequest $request)
     {
         $this->authorize('create', Property::class);
-        
+
         Property::create($request->validated());
 
         return Redirect::route('properties')->with('success', 'Property created.');
@@ -48,14 +48,14 @@ class PropertiesController extends Controller
     public function edit(Property $property)
     {
         $this->authorize('update', $property);
-        
-        return Inertia::render('Properties/Edit', $this->repo->getEditData($property));
+
+        return Inertia::render('Properties/Edit', $this->service->getEditData($property));
     }
 
     public function update(Property $property, PropertyUpdateRequest $request)
     {
         $this->authorize('update', $property);
-        
+
         $property->update($request->validated());
 
         return Redirect::back()->with('success', 'Property updated.');
@@ -64,7 +64,7 @@ class PropertiesController extends Controller
     public function destroy(Property $property)
     {
         $this->authorize('delete', $property);
-        
+
         $property->delete();
 
         return Redirect::back()->with('success', 'Property deleted.');
@@ -73,7 +73,7 @@ class PropertiesController extends Controller
     public function restore(Property $property)
     {
         $this->authorize('restore', $property);
-        
+
         $property->restore();
 
         return Redirect::back()->with('success', 'Property restored.');
@@ -82,7 +82,7 @@ class PropertiesController extends Controller
     public function show(Property $property)
     {
         $this->authorize('view', $property);
-        
-        return Inertia::render('Properties/Show', $this->repo->getShowResource($property));
+
+        return Inertia::render('Properties/Show', $this->service->getShowResource($property));
     }
 }

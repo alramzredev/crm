@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const DiscountRequestModal = ({
   isOpen,
@@ -10,14 +10,30 @@ const DiscountRequestModal = ({
   discountSubmitting,
   onSubmit,
   onClose,
+  editing = false,
 }) => {
+  const [priceError, setPriceError] = useState('');
+
+  // Validate requestedPrice on change
+  const handleRequestedPriceChange = (e) => {
+    const value = e.target.value;
+    setRequestedPrice(value);
+    if (parseFloat(value) > parseFloat(reservation.base_price || reservation.total_price)) {
+      setPriceError('Requested price cannot exceed the original price.');
+    } else {
+      setPriceError('');
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
         <div className="bg-gradient-to-r from-yellow-600 to-yellow-700 px-6 py-5">
-          <h3 className="text-lg font-bold text-white">Request Discount</h3>
+          <h3 className="text-lg font-bold text-white">
+            {editing ? 'Edit Discount Request' : 'Request Discount'}
+          </h3>
           <p className="text-yellow-100 text-sm mt-1">Reservation: {reservation?.reservation_code}</p>
         </div>
         <form className="p-6 space-y-6" onSubmit={onSubmit}>
@@ -31,10 +47,13 @@ const DiscountRequestModal = ({
               step="0.01"
               required
               value={requestedPrice}
-              onChange={e => setRequestedPrice(e.target.value)}
+              onChange={handleRequestedPriceChange}
               className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               disabled={discountSubmitting}
             />
+            {priceError && (
+              <div className="mt-2 text-xs text-red-600">{priceError}</div>
+            )}
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -53,10 +72,17 @@ const DiscountRequestModal = ({
           <div className="flex gap-3 pt-2">
             <button
               type="submit"
-              disabled={discountSubmitting || !requestedPrice || !discountReason}
+              disabled={
+                discountSubmitting ||
+                !requestedPrice ||
+                !discountReason ||
+                priceError
+              }
               className="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-600 to-yellow-700 text-white rounded-lg hover:from-yellow-700 hover:to-yellow-800 disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
             >
-              {discountSubmitting ? 'Submitting...' : 'Submit Request'}
+              {discountSubmitting
+                ? (editing ? 'Updating...' : 'Submitting...')
+                : (editing ? 'Update Request' : 'Submit Request')}
             </button>
             <button
               type="button"

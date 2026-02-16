@@ -7,10 +7,16 @@ use App\Models\ReservationDiscountRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use App\Repositories\ReservationDiscountRequestRepository;
 
 class ReservationDiscountRequestController extends Controller
 {
+    protected $repo;
 
+    public function __construct()
+    {
+        $this->repo = new ReservationDiscountRequestRepository();
+    }
 
     public function store(Request $request, Reservation $reservation)
     {
@@ -21,37 +27,37 @@ class ReservationDiscountRequestController extends Controller
             'reason' => 'required|string|max:500',
         ]);
 
-        $user = Auth::user();
-        $originalPrice = $reservation->total_price;
         $requestedPrice = $request->input('requested_price');
-        $discountAmount = $originalPrice - $requestedPrice;
-        $discountPercentage = $originalPrice > 0 ? round(($discountAmount / $originalPrice) * 100, 2) : 0;
+        $originalPrice = $reservation->base_price ?? $reservation->total_price;
 
-        ReservationDiscountRequest::create([
-            'reservation_id' => $reservation->id,
-            'requested_by' => $user->id,
-            'original_price' => $originalPrice,
-            'requested_price' => $requestedPrice,
-            'discount_amount' => $discountAmount,
-            'discount_percentage' => $discountPercentage,
-            'reason' => $request->input('reason'),
-            'status' => 'pending',
-        ]);
+        if ($requestedPrice > $originalPrice) {
+            return Redirect::back()->with('error', 'Requested price cannot exceed the original price.');
+        }
+
+        $this->repo->createForReservation($reservation, $request->only(['requested_price', 'reason']));
 
         return Redirect::back()->with('success', 'Discount request submitted.');
     }
-
-    
 
     public function approve(ReservationDiscountRequest $discountRequest)
     {
         $this->authorize('approve', $discountRequest);
 
-        $discountRequest->update([
-            'status' => 'approved',
-            'reviewed_by' => Auth::id(),
-            'reviewed_at' => now(),
-        ]);
+        $reservation = $discountRequest->reservation;
+        $approvedPrice = $discountRequest->requested_price;
+        $originalPrice = $reservation->base_price ?? $reservation->total_price;
+
+        if (!is_numeric($approvedPrice) || $approvedPrice < 0) {
+            return Redirect::back()->with('error', 'Approved price must be a valid positive number.');
+        }
+        if ($approvedPrice > $originalPrice) {
+            return Redirect::back()->with('error', 'Approved price cannot exceed the original price.');
+        }
+        if ($reservation->down_payment > $approvedPrice) {
+            return Redirect::back()->with('error', 'Down payment exceeds the approved discounted price. Please adjust the down payment before approving.');
+        }
+
+        $this->repo->approve($discountRequest);
 
         return Redirect::back()->with('success', 'Discount request approved.');
     }
@@ -64,13 +70,36 @@ class ReservationDiscountRequestController extends Controller
             'rejection_reason' => 'required|string|max:500',
         ]);
 
-        $discountRequest->update([
-            'status' => 'rejected',
-            'reviewed_by' => Auth::id(),
-            'reviewed_at' => now(),
-            'rejection_reason' => $request->input('rejection_reason'),
-        ]);
+        $this->repo->reject($discountRequest, $request->input('rejection_reason'));
 
         return Redirect::back()->with('success', 'Discount request rejected.');
+    }
+
+    public function update(Request $request, ReservationDiscountRequest $discountRequest)
+    {
+        $this->authorize('update', $discountRequest);
+
+        $request->validate([
+            'requested_price' => 'required|numeric|min:0',
+            'reason' => 'required|string|max:500',
+        ]);
+
+        $reservation = $discountRequest->reservation;
+        $approvedPrice = $request->input('requested_price');
+        $originalPrice = $reservation->base_price ?? $reservation->total_price;
+
+        if (!is_numeric($approvedPrice) || $approvedPrice < 0) {
+            return Redirect::back()->with('error', 'Approved price must be a valid positive number.');
+        }
+        if ($approvedPrice > $originalPrice) {
+            return Redirect::back()->with('error', 'Approved price cannot exceed the original price.');
+        }
+        if ($reservation->down_payment > $approvedPrice) {
+            return Redirect::back()->with('error', 'Down payment exceeds the approved discounted price. Please adjust the down payment before updating.');
+        }
+
+        $this->repo->updateRequest($discountRequest, $request->only(['requested_price', 'reason']));
+
+        return Redirect::back()->with('success', 'Discount request updated.');
     }
 }

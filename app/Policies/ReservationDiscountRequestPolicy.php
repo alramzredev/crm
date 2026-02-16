@@ -32,4 +32,10 @@ class ReservationDiscountRequestPolicy
         }
         return false;
     }
+
+    public function update(User $user, ReservationDiscountRequest $request)
+    {
+        // Only the requester can update if still pending or rejected
+        return $user->id === $request->requested_by && in_array($request->status, ['pending', 'rejected']);
+    }
 }

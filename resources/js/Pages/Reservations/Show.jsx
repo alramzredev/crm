@@ -24,6 +24,7 @@ const Show = () => {
   const [requestedPrice, setRequestedPrice] = useState('');
   const [discountReason, setDiscountReason] = useState('');
   const [discountSubmitting, setDiscountSubmitting] = useState(false);
+  const [editingDiscountRequest, setEditingDiscountRequest] = useState(null); // <-- add
 
   const handleModalClose = () => {
     setShowApprovalModal(false);
@@ -54,25 +55,55 @@ const Show = () => {
   const canDeletePayment = can('payments.delete');
   const canManagePayments = canAddPayment || canEditPayment || canDeletePayment;
  
-  // Submit Discount Request
+  // Open modal for editing
+  const handleEditDiscountRequest = (discountRequest) => {
+    setEditingDiscountRequest(discountRequest);
+    setRequestedPrice(discountRequest.requested_price || '');
+    setDiscountReason(discountRequest.reason || '');
+    setShowDiscountModal(true);
+  };
+
+  // Submit Discount Request (create or update)
   const handleDiscountSubmit = (e) => {
     e.preventDefault();
     setDiscountSubmitting(true);
-    router.post(
-      route('reservations.discount-requests.store', reservation.id),
-      {
-        requested_price: requestedPrice,
-        reason: discountReason,
-      },
-      {
-        onSuccess: () => {
-          setShowDiscountModal(false);
-          setRequestedPrice('');
-          setDiscountReason('');
+
+    if (editingDiscountRequest) {
+      // Update existing discount request
+      router.put(
+        route('discount-requests.update', editingDiscountRequest.id),
+        {
+          requested_price: requestedPrice,
+          reason: discountReason,
         },
-        onFinish: () => setDiscountSubmitting(false),
-      }
-    );
+        {
+          onSuccess: () => {
+            setShowDiscountModal(false);
+            setRequestedPrice('');
+            setDiscountReason('');
+            setEditingDiscountRequest(null);
+          },
+          onFinish: () => setDiscountSubmitting(false),
+        }
+      );
+    } else {
+      // Create new discount request
+      router.post(
+        route('reservations.discount-requests.store', reservation.id),
+        {
+          requested_price: requestedPrice,
+          reason: discountReason,
+        },
+        {
+          onSuccess: () => {
+            setShowDiscountModal(false);
+            setRequestedPrice('');
+            setDiscountReason('');
+          },
+          onFinish: () => setDiscountSubmitting(false),
+        }
+      );
+    }
   };
 
   const handleEditPayment = (payment) => {
@@ -126,9 +157,24 @@ const Show = () => {
           <div><strong>Expires At:</strong> {reservation.expires_at ? new Date(reservation.expires_at).toLocaleString() : '—'}</div>
           <div><strong>Lead:</strong> {reservation.lead ? `${reservation.lead.first_name} ${reservation.lead.last_name}` : '—'}</div>
           <div><strong>Unit:</strong> {reservation.unit?.unit_code || '—'}</div>
-          <div><strong>Total:</strong> {reservation.currency || 'SAR'} {reservation.total_price || '—'}</div>
-          <div><strong>Down Payment:</strong> {reservation.currency || 'SAR'} {reservation.down_payment || '—'}</div>
-          <div><strong>Remaining:</strong> {reservation.currency || 'SAR'} {reservation.remaining_amount || '—'}</div>
+          <div>
+            <strong>Base Price:</strong> {reservation.currency || 'SAR'} {reservation.base_price || reservation.total_price || '—'}
+          </div>
+          <div>
+            <strong>Discount:</strong>{' '}
+            {reservation.approved_discount_amount
+              ? `${reservation.currency || 'SAR'} ${reservation.approved_discount_amount} (${reservation.approved_discount_percentage || 0}%)`
+              : '—'}
+          </div>
+          <div>
+            <strong>Total (After Discount):</strong> {reservation.currency || 'SAR'} {reservation.total_price || '—'}
+          </div>
+          <div>
+            <strong>Down Payment:</strong> {reservation.currency || 'SAR'} {reservation.down_payment || '—'}
+          </div>
+          <div>
+            <strong>Remaining Amount:</strong> {reservation.currency || 'SAR'} {reservation.remaining_amount || '—'}
+          </div>
           <div><strong>Notes:</strong> {reservation.notes || '—'}</div>
           <div><strong>Payment Method:</strong> {reservation.payment_method || '—'}</div>
           <div><strong>Payment Plan:</strong> {reservation.payment_plan || '—'}</div>
@@ -166,12 +212,18 @@ const Show = () => {
         <DiscountRequestsTable
           discountRequests={discountRequests}
           canApprove={canApproveDiscount}
+          onEdit={handleEditDiscountRequest}
         />
         {canRequestDiscount && (
           <div className="px-8 py-4 bg-gray-50 border-t">
             <button
               className="inline-block px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-medium text-sm"
-              onClick={() => setShowDiscountModal(true)}
+              onClick={() => {
+                setEditingDiscountRequest(null);
+                setRequestedPrice('');
+                setDiscountReason('');
+                setShowDiscountModal(true);
+              }}
             >
               Request Discount
             </button>
@@ -188,7 +240,11 @@ const Show = () => {
         setDiscountReason={setDiscountReason}
         discountSubmitting={discountSubmitting}
         onSubmit={handleDiscountSubmit}
-        onClose={() => setShowDiscountModal(false)}
+        onClose={() => {
+          setShowDiscountModal(false);
+          setEditingDiscountRequest(null);
+        }}
+        editing={!!editingDiscountRequest}
       />
 
       <PaymentFormModal

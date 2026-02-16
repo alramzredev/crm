@@ -84,6 +84,13 @@ const Edit = () => {
 
             <TextInput
               className="w-full pb-8 pr-6 lg:w-1/2"
+              label="Original Price"
+              name="base_price"
+              value={reservation.base_price || reservation.total_price || ''}
+              readOnly
+            />
+            <TextInput
+              className="w-full pb-8 pr-6 lg:w-1/2"
               label="Total Price"
               name="total_price"
               errors={errors.total_price}

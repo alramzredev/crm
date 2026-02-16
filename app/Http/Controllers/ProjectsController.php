@@ -11,16 +11,16 @@ use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
-use App\Repositories\ProjectRepository;
+use App\Services\ProjectService;
 use App\Models\ProjectStatus;
 
 class ProjectsController extends Controller
 {
-    protected $repo;
+    protected $service;
 
-    public function __construct()
+    public function __construct(ProjectService $service)
     {
-        $this->repo = new ProjectRepository();
+        $this->service = $service;
     }
 
     /**
@@ -37,7 +37,7 @@ class ProjectsController extends Controller
 
         return Inertia::render('Projects/Index', [
             'filters' => Request::all('search', 'trashed', 'status'),
-            'projects' => $this->repo->getPaginatedProjects(
+            'projects' => $this->service->getPaginatedProjects(
                 Auth::user(),
                 Request::only('search', 'trashed', 'status')
             ),
@@ -52,7 +52,7 @@ class ProjectsController extends Controller
     {
         $this->authorize('create', Project::class);
 
-        return Inertia::render('Projects/Create', $this->repo->getCreateData());
+        return Inertia::render('Projects/Create', $this->service->getCreateData());
     }
 
     /**
@@ -75,12 +75,11 @@ class ProjectsController extends Controller
     {
         $this->authorize('update', $project);
 
-        // Additional check: Can user access this project?
-        if (!$this->repo->canAccessProject(Auth::user(), $project)) {
+        if (!$this->service->canAccessProject(Auth::user(), $project)) {
             return Redirect::back()->with('error', 'You do not have access to this project.');
         }
 
-        return Inertia::render('Projects/Edit', $this->repo->getEditData($project));
+        return Inertia::render('Projects/Edit', $this->service->getEditData($project));
     }
 
     /**
@@ -90,8 +89,7 @@ class ProjectsController extends Controller
     {
         $this->authorize('update', $project);
 
-        // Additional check: Can user access this project?
-        if (!$this->repo->canAccessProject(Auth::user(), $project)) {
+        if (!$this->service->canAccessProject(Auth::user(), $project)) {
             return Redirect::back()->with('error', 'You do not have access to this project.');
         }
 
@@ -107,8 +105,7 @@ class ProjectsController extends Controller
     {
         $this->authorize('delete', $project);
 
-        // Additional check: Can user access this project?
-        if (!$this->repo->canAccessProject(Auth::user(), $project)) {
+        if (!$this->service->canAccessProject(Auth::user(), $project)) {
             return Redirect::back()->with('error', 'You do not have access to this project.');
         }
 
@@ -137,10 +134,10 @@ class ProjectsController extends Controller
     {
         $this->authorize('view', $project);
 
-        if (!$this->repo->canAccessProject(Auth::user(), $project)) {
+        if (!$this->service->canAccessProject(Auth::user(), $project)) {
             return Redirect::back()->with('error', 'You do not have access to this project.');
         }
 
-        return Inertia::render('Projects/Show', $this->repo->getShowResource($project));
+        return Inertia::render('Projects/Show', $this->service->getShowResource($project));
     }
 }

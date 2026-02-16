@@ -1,7 +1,7 @@
 import React from 'react';
 import { router } from '@inertiajs/react';
 
-const DiscountRequestsTable = ({ discountRequests, canApprove = false }) => {
+const DiscountRequestsTable = ({ discountRequests, canApprove = false, onEdit }) => {
   if (!discountRequests || discountRequests.length === 0) {
     return <p className="text-gray-500 text-sm p-4">No discount requests yet.</p>;
   }
@@ -29,9 +29,7 @@ const DiscountRequestsTable = ({ discountRequests, canApprove = false }) => {
           <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Discount</th>
           <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
           <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Reason</th>
-          {canApprove && (
-            <th className="px-6 py-3 text-right text-sm font-semibold text-gray-900">Actions</th>
-          )}
+          <th className="px-6 py-3 text-right text-sm font-semibold text-gray-900">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -55,27 +53,36 @@ const DiscountRequestsTable = ({ discountRequests, canApprove = false }) => {
               </span>
             </td>
             <td className="px-6 py-4 text-sm text-gray-900">{req.reason || '—'}</td>
-            {canApprove && (
-              <td className="px-6 py-4 text-right text-sm space-x-2">
-                {req.status === 'pending' && (
-                  <>
-                    <button
-                      onClick={() => handleApprove(req.id)}
-                      className="text-green-600 hover:text-green-900"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => handleReject(req.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      Reject
-                    </button>
-                  </>
-                )}
-                {req.status !== 'pending' && <span className="text-gray-400">—</span>}
-              </td>
-            )}
+            <td className="px-6 py-4 text-right text-sm space-x-2">
+              {/* Edit button only for pending/rejected requests */}
+              {req.status !== 'approved' && typeof onEdit === 'function' && (
+                <button
+                  onClick={() => onEdit(req)}
+                  className="text-indigo-600 hover:text-indigo-900"
+                >
+                  Edit
+                </button>
+              )}
+              {canApprove && req.status === 'pending' && (
+                <>
+                  <button
+                    onClick={() => handleApprove(req.id)}
+                    className="text-green-600 hover:text-green-900"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => handleReject(req.id)}
+                    className="text-red-600 hover:text-red-900"
+                  >
+                    Reject
+                  </button>
+                </>
+              )}
+              {req.status === 'approved' && !canApprove && (
+                <span className="text-gray-400">—</span>
+              )}
+            </td>
           </tr>
         ))}
       </tbody>

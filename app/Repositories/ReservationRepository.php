@@ -87,6 +87,7 @@ class ReservationRepository
         $reservation->expires_at = now()->addDays($reservationPeriodDays);
         $reservation->payment_method = $validated['payment_method'] ?? null;
         $reservation->payment_plan = $validated['payment_plan'] ?? null;
+        $reservation->base_price = $validated['total_price'] ?? null;
         $reservation->total_price = $validated['total_price'] ?? null;
         $reservation->down_payment = $validated['down_payment'] ?? null;
         $reservation->remaining_amount = $validated['remaining_amount'] ?? null;

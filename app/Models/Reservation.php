@@ -33,10 +33,13 @@ class Reservation extends Model
         'created_by',
         'updated_by',
         'total_price',
+        'base_price',
         'remaining_amount',
         'currency',
         'national_address_file',
         'national_id_file',
+        'approved_discount_amount',
+        'approved_discount_percentage',
     ];
 
     protected $casts = [
@@ -47,9 +50,12 @@ class Reservation extends Model
         'privacy_accepted' => 'boolean',
         'down_payment' => 'decimal:2',
         'total_price' => 'decimal:2',
+        'base_price' => 'decimal:2',
         'remaining_amount' => 'decimal:2',
         'started_at' => 'datetime',
         'expires_at' => 'datetime',
+        'approved_discount_amount' => 'decimal:2',
+        'approved_discount_percentage' => 'decimal:2',
     ];
 
     /**
