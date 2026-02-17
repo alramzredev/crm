@@ -21,14 +21,14 @@ export default ({ text, link, icon }) => {
       href={route(link)}
       className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
         active
-          ? 'bg-white text-indigo-900 shadow-lg'
-          : 'text-indigo-100 hover:bg-indigo-700/50 hover:text-white'
+          ? 'bg-white text-black shadow-lg'
+          : 'text-white hover:bg-gray-900 hover:text-white'
       }`}
     >
       <Icon
         name={icon}
         className={`w-5 h-5 flex-shrink-0 fill-current ${
-          active ? 'text-indigo-600' : 'text-indigo-300 group-hover:text-white'
+          active ? 'text-black' : 'text-white group-hover:text-white'
         }`}
       />
       <span className="flex-1 text-left font-medium text-sm">{text}</span>

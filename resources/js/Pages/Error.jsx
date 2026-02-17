@@ -20,7 +20,7 @@ export default ({ status }) => {
   }[status];
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-5 text-indigo-100 bg-indigo-800">
+    <div className="flex items-center justify-center min-h-screen p-5 text-black bg-white">
       <Helmet title={title} />
       <div className="w-full max-w-md">
         <h1 className="text-3xl">{title}</h1>

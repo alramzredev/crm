@@ -19,7 +19,7 @@ export default ({ className }) => {
   };
 
   return (
-    <div className={className}>
+    <div className={`${className} bg-black`}>
       <div className="mb-4">
         <MainMenuItem text="Dashboard" link="dashboard" icon="dashboard" />
       </div>

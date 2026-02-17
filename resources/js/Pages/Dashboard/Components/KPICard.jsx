@@ -15,8 +15,8 @@ export default function KPICard({ title, value, icon, color = 'indigo', trend })
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="mt-2 text-3xl font-semibold text-gray-900">{value?.toLocaleString() || 0}</p>
+          <p className="text-sm font-medium text-black">{title}</p>
+          <p className="mt-2 text-3xl font-semibold text-black">{value?.toLocaleString() || 0}</p>
           {trend && (
             <p className={`mt-2 text-sm ${trend > 0 ? 'text-green-600' : 'text-red-600'}`}>
               {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%

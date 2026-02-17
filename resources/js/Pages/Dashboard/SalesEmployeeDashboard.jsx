@@ -48,16 +48,16 @@ const SalesEmployeeDashboard = () => {
 
       {/* Available Inventory */}
       <div>
-        <h2 className="text-xl font-semibold mb-4">Available Units</h2>
+        <h2 className="text-xl font-semibold mb-4 text-black">Available Units</h2>
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-white">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Unit Code</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Property</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Project</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rooms</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Area</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase">Unit Code</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase">Property</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase">Project</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase">Rooms</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase">Area</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
