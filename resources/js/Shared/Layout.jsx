@@ -23,6 +23,9 @@ export default function Layout({ title, children }) {
               {children}
             </div>
           </div>
+          {/* <footer className="text-center text-xs text-black py-4 bg-transparent">
+            © 2026 Alramz. All rights reserved.
+          </footer> */}
         </div>
       </div>
     </div>

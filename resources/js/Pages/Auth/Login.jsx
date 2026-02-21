@@ -10,8 +10,8 @@ import SIDE_IMAGE_URL from '../../../images/alramz_tower.jpg';
  
 export default () => {
   const { data, setData, errors, post, processing } = useForm({
-    email: 'b.mansour@alramzre.com',
-    password: 'secret',
+    email: '',
+    password: '',
     remember: true
   });
 
