@@ -6,17 +6,13 @@ import MainMenuItem from '@/Shared/MainMenuItem';
 export default ({ className }) => {
   const { auth } = usePage().props;
 
-  // console.log(auth.user?.permissions);
-
+ 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
   };
 
-  console.log(auth.user?.permissions);
-
-  const hasRole = (role) => {
-    return auth.user?.roles?.some(r => r.name === role) || false;
-  };
+ 
+  
 
   return (
     <div className={`${className} bg-black`}>

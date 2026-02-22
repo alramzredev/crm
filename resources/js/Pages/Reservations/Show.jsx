@@ -134,8 +134,7 @@ const Show = ({ reservation, cancelReasons, canApprove, discountRequests, custom
     .every(doc => doc.media && doc.status === 'approved');
 
   const handleApprove = () => {
-    console.log('Checking documents before approval...', allRequiredDocsValid);
-    if (!allRequiredDocsValid) {
+     if (!allRequiredDocsValid) {
       setDocErrors(['All required customer documents must be uploaded and approved before approval.']);
       return;
     }
