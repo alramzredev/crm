@@ -126,12 +126,12 @@ const Show = ({ reservation, cancelReasons, canApprove, discountRequests, custom
   };
 
   // Document validation state
-  const [docErrors, setDocErrors] = useState([]);
+  const [ , setDocErrors] = useState([]);
 
   // Helper to check if all required documents are uploaded and approved
   const allRequiredDocsValid = customerDocuments
     .filter(doc => doc.is_required)
-    .every(doc => doc.file_path && doc.status === 'approved');
+    .every(doc => doc.media && doc.status === 'approved');
 
   const handleApprove = () => {
     console.log('Checking documents before approval...', allRequiredDocsValid);
