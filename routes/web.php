@@ -119,6 +119,18 @@ Route::middleware('auth')->group(function () {
 
     // Discount requests for specific reservations
     Route::post('reservations/{reservation}/discount-requests')->uses('ReservationDiscountRequestController@store')->name('reservations.discount-requests.store');
+
+    // Customer Documents CRUD
+    Route::post('customers/{customer}/documents/{document}/upload')
+        ->uses('CustomerDocumentController@upload')
+        ->name('customer-documents.upload');
+    Route::delete('customers/{customer}/documents/{document}')
+        ->uses('CustomerDocumentController@destroy')
+        ->name('customer-documents.destroy');
+    // Add approve document route
+    Route::post('customers/{customer}/documents/{document}/approve')
+        ->uses('CustomerDocumentController@approve')
+        ->name('customer-documents.approve');
 });
 
 // Reports

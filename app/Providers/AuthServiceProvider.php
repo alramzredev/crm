@@ -14,6 +14,7 @@ use App\Models\Owner;
 use App\Models\StagingProject;
 use App\Models\StagingProperty;
 use App\Models\StagingUnit;
+use App\Models\Customer;
 use App\Policies\ProjectPolicy;
 use App\Policies\PropertyPolicy;
 use App\Policies\UnitPolicy;
@@ -24,6 +25,7 @@ use App\Policies\OwnerPolicy;
 use App\Policies\StagingProjectPolicy;
 use App\Policies\StagingPropertyPolicy;
 use App\Policies\StagingUnitPolicy;
+use App\Policies\CustomerPolicy;
 use App\Models\ImportBatch;
 use App\Policies\ImportBatchPolicy;
 
@@ -40,6 +42,7 @@ class AuthServiceProvider extends ServiceProvider
         StagingProject::class => StagingProjectPolicy::class,
         StagingProperty::class => StagingPropertyPolicy::class,
         StagingUnit::class => StagingUnitPolicy::class,
+        Customer::class => CustomerPolicy::class,
         ImportBatch::class => ImportBatchPolicy::class,
     ];
 

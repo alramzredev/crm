@@ -7,9 +7,10 @@ import DiscountRequestModal from './Components/DiscountRequestModal';
 import PaymentFormModal from './Components/PaymentFormModal';
 import StatusPill from './Components/StatusPill';
 import ApprovalModal from './Components/ApprovalModal';
+import CustomerDocuments from './Components/CustomerDocuments';
 
-const Show = () => {
-  const { reservation, cancelReasons = [], canApprove = false, auth, discountRequests = [] } = usePage().props;
+const Show = ({ reservation, cancelReasons, canApprove, discountRequests, customerDocuments = [] }) => {
+  const { auth } = usePage().props; 
   const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [approvalAction, setApprovalAction] = useState('confirm');
   const [selectedReason, setSelectedReason] = useState('');
@@ -122,6 +123,23 @@ const Show = () => {
   const handlePaymentModalClose = () => {
     setShowPaymentModal(false);
     setSelectedPayment(null);
+  };
+
+  // Document validation state
+  const [docErrors, setDocErrors] = useState([]);
+
+  // Helper to check if all required documents are uploaded and approved
+  const allRequiredDocsValid = customerDocuments
+    .filter(doc => doc.is_required)
+    .every(doc => doc.file_path && doc.status === 'approved');
+
+  const handleApprove = () => {
+    console.log('Checking documents before approval...', allRequiredDocsValid);
+    if (!allRequiredDocsValid) {
+      setDocErrors(['All required customer documents must be uploaded and approved before approval.']);
+      return;
+    }
+    setShowApprovalModal(true);
   };
 
   return (
@@ -246,6 +264,13 @@ const Show = () => {
         onClose={handlePaymentModalClose}
       />
 
+      {/* Customer Documents Section */}
+      <CustomerDocuments
+        documents={customerDocuments}
+        customerId={reservation.customer_id}
+        canEdit={true}
+      />
+
       {/* Approval Modal */}
       <ApprovalModal
         isOpen={showApprovalModal}
@@ -265,7 +290,7 @@ const Show = () => {
       {isApprovalAllowed && (
         <div className="flex justify-center mt-8">
           <button
-            onClick={() => setShowApprovalModal(true)}
+            onClick={handleApprove}
             className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-full shadow-lg hover:from-indigo-700 hover:to-indigo-800 font-semibold text-lg transition-all duration-200 flex items-center gap-2"
             style={{ minWidth: 200 }}
           >
@@ -280,6 +305,7 @@ const Show = () => {
   );
 };
 
+// Restore the layout assignment
 Show.layout = page => <Layout title="Reservation" children={page} />;
 
 export default Show;

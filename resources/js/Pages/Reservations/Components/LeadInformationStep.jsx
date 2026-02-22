@@ -54,7 +54,7 @@ const LeadInformationStep = ({ data, handleChange, errors = {} }) => {
         required
       />
 
-      <FileInput
+      {/* <FileInput
         className="w-full pb-8 pr-6 lg:w-1/2"
         label="National Address File"
         name="national_address_file"
@@ -70,7 +70,7 @@ const LeadInformationStep = ({ data, handleChange, errors = {} }) => {
         accept=".pdf,.jpg,.jpeg,.png"
         onChange={file => handleChange('national_id_file', file)}
         errors={errors.national_id_file}
-      />
+      /> */}
     </div>
   );
 };

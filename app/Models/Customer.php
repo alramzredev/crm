@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Customer extends Model
+class Customer extends Model implements HasMedia
 {
-    use HasFactory;
+    use InteractsWithMedia;
 
     protected $table = 'customers';
 
@@ -47,4 +48,6 @@ class Customer extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    
 }

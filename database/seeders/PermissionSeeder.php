@@ -137,6 +137,14 @@ class PermissionSeeder extends Seeder
                 'import-batches.retry',
                 'import-batches.delete',
             ],
+
+            'Customer Management' => [
+                'customers.view',
+                'customers.create',
+                'customers.edit',
+                'customers.delete',
+                'customers.restore',
+            ],
         ];
 
         // Flatten the permissions array and create them
@@ -234,6 +242,7 @@ class PermissionSeeder extends Seeder
             'import-batches.view',
             'import-batches.retry',
             'import-batches.delete',
+            // No customer permissions for project admin
         ]);
 
         // ============================================
@@ -264,6 +273,11 @@ class PermissionSeeder extends Seeder
             'projects.view',
             'properties.view',
             'units.view',
+            'customers.view',
+            'customers.create',
+            'customers.edit',
+            'customers.delete',
+            'customers.restore',
         ]);
 
         // ============================================
@@ -283,6 +297,9 @@ class PermissionSeeder extends Seeder
             'projects.view',
             'properties.view',
             'units.view',
+            'customers.view',
+            'customers.create',
+            'customers.edit',
         ]);
 
         // ============================================

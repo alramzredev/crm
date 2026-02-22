@@ -76,6 +76,17 @@ class ReservationController extends Controller
             ]);
         }
 
+        // Create required documents for customer
+        if ($customer->wasRecentlyCreated) {
+            $requiredTypes = \App\Models\DocumentType::where('applies_to', 'customer')->get();
+            foreach ($requiredTypes as $type) {
+                $customer->documents()->create([
+                    'document_type_id' => $type->id,
+                    'status' => 'pending',
+                ]);
+            }
+        }
+
         $validated['customer_id'] = $customer?->id;
 
         $reservation = $this->service->createReservation($validated, $leadData, $request);
@@ -85,7 +96,8 @@ class ReservationController extends Controller
             $reservation->unit->update(['status_id' => 2]);
         }
 
-        return Redirect::route('reservations.edit', $reservation->id)
+        // Redirect to reservation show page after creation
+        return Redirect::route('reservations.show', $reservation->id)
             ->with('success', 'Reservation created.');
     }
 
@@ -99,11 +111,39 @@ class ReservationController extends Controller
         // Fetch discount requests for this reservation
         $discountRequests = $reservation->discountRequests()->with('requester')->orderByDesc('created_at')->get();
 
+        // Fetch customer documents using Spatie Media Library
+        $customer = $reservation->customer;
+        $customerDocuments = [];
+        if ($customer) {
+            // Assume you have a list of required document types
+            $requiredTypes = \App\Models\DocumentType::where('applies_to', 'customer')->get();
+            foreach ($requiredTypes as $type) {
+                $media = $customer->getMedia($type->code)->first();
+                $customerDocuments[] = [
+                    'type' => $type->code,
+                    'type_name' => $type->name,
+                    'is_required' => $type->is_required,
+                    'status' => $media ? ($media->getCustomProperty('status') ?? 'approved') : 'pending',
+                    'media' => $media ? [
+                        'id' => $media->id,
+                        'file_name' => $media->file_name,
+                        'mime_type' => $media->mime_type,
+                        'size' => $media->size,
+                        'url' => $media->getFullUrl(),
+                        'created_at' => $media->created_at,
+                    ] : null,
+                    'expires_at' => $media ? $media->getCustomProperty('expires_at') : null,
+                    'rejection_reason' => $media ? $media->getCustomProperty('rejection_reason') : null,
+                ];
+            }
+        }
+
         return Inertia::render('Reservations/Show', [
             'reservation' => $this->service->getShowData($reservation),
             'cancelReasons' => ReservationCancelReason::active()->ordered()->get(),
             'canApprove' => $canApprove,
             'discountRequests' => $discountRequests,
+            'customerDocuments' => $customerDocuments,
         ]);
     }
 
