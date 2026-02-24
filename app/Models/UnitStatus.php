@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UnitStatus extends Model
 {
-    protected $fillable = ['name', 'description'];
+    protected $fillable = ['name', 'description', 'code'];
 
     public function units()
     {

@@ -12,13 +12,12 @@ class UpdateUnitStatusAfterConfirmation
     {
         $reservation = $event->reservation;
         if ($reservation->unit) {
-            $reservation->unit->update(['status_id' => 2]);
+            $reservation->unit->changeStatus('reserved');
         }
 
         // Send notification to user/customer (example, adjust as needed)
         if ($reservation->user) {
-            // You should have a ReservationConfirmedNotification class
-            Notification::send($reservation->user, new ReservationConfirmedNotification($reservation));
+             Notification::send($reservation->user, new ReservationConfirmedNotification($reservation));
         }
     }
 }

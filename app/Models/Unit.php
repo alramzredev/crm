@@ -196,6 +196,11 @@ class Unit extends Model
         return $this->belongsTo(UnitStatus::class);
     }
 
+    public function getStatusCodeAttribute()
+    {
+        return $this->status ? $this->status->code : null;
+    }
+
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
@@ -246,6 +251,18 @@ class Unit extends Model
 
     public function scopeAvailable($query)
     {
-        return $query->where('status_id', 1);
+        return $query->whereHas('status', function ($q) {
+            $q->where('code', 'available');
+        });
+    }
+
+    /**
+     * Change the unit status by status code.
+     */
+    public function changeStatus(string $code): void
+    {
+        $status = UnitStatus::where('code', $code)->firstOrFail();
+        $this->status_id = $status->id;
+        $this->save();
     }
 }

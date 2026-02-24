@@ -128,7 +128,9 @@ const CustomerDocuments = ({ documents = [], customerId, canEdit }) => {
                       {doc.media.file_name || 'View'}
                     </a>
                   ) : (
-                    <span className="text-gray-400">No file</span>
+                    <span className={`text-gray-400 ${doc.is_required ? 'font-bold text-red-500' : ''}`}>
+                      No file{doc.is_required ? ' (required)' : ''}
+                    </span>
                   )}
                 </td>
                 <td className="px-6 py-3">{doc.media ? `${(doc.media.size / 1024).toFixed(1)} KB` : '—'}</td>

@@ -31,7 +31,7 @@ class PropertyService
 
         return PropertyResource::collection(
             $query
-                ->orderBy('property_code')
+                ->orderBy('created_at', 'desc')
                 ->when(Request::get('project_id'), fn ($q, $pid) => $q->where('project_id', $pid))
                 ->paginate()
                 ->appends(Request::all())

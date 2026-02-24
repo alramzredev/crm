@@ -16,6 +16,7 @@ use App\Http\Requests\ReservationUpdateRequest;
 use App\Http\Requests\ReservationApprovalRequest;
 use App\Services\ReservationApprovalService;
 use App\Services\ReservationService;
+use App\Events\Reservation\ReservationConfirmed;
 
 class ReservationController extends Controller
 {
@@ -80,10 +81,11 @@ class ReservationController extends Controller
         if ($customer->wasRecentlyCreated) {
             $requiredTypes = \App\Models\DocumentType::where('applies_to', 'customer')->get();
             foreach ($requiredTypes as $type) {
-                $customer->documents()->create([
-                    'document_type_id' => $type->id,
-                    'status' => 'pending',
-                ]);
+                // Optionally, you can initialize empty media collections if needed,
+                // but Spatie Media Library will handle collections automatically.
+                // No need to create separate document records.
+                // If you want to ensure a collection exists, you can call:
+                // $customer->getMedia($type->code);
             }
         }
 
@@ -93,7 +95,7 @@ class ReservationController extends Controller
 
         // Update unit status to Reserved (status_id = 2)
         if ($reservation->unit) {
-            $reservation->unit->update(['status_id' => 2]);
+            $reservation->unit->changeStatus('reserved');
         }
 
         // Redirect to reservation show page after creation
@@ -174,6 +176,10 @@ class ReservationController extends Controller
 
         try {
             $service->confirmReservation($reservation, $validated['notes'] ?? null);
+
+            // Fire ReservationConfirmed event
+            event(new ReservationConfirmed($reservation, Auth::user()));
+
             return Redirect::back()->with('success', 'Reservation approved successfully.');
         } catch (\Exception $e) {
             return Redirect::back()->with('error', $e->getMessage());
@@ -196,7 +202,7 @@ class ReservationController extends Controller
 
             // Update unit status back to Available (status_id = 1)
             if ($reservation->unit) {
-                $reservation->unit->update(['status_id' => 1]);
+                $reservation->unit->changeStatus('available');
             }
 
             return Redirect::back()->with('success', 'Reservation rejected successfully.');

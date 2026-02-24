@@ -15,7 +15,7 @@ class UnitCollection extends ResourceCollection
                 'project' => $unit->project ? $unit->project->only('id', 'name') : null,
                 'property' => $unit->property ? $unit->property->only('id', 'property_code') : null,
                 'property_type' => $unit->propertyType ? $unit->propertyType->only('id', 'name') : null,
-                'status' => $unit->status ? $unit->status->only('id', 'name') : null,
+                'status' => $unit->status ? $unit->status->only('id', 'name', 'code') : null,
                 'floor' => $unit->floor,
                 'area' => $unit->area,
                 'rooms' => $unit->rooms,

@@ -9,14 +9,13 @@ class ProjectStatusSeeder extends Seeder
 {
     public function run()
     {
-        $statuses = [
-            ['name' => 'new'],
-            ['name' => 'planning'],
-            ['name' => 'in_progress'],
-            ['name' => 'completed'],
-            ['name' => 'cancelled'],
-        ];
-
-        DB::table('project_statuses')->insert($statuses);
+        DB::table('project_statuses')->upsert([
+            ['name' => 'New', 'code' => 'new'],
+            ['name' => 'Planing', 'code' => 'planning'],
+            ['name' => 'In progress', 'code' => 'in_progress'],
+            ['name' => 'Completed', 'code' => 'completed'],
+            ['name' => 'Canceled', 'code' => 'canceled'],
+            ['name' => 'Active', 'code' => 'active'],
+        ], ['name'], ['code']);
     }
 }
