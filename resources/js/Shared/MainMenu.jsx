@@ -35,7 +35,6 @@ const closedMixin = (theme) => ({
 const StyledDrawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
-  // Wrapper takes NO space in flex layout — paper is position:fixed anyway
   width: 0,
   flexShrink: 0,
   whiteSpace: 'nowrap',
@@ -139,7 +138,6 @@ export default function MainMenu({ className, onToggle, mobileOpen, setMobileOpe
 
   return (
     <Box className={className}>
-      {/* Remove the mobile hamburger button here, handled in TopHeader */}
       {isMobile ? (
         <MuiDrawer
           variant="temporary"

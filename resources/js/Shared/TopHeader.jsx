@@ -1,56 +1,140 @@
 import React, { useState } from 'react';
-import logo from '../../images/logo-white-2-1-1.svg';
-import { Link } from '@inertiajs/react';
-import Logo from '@/Shared/Logo';
-import MainMenu, { DRAWER_WIDTH, DRAWER_MINI_WIDTH } from '@/Shared/MainMenu';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { Link, usePage } from '@inertiajs/react';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { DRAWER_WIDTH } from '@/Shared/MainMenu';
 
-export default ({ drawerWidth = DRAWER_WIDTH }) => {
-  const [menuOpened, setMenuOpened] = useState(false);
+export default ({ drawerWidth = DRAWER_WIDTH, onMobileMenuOpen }) => {
+  const { auth } = usePage().props;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const userRole = auth.user.roles?.[0] || '';
+  const isSalesSupervisor = userRole === 'sales_supervisor';
+  const isSuperAdmin = userRole === 'super_admin';
+
+  const handleMenu = (e) => setAnchorEl(e.currentTarget);
+  const handleClose = () => setAnchorEl(null);
+
   return (
-    <div
-      className="flex items-center justify-between px-6 py-4 bg-indigo-900 md:flex-shrink-0 md:justify-center relative transition-all duration-300"
-      style={{
-        marginLeft: isMobile ? 0 : drawerWidth,
-        transition: 'margin-left 0.3s cubic-bezier(0.4,0,0.2,1)',
+    <AppBar
+      position="fixed"
+      elevation={0}
+      sx={{
+        backgroundColor: '#fff',
+        color: '#1a1a1a',
+        borderBottom: '1px solid #e5e7eb',
+        ml: isMobile ? 0 : `${drawerWidth}px`,
+        width: isMobile ? '100%' : `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(['margin-left', 'width'], {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.leavingScreen,
+        }),
+        zIndex: theme.zIndex.drawer - 1,
       }}
     >
-      <Link className="mt-1" href="/">
-        <Logo className="text-white fill-current" width="120" height="28" />
-      </Link>
-      <div className="relative md:hidden">
-        <svg
-          onClick={() => setMenuOpened(true)}
-          className="w-6 h-6 text-white cursor-pointer fill-current"
-          xmlns={logo}
-          viewBox="0 0 20 20"
-        >
-          <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-        </svg>
-        {menuOpened && (
-          <>
-            <div
-              className="fixed inset-0 z-30 bg-black opacity-25"
-              onClick={() => setMenuOpened(false)}
-            ></div>
-            <div
-              className="fixed top-0 left-0 z-40"
-              style={{ width: DRAWER_WIDTH, height: '100vh' }}
+      <Toolbar sx={{ justifyContent: 'space-between', minHeight: '56px !important', px: { xs: 2, md: 4 } }}>
+        {/* Left: burger icon always visible */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <IconButton
+            edge="start"
+            onClick={onMobileMenuOpen}
+            sx={{ color: '#374151', mr: 1 }}
+            aria-label="open menu"
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            variant="subtitle1"
+            sx={{ fontWeight: 600, color: '#374151', letterSpacing: '-0.2px' }}
+          >
+            Alramz
+          </Typography>
+        </div>
+
+        {/* Right: user menu */}
+        <div>
+          <IconButton
+            onClick={handleMenu}
+            disableRipple
+            sx={{
+              borderRadius: 2,
+              px: 1.5,
+              gap: 0.5,
+              color: '#374151',
+              '&:hover': { bgcolor: '#f3f4f6' },
+            }}
+          >
+            <AccountCircle sx={{ color: '#6b7280' }} />
+            <Typography variant="body2" sx={{ fontWeight: 500, mx: 0.5 }}>
+              {auth.user.first_name}
+              {' '}
+              <span className="hidden md:inline">{auth.user.last_name}</span>
+            </Typography>
+            <KeyboardArrowDownIcon fontSize="small" sx={{ color: '#9ca3af' }} />
+          </IconButton>
+
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            PaperProps={{
+              elevation: 3,
+              sx: {
+                mt: 0.5,
+                minWidth: 180,
+                borderRadius: 2,
+                '& .MuiMenuItem-root': {
+                  fontSize: '0.875rem',
+                  px: 2,
+                  py: 1,
+                  '&:hover': { bgcolor: '#eef2ff', color: '#4f46e5' },
+                },
+              },
+            }}
+          >
+            <MenuItem component={Link} href={route('users.edit', auth.user.id)} onClick={handleClose}>
+              My Profile
+            </MenuItem>
+
+            {isSalesSupervisor && (
+              <MenuItem component={Link} href={route('employees')} onClick={handleClose}>
+                Manage Team
+              </MenuItem>
+            )}
+
+            {isSuperAdmin && (
+              <MenuItem component={Link} href={route('users')} onClick={handleClose}>
+                Manage Users
+              </MenuItem>
+            )}
+
+            <MenuItem
+              component={Link}
+              href={route('logout')}
+              onClick={handleClose}
+              as="button"
+              method="post"
+              sx={{ width: '100%', color: '#ef4444', '&:hover': { bgcolor: '#fef2f2', color: '#ef4444' } }}
             >
-              <MainMenu
-                className="h-full"
-                mobileOpen={menuOpened}
-                setMobileOpen={setMenuOpened}
-                onToggle={() => {}} // no-op for mobile
-              />
-            </div>
-          </>
-        )}
-      </div>
-    </div>
+              Logout
+            </MenuItem>
+          </Menu>
+        </div>
+      </Toolbar>
+    </AppBar>
   );
 };
