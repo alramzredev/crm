@@ -99,4 +99,12 @@ class Lead extends Model
     {
         return $this->hasOne(LeadAssignment::class)->where('is_active', true);
     }
+
+   
+    public function changeStatus(string $code): void
+    {
+        $status = LeadStatus::where('code', $code)->firstOrFail();
+        $this->status_id = $status->id;
+        $this->save();
+    }
 }

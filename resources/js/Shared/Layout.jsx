@@ -1,31 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Helmet from 'react-helmet';
-import MainMenu from '@/Shared/MainMenu';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import Box from '@mui/material/Box';
+import MainMenu, { DRAWER_WIDTH, DRAWER_MINI_WIDTH } from '@/Shared/MainMenu';
 import FlashMessages from '@/Shared/FlashMessages';
 import TopHeader from '@/Shared/TopHeader';
 import BottomHeader from '@/Shared/BottomHeader';
 
 export default function Layout({ title, children }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [drawerWidth, setDrawerWidth] = useState(DRAWER_WIDTH);
+
   return (
     <div>
       <Helmet titleTemplate="%s | Alramz CRM" title={title} />
-      <div className="flex flex-col">
-        <div className="flex flex-col h-screen">
-          <div className="md:flex">
-            <TopHeader />
-            <BottomHeader />
-          </div>
-          <div className="flex flex-grow overflow-hidden">
-            <MainMenu className="flex-shrink-0 hidden w-56 p-12 overflow-y-auto bg-black md:block" />
-            {/* To reset scroll region (https://inertiajs.com/pages#scroll-regions) add `scroll-region="true"` to div below */}
-            <div className="w-full px-4 py-8 overflow-hidden overflow-y-auto md:p-12">
+      <div className="flex flex-col h-screen">
+        {/* Pass drawerWidth to TopHeader for responsive margin */}
+        <div className="md:flex">
+          <TopHeader drawerWidth={isMobile ? 0 : drawerWidth} />
+          <BottomHeader />
+        </div>
+        <div className="flex flex-grow overflow-hidden">
+          {!isMobile && (
+            <MainMenu onToggle={setDrawerWidth} />
+          )}
+          <Box
+            sx={{
+              flexGrow: 1,
+              ml: isMobile ? 0 : `${drawerWidth}px`,
+              transition: theme.transitions.create('margin-left', {
+                easing: theme.transitions.easing.sharp,
+                duration: drawerWidth === DRAWER_WIDTH
+                  ? theme.transitions.duration.enteringScreen
+                  : theme.transitions.duration.leavingScreen,
+              }),
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              minWidth: 0,
+            }}
+          >
+            <div className="px-4 py-8 md:p-12">
               <FlashMessages />
               {children}
             </div>
-          </div>
-          {/* <footer className="text-center text-xs text-black py-4 bg-transparent">
-            © 2026 Alramz. All rights reserved.
-          </footer> */}
+          </Box>
         </div>
       </div>
     </div>

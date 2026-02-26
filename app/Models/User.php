@@ -25,12 +25,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'last_name',
         'email',
         'phone',
+        'lead_capacity',
         'password',
         'photo_path',
     ];
 
     protected $casts = [
         'owner' => 'boolean',
+        'lead_capacity' => 'integer',
     ];
 
     public function getNameAttribute()

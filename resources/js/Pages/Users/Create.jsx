@@ -18,7 +18,8 @@ const Create = () => {
     role: '',
     photo: '',
     supervisor_ids: [],
-    project_ids: []
+    project_ids: [],
+    lead_capacity: 0, // Add lead_capacity to form state
   });
 
   const selectedRole = useMemo(() => {
@@ -120,7 +121,9 @@ const Create = () => {
               <option value="">Select a role</option>
               {roles.map(r => <option key={r.id} value={r.id}>{r.label || r.name}</option>)}
             </SelectInput>
-            <FileInput
+
+
+            {/* <FileInput
               className="w-full pb-8 pr-6 lg:w-1/2"
               label="Photo"
               name="photo"
@@ -128,7 +131,21 @@ const Create = () => {
               errors={errors.photo}
               value={data.photo}
               onChange={photo => setData('photo', photo)}
-            />
+            /> */}
+
+            {/* Sales Employee: Lead Capacity */}
+            {isSalesEmployee && (
+              <TextInput
+                className="w-full pb-8 pr-6 lg:w-1/2"
+                label="Lead Capacity"
+                name="lead_capacity"
+                type="number"
+                min="0"
+                errors={errors.lead_capacity}
+                value={data.lead_capacity}
+                onChange={e => setData('lead_capacity', e.target.value)}
+              />
+            )}
 
             {/* Sales Employee: Assign Supervisors */}
             {isSalesEmployee && (

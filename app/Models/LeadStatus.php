@@ -12,10 +12,16 @@ class LeadStatus extends Model
         'name',
         'description',
         'color',
+        'code', // Added code field
     ];
 
     public function leads()
     {
         return $this->hasMany(Lead::class, 'status_id');
+    }
+
+    public function findByCode($code)
+    {
+        return $this->where('code', $code)->first();
     }
 }

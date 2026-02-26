@@ -45,19 +45,28 @@ const Index = () => {
 
   return (
     <div>
-      <div className="mb-8 flex justify-between items-center">
+      <div className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold">Import Batches</h1>
           <p className="text-gray-600 mt-2">Monitor, debug, and retry data imports.</p>
         </div>
-        <div className="space-x-2">
-          <Link href={route('imports.projects')} className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded hover:bg-indigo-700">
+        <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+          <Link
+            href={route('imports.projects')}
+            className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg shadow hover:bg-indigo-700 transition"
+          >
             + Import Projects
           </Link>
-          <Link href={route('imports.properties')} className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded hover:bg-indigo-700">
+          <Link
+            href={route('imports.properties')}
+            className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg shadow hover:bg-indigo-700 transition"
+          >
             + Import Properties
           </Link>
-          <Link href={route('imports.units')} className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded hover:bg-indigo-700">
+          <Link
+            href={route('imports.units')}
+            className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg shadow hover:bg-indigo-700 transition"
+          >
             + Import Units
           </Link>
         </div>
