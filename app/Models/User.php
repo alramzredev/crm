@@ -31,7 +31,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     ];
 
     protected $casts = [
-        'owner' => 'boolean',
         'lead_capacity' => 'integer',
     ];
 
@@ -77,9 +76,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function scopeWhereRole($query, $role)
     {
-        switch ($role) {
-            case 'user': return $query->where('owner', false);
-            case 'owner': return $query->where('owner', true);
+        if ($role) {
+            $query->whereHas('roles', function ($q) use ($role) {
+                $q->where('name', $role);
+            });
         }
     }
 
@@ -183,5 +183,4 @@ public function activeProjects()
         return $this->hasMany(LeadAssignment::class, 'assigned_by');
     }
 
-   
 }

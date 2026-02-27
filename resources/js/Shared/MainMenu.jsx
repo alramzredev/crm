@@ -10,6 +10,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MainMenuItem from '@/Shared/MainMenuItem';
+import Logo from '@/Shared/Logo';
 
 export const DRAWER_WIDTH = 240;
 export const DRAWER_MINI_WIDTH = 64;
@@ -57,12 +58,10 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   borderBottom: '1px solid rgba(255,255,255,0.1)',
 }));
 
-export default function MainMenu({ className, onToggle, mobileOpen, setMobileOpen }) {
+export default function MainMenu({ className, onToggle, mobileOpen, setMobileOpen, desktopOpen, setDesktopOpen }) {
   const { auth } = usePage().props;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const [desktopOpen, setDesktopOpen] = useState(true);
 
   const drawerOpen = isMobile ? mobileOpen : desktopOpen;
 
@@ -98,8 +97,16 @@ export default function MainMenu({ className, onToggle, mobileOpen, setMobileOpe
             transition: 'opacity 0.2s ease',
           }}
         >
-          Alramz CRM
-        </Typography>
+<Logo
+            style={{
+              height: 32,
+              width: drawerOpen ? 120 : 32,
+              objectFit: 'contain',
+              objectPosition: 'left center',
+              transition: 'width 0.3s ease',
+              flexShrink: 0,
+            }}
+          />         </Typography>
 
         {!isMobile && (
           <IconButton

@@ -26,11 +26,11 @@ class UsersController extends Controller
     public function index()
     {
         $this->authorize('viewAny', User::class);
-        
+
         return Inertia::render('Users/Index', [
             'filters' => Request::all('search', 'role', 'trashed'),
-            'users' => 
-                $this->repo->getPaginatedUsers(Request::only('search', 'role', 'trashed'))
+            'users' => $this->repo->getPaginatedUsers(Request::only('search', 'role', 'trashed')),
+            'availableRoles' => $this->repo->getAvailableRoles(),
         ]);
     }
 

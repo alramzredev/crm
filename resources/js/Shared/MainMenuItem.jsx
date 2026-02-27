@@ -34,26 +34,31 @@ export default ({ text, link, icon, drawerOpen = true }) => {
             px: 2,
             borderRadius: 2,
             transition: 'all 0.2s ease',
-            '&.Mui-selected': {
-              bgcolor: 'rgba(255,255,255,0.15)',
-              color: '#fff',
-              '&:hover': { bgcolor: 'rgba(255,255,255,0.2)' },
-              '& .MuiListItemIcon-root': { color: '#fff' },
-            },
-            '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' },
-            color: 'rgba(255,255,255,0.85)',
+            // Remove MUI color logic, use Tailwind below
           }}
+          className={
+            active
+              ? 'bg-white text-black border-l-4 border-indigo-500 shadow font-semibold'
+              : 'text-white hover:bg-gray-900 hover:text-white'
+          }
         >
           <ListItemIcon
             sx={{
               minWidth: 0,
               mr: drawerOpen ? 2 : 'auto',
               justifyContent: 'center',
-              color: active ? '#fff' : 'rgba(255,255,255,0.7)',
+              color: 'inherit',
               transition: 'margin 0.3s ease',
             }}
           >
-            <Icon name={icon} className="w-5 h-5 fill-current" />
+            <Icon
+              name={icon}
+              className={
+                active
+                  ? 'w-5 h-5 fill-current text-indigo-600'
+                  : 'w-5 h-5 fill-current text-white group-hover:text-white'
+              }
+            />
           </ListItemIcon>
           <ListItemText
             primary={text}

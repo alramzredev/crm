@@ -14,6 +14,13 @@ export default function Layout({ title, children }) {
 
   const [drawerWidth, setDrawerWidth] = useState(DRAWER_WIDTH);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [desktopOpen, setDesktopOpen] = useState(true); // <-- add
+
+  const handleToggleDesktop = () => {
+    const next = !desktopOpen;
+    setDesktopOpen(next);
+    setDrawerWidth(next ? DRAWER_WIDTH : DRAWER_MINI_WIDTH);
+  };
 
   const isOpen = drawerWidth === DRAWER_WIDTH;
 
@@ -25,6 +32,8 @@ export default function Layout({ title, children }) {
       <TopHeader
         drawerWidth={isMobile ? 0 : drawerWidth}
         onMobileMenuOpen={() => setMobileOpen(true)}
+        onToggle={handleToggleDesktop} // <-- pass handler
+        desktopOpen={desktopOpen} // <-- pass state
       />
 
       {/* Sidebar — receives and controls mobileOpen */}
@@ -32,6 +41,8 @@ export default function Layout({ title, children }) {
         onToggle={setDrawerWidth}
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
+        desktopOpen={desktopOpen} // <-- pass state
+        setDesktopOpen={setDesktopOpen} // <-- pass setter
       />
 
       {/* Main content */}
@@ -47,16 +58,24 @@ export default function Layout({ title, children }) {
           }),
           minHeight: '100vh',
           overflowX: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {/* Spacer for fixed AppBar */}
         <Toolbar sx={{ minHeight: '56px !important' }} />
 
-        <div className="px-4 py-6 md:px-8 md:py-8">
+        <div className="px-4 py-6 md:px-8 md:py-8 flex-1">
           <FlashMessages />
           {children}
         </div>
+
+        {/* All rights reserved footer */}
+        <footer className="w-full text-center py-4 text-xs text-gray-500">
+          © {new Date().getFullYear()} Alramz. All rights reserved.
+        </footer>
       </Box>
+
     </div>
   );
 }

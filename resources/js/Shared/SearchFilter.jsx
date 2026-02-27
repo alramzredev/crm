@@ -6,7 +6,7 @@ import pickBy from 'lodash/pickBy';
 import logo from '../../images/logo-white-2-1-1.svg';
 
 export default () => {
-  const { filters } = usePage().props;
+  const { filters, availableRoles = [] } = usePage().props;
   const [opened, setOpened] = useState(false);
 
   const [values, setValues] = useState({
@@ -71,8 +71,11 @@ export default () => {
                 onChange={handleChange}
               >
                 <option value=""></option>
-                <option value="user">User</option>
-                <option value="owner">Owner</option>
+                {availableRoles.map(role => (
+                  <option key={role.name} value={role.name}>
+                    {role.label || role.name}
+                  </option>
+                ))}
               </SelectInput>
             )}
             <SelectInput

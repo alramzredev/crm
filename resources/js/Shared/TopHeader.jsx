@@ -12,8 +12,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { DRAWER_WIDTH } from '@/Shared/MainMenu';
+import { DRAWER_MINI_WIDTH } from '@/Shared/MainMenu';
 
-export default ({ drawerWidth = DRAWER_WIDTH, onMobileMenuOpen }) => {
+export default ({ drawerWidth = DRAWER_WIDTH, onMobileMenuOpen, onToggle, desktopOpen }) => {
   const { auth } = usePage().props;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -24,6 +25,12 @@ export default ({ drawerWidth = DRAWER_WIDTH, onMobileMenuOpen }) => {
   const isSalesSupervisor = userRole === 'sales_supervisor';
   const isSuperAdmin = userRole === 'super_admin';
 
+  const toggleDesktop = () => {
+    const next = !desktopOpen;
+    setDesktopOpen(next);
+    onToggle?.(next ? DRAWER_WIDTH : DRAWER_MINI_WIDTH);
+  };
+
   const handleMenu = (e) => setAnchorEl(e.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
@@ -32,9 +39,7 @@ export default ({ drawerWidth = DRAWER_WIDTH, onMobileMenuOpen }) => {
       position="fixed"
       elevation={0}
       sx={{
-        backgroundColor: '#fff',
-        color: '#1a1a1a',
-        borderBottom: '1px solid #e5e7eb',
+        // Remove MUI color and border, use Tailwind via className below
         ml: isMobile ? 0 : `${drawerWidth}px`,
         width: isMobile ? '100%' : `calc(100% - ${drawerWidth}px)`,
         transition: theme.transitions.create(['margin-left', 'width'], {
@@ -43,21 +48,31 @@ export default ({ drawerWidth = DRAWER_WIDTH, onMobileMenuOpen }) => {
         }),
         zIndex: theme.zIndex.drawer - 1,
       }}
+      className="bg-white border-b border-gray-200 text-black"
     >
-      <Toolbar sx={{ justifyContent: 'space-between', minHeight: '56px !important', px: { xs: 2, md: 4 } }}>
+      <Toolbar
+        sx={{
+          justifyContent: 'space-between',
+          minHeight: '56px !important',
+          px: { xs: 2, md: 4 },
+          // Remove MUI color, use Tailwind below
+        }}
+        className="bg-white text-black px-4"
+      >
         {/* Left: burger icon always visible */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <IconButton
             edge="start"
-            onClick={onMobileMenuOpen}
-            sx={{ color: '#374151', mr: 1 }}
+            onClick={isMobile ? onMobileMenuOpen : onToggle}
+            sx={{ color: '#000', mr: 1 }} // project black
             aria-label="open menu"
           >
             <MenuIcon />
           </IconButton>
           <Typography
             variant="subtitle1"
-            sx={{ fontWeight: 600, color: '#374151', letterSpacing: '-0.2px' }}
+            sx={{ fontWeight: 600, letterSpacing: '-0.2px' }}
+            className="font-semibold text-black"
           >
             Alramz
           </Typography>
@@ -75,14 +90,15 @@ export default ({ drawerWidth = DRAWER_WIDTH, onMobileMenuOpen }) => {
               color: '#374151',
               '&:hover': { bgcolor: '#f3f4f6' },
             }}
+            className="rounded-md px-2 gap-1 text-gray-700 hover:bg-gray-100"
           >
-            <AccountCircle sx={{ color: '#6b7280' }} />
-            <Typography variant="body2" sx={{ fontWeight: 500, mx: 0.5 }}>
+            <AccountCircle className="text-gray-400" />
+            <Typography variant="body2" sx={{ fontWeight: 500, mx: 0.5 }} className="font-medium mx-1">
               {auth.user.first_name}
               {' '}
               <span className="hidden md:inline">{auth.user.last_name}</span>
             </Typography>
-            <KeyboardArrowDownIcon fontSize="small" sx={{ color: '#9ca3af' }} />
+            <KeyboardArrowDownIcon fontSize="small" className="text-gray-400" />
           </IconButton>
 
           <Menu
@@ -104,6 +120,7 @@ export default ({ drawerWidth = DRAWER_WIDTH, onMobileMenuOpen }) => {
                   '&:hover': { bgcolor: '#eef2ff', color: '#4f46e5' },
                 },
               },
+              className: "bg-white rounded-lg shadow-lg"
             }}
           >
             <MenuItem component={Link} href={route('users.edit', auth.user.id)} onClick={handleClose}>
@@ -123,14 +140,18 @@ export default ({ drawerWidth = DRAWER_WIDTH, onMobileMenuOpen }) => {
             )}
 
             <MenuItem
-              component={Link}
-              href={route('logout')}
               onClick={handleClose}
-              as="button"
-              method="post"
-              sx={{ width: '100%', color: '#ef4444', '&:hover': { bgcolor: '#fef2f2', color: '#ef4444' } }}
+              className="w-full text-red-600 hover:bg-red-50 hover:text-red-700"
             >
-              Logout
+              <Link
+                href={route('logout')}
+                method="post"
+                as="button"
+                className="w-full text-left block"
+                style={{ background: 'none', border: 'none', padding: 0, margin: 0 }}
+              >
+                Logout
+              </Link>
             </MenuItem>
           </Menu>
         </div>

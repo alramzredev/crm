@@ -20,6 +20,11 @@ class UserRepository
         );
     }
 
+    public function getAvailableRoles()
+    {
+        return \Spatie\Permission\Models\Role::all(['name', 'label']);
+    }
+
     public function getCreateData(): array
     {
         return [
