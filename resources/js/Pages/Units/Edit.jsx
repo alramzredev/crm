@@ -5,6 +5,7 @@ import Layout from '@/Shared/Layout';
 import DeleteButton from '@/Shared/DeleteButton';
 import TrashedMessage from '@/Shared/TrashedMessage';
 import UnitForm from '@/Shared/Units/UnitForm';
+import { useTranslation } from 'react-i18next';
 
 const Edit = () => {
   const { unit = {}, projects = [], properties = [], propertyTypes = [], propertyStatuses = [], unitTypes = [], cities = [], municipalities = [], neighborhoods = [] } = usePage().props;
@@ -80,6 +81,7 @@ const Edit = () => {
     city_id: unit.city?.id || unit.city_id || '',
     municipality_id: unit.municipality?.id || unit.municipality_id || '',
   });
+  const { t } = useTranslation();
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -103,7 +105,7 @@ const Edit = () => {
       <Helmet title={unit.unit_code || 'Edit Unit'} />
       <h1 className="mb-8 text-3xl font-bold">
         <Link href={route('units')} className="text-indigo-600 hover:text-indigo-700">
-          Units
+          {t('units')}
         </Link>
         <span className="mx-2 font-medium text-indigo-600">/</span>
         <Link href={route('units.show', unit.id)} className="text-indigo-600 hover:text-indigo-700">
@@ -112,7 +114,7 @@ const Edit = () => {
       </h1>
       {unit.deleted_at && (
         <TrashedMessage onRestore={restore}>
-          This unit has been deleted.
+          {t('unit_deleted')}
         </TrashedMessage>
       )}
       <div className="max-w-4xl overflow-hidden bg-white rounded shadow">

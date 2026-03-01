@@ -5,10 +5,15 @@ import Icon from '@/Shared/Icon';
 import SearchFilter from '@/Shared/SearchFilter';
 import Pagination from '@/Shared/Pagination';
 import StatusFilter from '@/Shared/StatusFilter';
+import { useTranslation } from 'react-i18next';
+import ShowButton from '@/Shared/TableActions/ShowButton';
+import EditButton from '@/Shared/TableActions/EditButton';
+import DeleteButton from '@/Shared/TableActions/DeleteButton';
 
 const Index = () => {
   const { projects, auth, projectStatuses = [] } = usePage().props;
   const { data, meta: { links } } = projects;
+  const { t } = useTranslation();
 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
@@ -22,7 +27,7 @@ const Index = () => {
 
   return (
     <div>
-      <h1 className="mb-8 text-3xl font-bold">Projects</h1>
+      <h1 className="mb-8 text-3xl font-bold">{t('projects')}</h1>
       <div className="flex items-center justify-between mb-6 gap-4">
         <div className="flex items-center gap-4">
           <SearchFilter />
@@ -34,21 +39,20 @@ const Index = () => {
         </div>
         {can('projects.create') && (
           <Link className="btn-indigo focus:outline-none" href={route('projects.create')}>
-            <span>Create</span>
-            <span className="hidden md:inline"> Project</span>
-          </Link>
+            <span>{t('create_project')}</span>
+           </Link>
         )}
       </div>
       <div className="overflow-x-auto bg-white rounded shadow">
         <table className="w-full whitespace-nowrap">
           <thead>
             <tr className="font-bold text-left">
-              <th className="px-6 pt-5 pb-4">Code</th>
-              <th className="px-6 pt-5 pb-4">Name</th>
-              <th className="px-6 pt-5 pb-4">Owner</th>
-              <th className="px-6 pt-5 pb-4">City</th>
-              <th className="px-6 pt-5 pb-4">Status</th>
-              <th className="px-6 pt-5 pb-4">Actions</th>
+              <th className="px-6 pt-5 pb-4">{t('code')}</th>
+              <th className="px-6 pt-5 pb-4">{t('name')}</th>
+              <th className="px-6 pt-5 pb-4">{t('owner')}</th>
+              <th className="px-6 pt-5 pb-4">{t('city')}</th>
+              <th className="px-6 pt-5 pb-4">{t('status')}</th>
+              <th className="px-6 pt-5 pb-4">{t('actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -76,37 +80,24 @@ const Index = () => {
                 <td className="border-t px-6 py-4">{p.city?.name || '—'}</td>
                 <td className="border-t px-6 py-4">{p.status?.name || '—'}</td>
                 <td className="border-t px-6 py-4">
-                  {can('projects.edit') && (
-                    <Link
-                      href={route('projects.edit', p.id)}
-                      className="text-indigo-600 hover:text-indigo-800 mr-4"
-                    >
-                      Edit
-                    </Link>
-                  )}
-                  {!p.deleted_at && can('projects.delete') && (
-                    <button
-                      type="button"
-                      onClick={() => destroy(p.id)}
-                      className="text-red-600 hover:text-red-800 mr-4"
-                    >
-                      Delete
-                    </button>
-                  )}
-                  <Link
-                    tabIndex="-1"
-                    href={route('projects.show', p.id)}
-                    className="text-indigo-600 hover:text-indigo-800"
-                  >
-                    Show
-                  </Link>
+                  <div className="flex gap-2">
+                    {can('projects.edit') && (
+                      <EditButton onClick={() => router.visit(route('projects.edit', p.id))} />
+                    )}
+                    {!p.deleted_at && can('projects.delete') && (
+                      <DeleteButton onClick={() => destroy(p.id)} />
+                    )}
+                    {can('projects.view') && (
+                      <ShowButton onClick={() => router.visit(route('projects.show', p.id))} />
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
             {data.length === 0 && (
               <tr>
                 <td className="px-6 py-4 border-t" colSpan="6">
-                  No projects found.
+                  {t('no_projects_found')}
                 </td>
               </tr>
             )}

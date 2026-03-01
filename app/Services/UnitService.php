@@ -69,13 +69,17 @@ class UnitService
     {
         $query = $this->repo->query(['project', 'property', 'propertyType', 'status']);
 
-        return UnitResource::collection(
-            $query
-                ->orderBy('unit_code')
-                ->when(request()->get('project_id'), fn ($q, $pid) => $q->where('project_id', $pid))
-                ->when(request()->get('property_id'), fn ($q, $pid) => $q->where('property_id', $pid))
-                ->paginate($perPage)
-                ->appends(request()->all())
-        );
+        return [
+            'units' => UnitResource::collection(
+                $query
+                    ->orderBy('unit_code')
+                    ->when(request()->get('project_id'), fn ($q, $pid) => $q->where('project_id', $pid))
+                    ->when(request()->get('status_id'), fn ($q, $sid) => $q->where('status_id', $sid))
+                    ->paginate($perPage)
+                    ->appends(request()->all())
+            ),
+            'projects' => \App\Models\Project::orderBy('name')->get(),
+            'unitStatuses' => \App\Models\UnitStatus::orderBy('name')->get(),
+        ];
     }
 }

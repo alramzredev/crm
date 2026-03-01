@@ -5,6 +5,7 @@ import LoadingButton from '@/Shared/LoadingButton';
 import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
 import FileInput from '@/Shared/FileInput';
+import { useTranslation } from 'react-i18next';
 
 const Create = () => {
   const { projects, leadSources = [], leadStatuses = [], brokers = [], auth } = usePage().props;
@@ -22,6 +23,7 @@ const Create = () => {
     national_address_file: '',
     national_id_file: '',
   });
+  const { t } = useTranslation();
 
   const employeeLabel = b => b.name || [b.first_name, b.last_name].filter(Boolean).join(' ') || '—';
 
@@ -37,9 +39,9 @@ const Create = () => {
           href={route('leads')}
           className="text-indigo-600 hover:text-indigo-700"
         >
-          Leads
+          {t('leads')}
         </Link>
-        <span className="font-medium text-indigo-600"> /</span> Create
+        <span className="font-medium text-indigo-600"> /</span> {t('create')}
       </h1>
       <div className="max-w-3xl overflow-hidden bg-white rounded shadow">
         <form onSubmit={handleSubmit}>
@@ -47,7 +49,7 @@ const Create = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 border-b">
             <TextInput
               className="w-full"
-              label="Title"
+              label={t('title')}
               name="title"
               errors={errors.title}
               value={data.title}
@@ -55,7 +57,7 @@ const Create = () => {
             />
             <TextInput
               className="w-full"
-              label="National ID"
+              label={t('national_id')}
               name="national_id"
               errors={errors.national_id}
               value={data.national_id}
@@ -63,7 +65,7 @@ const Create = () => {
             />
             <SelectInput
               className="w-full"
-              label="Project"
+              label={t('project')}
               name="project_id"
               errors={errors.project_id}
               value={data.project_id}
@@ -74,7 +76,7 @@ const Create = () => {
             </SelectInput>
             <SelectInput
               className="w-full"
-              label="Lead Source"
+              label={t('lead_source')}
               name="lead_source_id"
               errors={errors.lead_source_id}
               value={data.lead_source_id}
@@ -85,7 +87,7 @@ const Create = () => {
             </SelectInput>
             <SelectInput
               className="w-full"
-              label="Status"
+              label={t('status')}
               name="status_id"
               errors={errors.status_id}
               value={data.status_id}
@@ -97,7 +99,7 @@ const Create = () => {
             {!auth.user.roles?.includes('sales_employee') && (
               <SelectInput
                 className="w-full"
-                label="Sales Employee"
+                label={t('sales_employee')}
                 name="employee_id"
                 errors={errors.employee_id}
                 value={data.employee_id}
@@ -113,7 +115,7 @@ const Create = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 border-b">
             <TextInput
               className="w-full"
-              label="First Name"
+              label={t('first_name')}
               name="first_name"
               errors={errors.first_name}
               value={data.first_name}
@@ -121,7 +123,7 @@ const Create = () => {
             />
             <TextInput
               className="w-full"
-              label="Last Name"
+              label={t('last_name')}
               name="last_name"
               errors={errors.last_name}
               value={data.last_name}
@@ -129,7 +131,7 @@ const Create = () => {
             />
             <TextInput
               className="w-full"
-              label="Email"
+              label={t('email')}
               name="email"
               type="email"
               errors={errors.email}
@@ -138,7 +140,7 @@ const Create = () => {
             />
             <TextInput
               className="w-full"
-              label="Phone"
+              label={t('phone')}
               name="phone"
               type="text"
               errors={errors.phone}
@@ -148,11 +150,11 @@ const Create = () => {
           </div>
 
           {/* Files */}
-          <div className="p-6">
+          {/* <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FileInput
                 className="w-full"
-                label="National Address File"
+                label={t('national_address_file')}
                 name="national_address_file"
                 accept="image/*,application/pdf"
                 errors={errors.national_address_file}
@@ -161,7 +163,7 @@ const Create = () => {
               />
               <FileInput
                 className="w-full"
-                label="National ID File"
+                label={t('national_id_file')}
                 name="national_id_file"
                 accept="image/*,application/pdf"
                 errors={errors.national_id_file}
@@ -169,7 +171,7 @@ const Create = () => {
                 onChange={file => setData('national_id_file', file)}
               />
             </div>
-          </div>
+          </div> */}
 
           <div className="flex items-center justify-end px-6 py-4 bg-gray-100 border-t">
             <LoadingButton
@@ -177,7 +179,7 @@ const Create = () => {
               type="submit"
               className="btn-indigo"
             >
-              Create Lead
+              {t('create_lead')}
             </LoadingButton>
           </div>
         </form>

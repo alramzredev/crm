@@ -1,9 +1,14 @@
 import React from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 import Pagination from '@/Shared/Pagination';
+import EditButton from '@/Shared/TableActions/EditButton';
+import DeleteButton from '@/Shared/TableActions/DeleteButton';
+import ShowButton from '@/Shared/TableActions/ShowButton';
+import { useTranslation } from 'react-i18next';
 
 const UnitList = ({ units, showButton = true, inTab = false }) => {
   const { auth } = usePage().props;
+  const { t } = useTranslation();
 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
@@ -14,11 +19,11 @@ const UnitList = ({ units, showButton = true, inTab = false }) => {
   const paginationLinks = units?.meta?.links || units?.links || null;
 
   if (!unitData || unitData.length === 0) {
-    return <p>No units found.</p>;
+    return <p>{t('unit_list_no_units_found')}</p>;
   }
 
   function destroy(id) {
-    if (confirm('Are you sure you want to delete this unit?')) {
+    if (confirm(t('delete_unit') || 'Are you sure you want to delete this unit?')) {
       router.delete(route('units.destroy', id), { preserveScroll: true });
     }
   }
@@ -29,13 +34,13 @@ const UnitList = ({ units, showButton = true, inTab = false }) => {
         <table className="w-full whitespace-nowrap">
           <thead>
             <tr className="font-bold text-left">
-              <th className="px-6 pt-5 pb-4">Code</th>
-              <th className="px-6 pt-5 pb-4">Property</th>
-              <th className="px-6 pt-5 pb-4">Floor</th>
-              <th className="px-6 pt-5 pb-4">Area</th>
-              <th className="px-6 pt-5 pb-4">Rooms</th>
-              <th className="px-6 pt-5 pb-4">Status</th>
-              <th className="px-6 pt-5 pb-4">Actions</th>
+              <th className="px-6 pt-5 pb-4">{t('unit_list_code')}</th>
+              <th className="px-6 pt-5 pb-4">{t('unit_list_property')}</th>
+              <th className="px-6 pt-5 pb-4">{t('unit_list_floor')}</th>
+              <th className="px-6 pt-5 pb-4">{t('unit_list_area')}</th>
+              <th className="px-6 pt-5 pb-4">{t('unit_list_rooms')}</th>
+              <th className="px-6 pt-5 pb-4">{t('unit_list_status')}</th>
+              <th className="px-6 pt-5 pb-4">{t('unit_list_actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -48,21 +53,17 @@ const UnitList = ({ units, showButton = true, inTab = false }) => {
                 <td className="border-t px-6 py-4">{u.rooms || '—'}</td>
                 <td className="border-t px-6 py-4">{u.status?.name || '—'}</td>
                 <td className="border-t px-6 py-4">
-                  {can('units.edit') && (
-                    <Link href={route('units.edit', u.id)} className="text-indigo-600 hover:text-indigo-800 mr-4">
-                      Edit
-                    </Link>
-                  )}
-                  {!u.deleted_at && can('units.delete') && (
-                    <button type="button" onClick={() => destroy(u.id)} className="text-red-600 hover:text-red-800 mr-4">
-                      Delete
-                    </button>
-                  )}
-                  {showButton && can('units.view') && (
-                    <Link href={route('units.show', u.id)} className="text-indigo-600 hover:text-indigo-800">
-                      Show
-                    </Link>
-                  )}
+                  <div className="flex gap-2">
+                    {can('units.edit') && (
+                      <EditButton onClick={() => router.visit(route('units.edit', u.id))} />
+                    )}
+                    {!u.deleted_at && can('units.delete') && (
+                      <DeleteButton onClick={() => destroy(u.id)} />
+                    )}
+                    {showButton && can('units.view') && (
+                      <ShowButton onClick={() => router.visit(route('units.show', u.id))} />
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

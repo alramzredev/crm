@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 import Pagination from '@/Shared/Pagination';
+import EditButton from '@/Shared/TableActions/EditButton';
+import DeleteButton from '@/Shared/TableActions/DeleteButton';
+import ShowButton from '@/Shared/TableActions/ShowButton';
 
 const PropertyList = ({ properties, showButton = true, inTab = false }) => {
   const { auth } = usePage().props;
@@ -44,21 +47,17 @@ const PropertyList = ({ properties, showButton = true, inTab = false }) => {
                 <td className="border-t px-6 py-4">{p.owner?.name || '—'}</td>
                 <td className="border-t px-6 py-4">{p.status?.name || '—'}</td>
                 <td className="border-t px-6 py-4">
-                  {can('properties.edit') && (
-                    <Link href={route('properties.edit', p.id)} className="text-indigo-600 hover:text-indigo-800 mr-4">
-                      Edit
-                    </Link>
-                  )}
-                  {!p.deleted_at && can('properties.delete') && (
-                    <button type="button" onClick={() => destroy(p.id)} className="text-red-600 hover:text-red-800 mr-4">
-                      Delete
-                    </button>
-                  )}
-                  {showButton && can('properties.view') && (
-                    <Link href={route('properties.show', p.id)} className="text-indigo-600 hover:text-indigo-800">
-                      Show
-                    </Link>
-                  )}
+                  <div className="flex gap-2">
+                    {can('properties.edit') && (
+                      <EditButton onClick={() => router.visit(route('properties.edit', p.id))} />
+                    )}
+                    {!p.deleted_at && can('properties.delete') && (
+                      <DeleteButton onClick={() => destroy(p.id)} />
+                    )}
+                    {showButton && can('properties.view') && (
+                      <ShowButton onClick={() => router.visit(route('properties.show', p.id))} />
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

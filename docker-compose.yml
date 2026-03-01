@@ -31,6 +31,9 @@ services:
       db:
         condition: service_healthy
 
+    command: >
+      sh -c "php artisan migrate --force && php-fpm"
+
     volumes:
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache

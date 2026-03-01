@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useForm, Link } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import LoadingButton from '@/Shared/LoadingButton';
+import { useTranslation } from 'react-i18next';
 
 const ImportUnits = () => {
   const [showRules, setShowRules] = useState(false);
@@ -10,6 +11,7 @@ const ImportUnits = () => {
     update_existing: false,
     skip_duplicates: true,
   });
+  const { t } = useTranslation();
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -23,8 +25,8 @@ const ImportUnits = () => {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Import Units</h1>
-        <p className="text-gray-600 mt-2">Upload an Excel file to import units in bulk.</p>
+        <h1 className="text-3xl font-bold">{t('import_units')}</h1>
+        <p className="text-gray-600 mt-2">{t('import_units_desc')}</p>
       </div>
 
       <div className="max-w-2xl bg-white rounded shadow overflow-hidden">
@@ -37,10 +39,10 @@ const ImportUnits = () => {
               </svg>
             </div>
             <div className="ml-3 text-sm text-yellow-700">
-              <p><strong>Prerequisites:</strong></p>
+              <p><strong>{t('prerequisites')}:</strong></p>
               <ul className="mt-1 list-disc list-inside space-y-1">
-                <li>Projects must exist</li>
-                <li>Properties must exist under those projects</li>
+                <li>{t('projects_must_exist')}</li>
+                <li>{t('properties_must_exist')}</li>
               </ul>
             </div>
           </div>
@@ -51,7 +53,7 @@ const ImportUnits = () => {
             {/* File Upload */}
             <div className="mb-8">
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                Select Excel File
+                {t('select_excel_file')}
               </label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-400 transition">
                 <input
@@ -66,9 +68,9 @@ const ImportUnits = () => {
                     <path d="M28 8H12a4 4 0 00-4 4v20a4 4 0 004 4h24a4 4 0 004-4V20m-12-8v12m0 0l-4-4m4 4l4-4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   <p className="text-sm text-gray-700">
-                    <span className="font-medium text-indigo-600 hover:text-indigo-500">Click to upload</span> or drag and drop
+                    <span className="font-medium text-indigo-600 hover:text-indigo-500">{t('click_to_upload')}</span> {t('or_drag_and_drop')}
                   </p>
-                  <p className="text-xs text-gray-500">XLSX or CSV up to 10MB</p>
+                  <p className="text-xs text-gray-500">{t('xlsx_or_csv_up_to_10mb')}</p>
                 </label>
               </div>
               {data.file && <p className="mt-2 text-sm text-green-600">✓ {data.file.name}</p>}
@@ -82,18 +84,18 @@ const ImportUnits = () => {
                 onClick={() => setShowRules(!showRules)}
                 className="flex items-center justify-between w-full text-left"
               >
-                <span className="text-sm font-medium text-blue-900">Validation Rules</span>
+                <span className="text-sm font-medium text-blue-900">{t('validation_rules')}</span>
                 <svg className={`h-5 w-5 text-blue-500 transition ${showRules ? 'rotate-180' : ''}`} fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
               </button>
               {showRules && (
                 <ul className="mt-3 text-sm text-blue-800 space-y-1 list-disc list-inside">
-                  <li>Unit code is required and must be unique per property</li>
-                  <li>Project code is required (must exist)</li>
-                  <li>Property code is required (must exist under project)</li>
-                  <li>Status is required (must exist in unit_statuses)</li>
-                  <li>Area must be a positive number</li>
+                  <li>{t('unit_code_required_unique')}</li>
+                  <li>{t('project_code_required_exist')}</li>
+                  <li>{t('property_code_required_exist')}</li>
+                  <li>{t('status_required_exist')}</li>
+                  <li>{t('area_positive_number')}</li>
                 </ul>
               )}
             </div>
@@ -107,7 +109,7 @@ const ImportUnits = () => {
                   onChange={e => setData('update_existing', e.target.checked)}
                   className="rounded border-gray-300 text-indigo-600"
                 />
-                <span className="ml-2 text-sm text-gray-700">Update existing units if code matches</span>
+                <span className="m-2 text-sm text-gray-700">{t('update_existing_units')}</span>
               </label>
               <label className="flex items-center">
                 <input
@@ -116,7 +118,7 @@ const ImportUnits = () => {
                   onChange={e => setData('skip_duplicates', e.target.checked)}
                   className="rounded border-gray-300 text-indigo-600"
                 />
-                <span className="ml-2 text-sm text-gray-700">Skip duplicate codes</span>
+                <span className="m-2 text-sm text-gray-700">{t('skip_duplicate_codes')}</span>
               </label>
             </div>
           </div>
@@ -128,11 +130,11 @@ const ImportUnits = () => {
               onClick={downloadSample}
               className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
             >
-              📥 Download Sample Template
+              📥 {t('download_sample_template')}
             </button>
             <div className="flex gap-3">
               <Link href={route('dashboard')} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50">
-                Cancel
+                {t('cancel')}
               </Link>
               <LoadingButton
                 loading={processing}
@@ -140,7 +142,7 @@ const ImportUnits = () => {
                 type="submit"
                 className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded hover:bg-indigo-700 disabled:opacity-50"
               >
-                Upload & Import
+                {t('upload_import')}
               </LoadingButton>
             </div>
           </div>

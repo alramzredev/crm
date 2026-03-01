@@ -2,9 +2,11 @@ import React from 'react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import UnitForm from '@/Shared/Units/UnitForm';
+import { useTranslation } from 'react-i18next';
 
 const Create = () => {
   const { projects = [], properties = [], propertyTypes = [], propertyStatuses = [], unitTypes = [], cities = [], municipalities = [], neighborhoods = [], defaults = {}, property = null } = usePage().props;
+  const { t } = useTranslation();
 
   // Determine if fields should be read-only
   const isPropertyPredefined = Boolean(property);
@@ -90,9 +92,9 @@ const Create = () => {
     <div>
       <h1 className="mb-8 text-3xl font-bold">
         <Link href={route('units')} className="text-indigo-600 hover:text-indigo-700">
-          Units
+          {t('units')}
         </Link>
-        <span className="font-medium text-indigo-600"> /</span> Create
+        <span className="font-medium text-indigo-600"> /</span> {t('create')}
         {property && (
           <>
             <span className="mx-2 font-medium text-gray-400">/</span>

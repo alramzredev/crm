@@ -1,5 +1,8 @@
 import React from 'react';
 import { router } from '@inertiajs/react';
+import EditButton from '@/Shared/TableActions/EditButton';
+import DeleteButton from '@/Shared/TableActions/DeleteButton';
+import { useTranslation } from 'react-i18next';
 
 const StatusPill = ({ status }) => {
   const colors = {
@@ -21,6 +24,8 @@ const BatchPropertiesList = ({
   onSelectAll,
   onSelectRow
 }) => {
+  const { t } = useTranslation();
+
   function handleRevalidate(rowId) {
     router.post(route('staging-properties.revalidate', rowId), {}, { preserveScroll: true });
   }
@@ -80,23 +85,13 @@ const BatchPropertiesList = ({
               </td>
               <td className="px-4 py-3 text-center space-x-2">
                 {row.import_status !== 'imported' && (
-                  <button
-                    onClick={() => handleRevalidate(row.id)}
-                    className="text-blue-600 hover:text-blue-800 text-xs font-medium"
-                  >
-                    Revalidate
-                  </button>
+                  <EditButton onClick={() => handleRevalidate(row.id)} label={t('revalidate')} />
                 )}
                 {row.import_status === 'valid' && (
-                  <button
-                    onClick={() => handleImport(row.id)}
-                    className="text-green-600 hover:text-green-800 text-xs font-medium"
-                  >
-                    Import
-                  </button>
+                  <DeleteButton onClick={() => handleImport(row.id)} label={t('import')} />
                 )}
                 {row.import_status === 'imported' && (
-                  <span className="text-green-700 text-xs font-medium">✓ Imported</span>
+                  <span className="text-green-700 text-xs font-medium">{t('imported_status')}</span>
                 )}
               </td>
             </tr>

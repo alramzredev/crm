@@ -4,9 +4,11 @@ import Layout from '@/Shared/Layout';
 import LoadingButton from '@/Shared/LoadingButton';
 import SelectInput from '@/Shared/SelectInput';
 import TextInput from '@/Shared/TextInput';
+import { useTranslation } from 'react-i18next';
 
 const Edit = () => {
   const { reservation } = usePage().props;
+  const { t } = useTranslation();
 
   const { data, setData, errors, put, processing } = useForm({
     status: reservation.status || '',
@@ -28,10 +30,10 @@ const Edit = () => {
     <div>
       <h1 className="mb-8 text-3xl font-bold">
         <Link href={route('reservations')} className="text-indigo-600 hover:text-indigo-700">
-          Reservations
+          {t('reservations')}
         </Link>
         <span className="mx-2 font-medium text-indigo-600">/</span>
-        {reservation.reservation_code || 'Edit'}
+        {reservation.reservation_code || t('edit')}
       </h1>
 
       {/* Reservation Form */}
@@ -40,58 +42,58 @@ const Edit = () => {
           <div className="flex flex-wrap p-8 -mb-8 -mr-6">
             <SelectInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Status"
+              label={t('status')}
               name="status"
               errors={errors.status}
               value={data.status}
               onChange={e => setData('status', e.target.value)}
             >
-              <option value=""></option>
-              <option value="draft">Draft</option>
-              <option value="active">Active</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="expired">Expired</option>
-              <option value="canceled">Canceled</option>
+              <option value="">{t('all_statuses')}</option>
+              <option value="draft">{t('draft')}</option>
+              <option value="active">{t('active')}</option>
+              <option value="confirmed">{t('confirmed')}</option>
+              <option value="expired">{t('expired')}</option>
+              <option value="canceled">{t('canceled')}</option>
             </SelectInput>
 
             <SelectInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Payment Method"
+              label={t('payment_method')}
               name="payment_method"
               errors={errors.payment_method}
               value={data.payment_method}
               onChange={e => setData('payment_method', e.target.value)}
             >
               <option value=""></option>
-              <option value="cash">Cash</option>
-              <option value="bank_transfer">Bank Transfer</option>
-              <option value="check">Check</option>
+              <option value="cash">{t('cash')}</option>
+              <option value="bank_transfer">{t('bank_transfer')}</option>
+              <option value="check">{t('check')}</option>
             </SelectInput>
 
             <SelectInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Payment Plan"
+              label={t('payment_plan')}
               name="payment_plan"
               errors={errors.payment_plan}
               value={data.payment_plan}
               onChange={e => setData('payment_plan', e.target.value)}
             >
               <option value=""></option>
-              <option value="cash">Cash</option>
-              <option value="installment">Installment</option>
-              <option value="mortgage">Mortgage</option>
+              <option value="cash">{t('cash')}</option>
+              <option value="installment">{t('installment')}</option>
+              <option value="mortgage">{t('mortgage')}</option>
             </SelectInput>
 
             <TextInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Original Price"
+              label={t('base_price')}
               name="base_price"
               value={reservation.base_price || reservation.total_price || ''}
               readOnly
             />
             <TextInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Total Price"
+              label={t('total_price')}
               name="total_price"
               errors={errors.total_price}
               value={data.total_price}
@@ -99,7 +101,7 @@ const Edit = () => {
             />
             <TextInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Down Payment"
+              label={t('down_payment')}
               name="down_payment"
               errors={errors.down_payment}
               value={data.down_payment}
@@ -107,23 +109,23 @@ const Edit = () => {
             />
             <TextInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Remaining Amount"
+              label={t('remaining_amount')}
               name="remaining_amount"
               errors={errors.remaining_amount}
               value={data.remaining_amount}
               onChange={e => setData('remaining_amount', e.target.value)}
             />
-            <TextInput
+            {/* <TextInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Currency"
+              label={t('currency')}
               name="currency"
               errors={errors.currency}
               value={data.currency}
               onChange={e => setData('currency', e.target.value)}
-            />
+            /> */}
             <TextInput
               className="w-full pb-8 pr-6"
-              label="Notes"
+              label={t('notes')}
               name="notes"
               errors={errors.notes}
               value={data.notes}
@@ -132,12 +134,11 @@ const Edit = () => {
           </div>
           <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
             <LoadingButton loading={processing} type="submit" className="ml-auto btn-indigo">
-              Update Reservation
+              {t('update_reservation')}
             </LoadingButton>
           </div>
         </form>
       </div>
-
     </div>
   );
 };

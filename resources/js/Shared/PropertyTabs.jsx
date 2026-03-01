@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function PropertyTabs({ activeTab, onChange }) {
+  const { t } = useTranslation();
   return (
     <div className="mb-6 border-b border-gray-200">
       <nav className="flex space-x-6">
@@ -13,7 +15,7 @@ export default function PropertyTabs({ activeTab, onChange }) {
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >
-          Overview
+          {t('overview')}
         </button>
         <button
           type="button"
@@ -24,7 +26,7 @@ export default function PropertyTabs({ activeTab, onChange }) {
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >
-          Units
+          {t('units')}
         </button>
       </nav>
     </div>

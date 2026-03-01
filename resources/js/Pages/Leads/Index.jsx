@@ -5,10 +5,17 @@ import Icon from '@/Shared/Icon';
 import SearchFilter from '@/Shared/SearchFilter';
 import StatusFilter from '@/Shared/StatusFilter';
 import Pagination from '@/Shared/Pagination';
+import { useTranslation } from 'react-i18next';
+import EditButton from '@/Shared/TableActions/EditButton';
+import DeleteButton from '@/Shared/TableActions/DeleteButton';
+import ShowButton from '@/Shared/TableActions/ShowButton';
+import CreateReservationButton from '@/Shared/TableActions/CreateReservationButton';
+import SelectInput from '@/Shared/SelectInput';
 
 const Index = () => {
   const { leads = { data: [], meta: { links: [] } }, auth, leadStatuses = [] } = usePage().props;
   const { data = [], meta: { links } = { links: [] } } = leads;
+  const { t } = useTranslation();
 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
@@ -20,34 +27,49 @@ const Index = () => {
     }
   }
 
+  // Add for status filter
+  const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const currentStatus = params.get('status') || '';
+
+  function handleStatusChange(e) {
+    const status = e.target.value;
+    router.get(route('leads'), { ...Object.fromEntries(params), status }, { preserveScroll: true });
+  }
+
   return (
     <div>
-      <h1 className="mb-8 text-3xl font-bold">Leads</h1>
+      <h1 className="mb-8 text-3xl font-bold">{t('leads')}</h1>
       <div className="flex items-center justify-between mb-6 gap-4">
         <div className="flex items-center gap-4">
           <SearchFilter />
-          <StatusFilter
-            statuses={leadStatuses.map(s => ({ value: s.id, label: s.name }))}
-            currentStatus={new URLSearchParams(window.location.search).get('status')}
-            routeName="leads"
-          />
+          <SelectInput
+            className="w-48"
+            label={t('status')}
+            name="status"
+            value={currentStatus}
+            onChange={handleStatusChange}
+          >
+            <option value="">{t('all_statuses') || 'All Statuses'}</option>
+            {leadStatuses.map(s => (
+              <option key={s.id} value={s.id}>{s.name}</option>
+            ))}
+          </SelectInput>
         </div>
         {can('leads.create') && (
           <Link className="btn-indigo focus:outline-none" href={route('leads.create')}>
-            <span>Create</span>
-            <span className="hidden md:inline"> Lead</span>
-          </Link>
+            <span>{t('create_lead')}</span>
+           </Link>
         )}
       </div>
       <div className="overflow-x-auto bg-white rounded shadow">
         <table className="w-full whitespace-nowrap">
           <thead>
             <tr className="font-bold text-left">
-              <th className="px-6 pt-5 pb-4">Name</th>
-              <th className="px-6 pt-5 pb-4">Email</th>
-              <th className="px-6 pt-5 pb-4">Phone</th>
-              <th className="px-6 pt-5 pb-4">Project</th>
-              <th className="px-6 pt-5 pb-4">Actions</th>
+              <th className="px-6 pt-5 pb-4">{t('name')}</th>
+              <th className="px-6 pt-5 pb-4">{t('email')}</th>
+              <th className="px-6 pt-5 pb-4">{t('phone')}</th>
+              <th className="px-6 pt-5 pb-4">{t('project')}</th>
+              <th className="px-6 pt-5 pb-4">{t('actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -65,29 +87,28 @@ const Index = () => {
                 <td className="border-t px-6 py-4">{lead.email || '—'}</td>
                 <td className="border-t px-6 py-4">{lead.phone || '—'}</td>
                 <td className="border-t px-6 py-4">{lead.project?.name || '—'}</td>
-                <td className="border-t px-6 py-4 space-x-3">
-                  {!lead.deleted_at && can('reservations.create') && (
-                    <Link href={route('reservations.create', { lead_id: lead.id })} className="text-green-600 hover:text-green-800">
-                      Reserve
-                    </Link>
-                  )}
-                  {can('leads.edit') && (
-                    <Link href={route('leads.edit', lead.id)} className="text-indigo-600 hover:text-indigo-800">
-                      Edit
-                    </Link>
-                  )}
-                  {!lead.deleted_at && can('leads.delete') && (
-                    <button type="button" onClick={() => destroy(lead.id)} className="text-red-600 hover:text-red-800">
-                      Delete
-                    </button>
-                  )}
+                <td className="border-t px-6 py-4">
+                  <div className="flex gap-2">
+                    {!lead.deleted_at && can('reservations.create') && (
+                      <CreateReservationButton
+                        onClick={() => router.visit(route('reservations.create', { lead_id: lead.id }))}
+                        label={t('reserve_unit')}
+                      />
+                    )}
+                    {can('leads.edit') && (
+                      <EditButton onClick={() => router.visit(route('leads.edit', lead.id))} />
+                    )}
+                    {!lead.deleted_at && can('leads.delete') && (
+                      <DeleteButton onClick={() => destroy(lead.id)} />
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
             {data.length === 0 && (
               <tr>
                 <td className="px-6 py-4 border-t" colSpan="5">
-                  No leads found.
+                  {t('no_leads_found')}
                 </td>
               </tr>
             )}

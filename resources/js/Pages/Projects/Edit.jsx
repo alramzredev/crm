@@ -5,6 +5,7 @@ import Layout from '@/Shared/Layout';
 import DeleteButton from '@/Shared/DeleteButton';
 import TrashedMessage from '@/Shared/TrashedMessage';
 import ProjectForm from '@/Shared/Projects/ProjectForm';
+import { useTranslation } from 'react-i18next';
 
 const Edit = () => {
   const { project = {}, owners = [], cities = [], municipalities = [], neighborhoods = [], projectTypes = [], projectStatuses = [] } = usePage().props;
@@ -30,6 +31,7 @@ const Edit = () => {
     sellable_area_factor: project.sellable_area_factor || '',
     floor_area_ratio: project.floor_area_ratio || '',
   });
+  const { t } = useTranslation();
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -50,19 +52,19 @@ const Edit = () => {
 
   return (
     <div>
-      <Helmet title={project.name || 'Edit Project'} />
+      <Helmet title={project.name || t('edit_project')} />
       <h1 className="mb-8 text-3xl font-bold">
         <Link href={route('projects')} className="text-indigo-600 hover:text-indigo-700">
-          Projects
+          {t('projects')}
         </Link>
         <span className="mx-2 font-medium text-indigo-600">/</span>
         <Link href={route('projects.show', project.id)} className="text-indigo-600 hover:text-indigo-700">
-          {project.name || `Project #${project.id}`}
+          {project.name || `${t('project')} #${project.id}`}
         </Link>
       </h1>
       {project.deleted_at && (
         <TrashedMessage onRestore={restore}>
-          This project has been deleted.
+          {t('project_deleted')}
         </TrashedMessage>
       )}
       <div className="max-w-4xl overflow-hidden bg-white rounded shadow">
@@ -72,7 +74,7 @@ const Edit = () => {
           errors={errors}
           processing={processing}
           onSubmit={handleSubmit}
-          submitLabel="Update Project"
+          submitLabel={t('update_project')}
           owners={owners}
           cities={cities}
           municipalities={municipalities}
@@ -83,7 +85,7 @@ const Edit = () => {
         <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
           {!project.deleted_at && (
             <DeleteButton onDelete={destroy}>
-              Delete Project
+              {t('delete_project')}
             </DeleteButton>
           )}
         </div>

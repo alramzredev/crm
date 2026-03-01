@@ -27,10 +27,14 @@ class UnitsController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Unit::class);
-        
+
+        $data = $this->service->getPaginatedUnits(Request::only('search', 'trashed', 'project_id', 'status_id'));
+
         return Inertia::render('Units/Index', [
-            'filters' => Request::all('search', 'trashed'),
-            'units' => $this->service->getPaginatedUnits(Request::only('search', 'trashed')),
+            'filters' => Request::all('search', 'trashed', 'project_id', 'status_id'),
+            'units' => $data['units'],
+            'projects' => $data['projects'],
+            'unitStatuses' => $data['unitStatuses'],
         ]);
     }
 

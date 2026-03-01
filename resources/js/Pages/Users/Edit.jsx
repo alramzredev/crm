@@ -8,6 +8,7 @@ import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
 import FileInput from '@/Shared/FileInput';
 import TrashedMessage from '@/Shared/TrashedMessage';
+import { useTranslation } from 'react-i18next'; // add this
 
 const Edit = () => {
   const { user, roles = [], supervisors = [], projects = [], auth } = usePage().props;
@@ -64,16 +65,18 @@ const Edit = () => {
   }
 
   function destroy() {
-    if (confirm('Are you sure you want to delete this user?')) {
+    if (confirm(t('delete_user_confirm') || 'Are you sure you want to delete this user?')) {
       router.delete(route('users.destroy', user.id));
     }
   }
 
   function restore() {
-    if (confirm('Are you sure you want to restore this user?')) {
+    if (confirm(t('restore_user_confirm') || 'Are you sure you want to restore this user?')) {
       router.put(route('users.restore', user.id));
     }
   }
+
+  const { t } = useTranslation(); // add this
 
   return (
     <div>
@@ -84,7 +87,7 @@ const Edit = () => {
             href={route('users')}
             className="text-indigo-600 hover:text-indigo-700"
           >
-            Users
+            {t('users')}
           </Link>
           <span className="mx-2 font-medium text-indigo-600">/</span>
           {data.first_name} {data.last_name}
@@ -95,7 +98,7 @@ const Edit = () => {
       </div>
       {user.deleted_at && can('users.restore') && (
         <TrashedMessage onRestore={restore}>
-          This user has been deleted.
+          {t('user_deleted')}
         </TrashedMessage>
       )}
       <div className="max-w-3xl overflow-hidden bg-white rounded shadow">
@@ -103,7 +106,7 @@ const Edit = () => {
           <div className="flex flex-wrap p-8 -mb-8 -mr-6">
             <TextInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="First Name"
+              label={t('first_name')}
               name="first_name"
               errors={errors.first_name}
               value={data.first_name}
@@ -111,7 +114,7 @@ const Edit = () => {
             />
             <TextInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Last Name"
+              label={t('last_name')}
               name="last_name"
               errors={errors.last_name}
               value={data.last_name}
@@ -119,7 +122,7 @@ const Edit = () => {
             />
             <TextInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Email"
+              label={t('email')}
               name="email"
               type="email"
               errors={errors.email}
@@ -128,7 +131,7 @@ const Edit = () => {
             />
             <TextInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Phone"
+              label={t('phone')}
               name="phone"
               type="text"
               errors={errors.phone}
@@ -137,7 +140,7 @@ const Edit = () => {
             />
             <TextInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Password"
+              label={t('password')}
               name="password"
               type="password"
               errors={errors.password}
@@ -146,19 +149,19 @@ const Edit = () => {
             />
             <SelectInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Role"
+              label={t('role')}
               name="role"
               errors={errors.role}
               value={data.role}
               onChange={e => setData('role', e.target.value)}
             >
-              <option value="">Select a role</option>
+              <option value="">{t('select_role')}</option>
               {roles.map(r => <option key={r.id} value={r.id}>{r.label || r.name}</option>)}
             </SelectInput>
 
             {/* <FileInput
               className="w-full pb-8 pr-6 lg:w-1/2"
-              label="Photo"
+              label={t('photo')}
               name="photo"
               accept="image/*"
               errors={errors.photo}
@@ -170,7 +173,7 @@ const Edit = () => {
             {isSalesEmployee && (
               <TextInput
                 className="w-full pb-8 pr-6 lg:w-1/2"
-                label="Lead Capacity"
+                label={t('lead_capacity')}
                 name="lead_capacity"
                 type="number"
                 min="0"
@@ -184,14 +187,14 @@ const Edit = () => {
             {isSalesEmployee && (
               <div className="w-full pb-8 pr-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Assign Supervisors
+                  {t('assign_supervisors')}
                 </label>
                 {errors.supervisor_ids && (
                   <div className="text-sm text-red-500 mb-3">{errors.supervisor_ids}</div>
                 )}
                 <div className="space-y-2 bg-gray-50 p-4 rounded border border-gray-200">
                   {supervisors.length === 0 ? (
-                    <p className="text-sm text-gray-500">No supervisors available</p>
+                    <p className="text-sm text-gray-500">{t('no_supervisors_available')}</p>
                   ) : (
                     supervisors.map(supervisor => (
                       <label key={supervisor.id} className="flex items-center cursor-pointer">
@@ -217,14 +220,14 @@ const Edit = () => {
             {isSalesSupervisor && (
               <div className="w-full pb-8 pr-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Assign Projects
+                  {t('assign_projects')}
                 </label>
                 {errors.project_ids && (
                   <div className="text-sm text-red-500 mb-3">{errors.project_ids}</div>
                 )}
                 <div className="space-y-2 bg-gray-50 p-4 rounded border border-gray-200 max-h-60 overflow-y-auto">
                   {projects.length === 0 ? (
-                    <p className="text-sm text-gray-500">No projects available</p>
+                    <p className="text-sm text-gray-500">{t('no_projects_available')}</p>
                   ) : (
                     projects.map(project => (
                       <label key={project.id} className="flex items-center cursor-pointer">
@@ -248,14 +251,14 @@ const Edit = () => {
             {isProjectManager && (
               <div className="w-full pb-8 pr-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Assign Projects
+                  {t('assign_projects')}
                 </label>
                 {errors.project_ids && (
                   <div className="text-sm text-red-500 mb-3">{errors.project_ids}</div>
                 )}
                 <div className="space-y-2 bg-gray-50 p-4 rounded border border-gray-200 max-h-60 overflow-y-auto">
                   {projects.length === 0 ? (
-                    <p className="text-sm text-gray-500">No projects available</p>
+                    <p className="text-sm text-gray-500">{t('no_projects_available')}</p>
                   ) : (
                     projects.map(project => (
                       <label key={project.id} className="flex items-center cursor-pointer">
@@ -275,20 +278,25 @@ const Edit = () => {
               </div>
             )}
           </div>
-          <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
-            {!user.deleted_at && can('users.delete') && (
-              <DeleteButton onDelete={destroy}>Delete User</DeleteButton>
-            )}
+      <div className="flex items-center justify-end px-8 py-4 bg-gray-100 border-t border-gray-200">
+           
             {can('users.edit') && (
               <LoadingButton
                 loading={processing}
                 type="submit"
-                className="ml-auto btn-indigo"
+                className="btn-indigo"
               >
-                Update User
+                {t('update_user')}
               </LoadingButton>
             )}
           </div>
+
+        <div className="flex items-center px-8 py-4 bg-gray-100 border-t border-gray-200">
+            {!user.deleted_at && can('users.delete') && (
+              <DeleteButton onDelete={destroy}>{t('delete_user')}</DeleteButton>
+            )}
+            
+           </div>
         </form>
       </div>
     </div>

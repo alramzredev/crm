@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import SelectInput from '@/Shared/SelectInput';
+import { useTranslation } from 'react-i18next';
 
 const CityMunicipalityNeighborhoodSelector = ({
   data,
@@ -11,10 +12,11 @@ const CityMunicipalityNeighborhoodSelector = ({
   showCity = true,
   showMunicipality = true,
   showNeighborhood = true,
-  cityLabel = 'City',
-  municipalityLabel = 'Municipality',
-  neighborhoodLabel = 'Neighborhood',
+  cityLabel,
+  municipalityLabel,
+  neighborhoodLabel,
 }) => {
+  const { t } = useTranslation();
   // Filter municipalities by selected city
   const filteredMunicipalities = useMemo(() => {
     if (!data.city_id) return municipalities;
@@ -43,7 +45,7 @@ const CityMunicipalityNeighborhoodSelector = ({
       {showCity && (
         <SelectInput
           className="w-full pb-8 pr-6 lg:w-1/3"
-          label={cityLabel}
+          label={cityLabel || t('city')}
           name="city_id"
           errors={errors.city_id}
           value={data.city_id || ''}
@@ -59,7 +61,7 @@ const CityMunicipalityNeighborhoodSelector = ({
       {showMunicipality && (
         <SelectInput
           className="w-full pb-8 pr-6 lg:w-1/3"
-          label={municipalityLabel}
+          label={municipalityLabel || t('municipality')}
           name="municipality_id"
           errors={errors.municipality_id}
           value={data.municipality_id || ''}
@@ -76,7 +78,7 @@ const CityMunicipalityNeighborhoodSelector = ({
       {showNeighborhood && (
         <SelectInput
           className="w-full pb-8 pr-6 lg:w-1/3"
-          label={neighborhoodLabel}
+          label={neighborhoodLabel || t('neighborhood')}
           name="neighborhood_id"
           errors={errors.neighborhood_id}
           value={data.neighborhood_id || ''}

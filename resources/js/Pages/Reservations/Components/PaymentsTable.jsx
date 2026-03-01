@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
+import EditButton from '@/Shared/TableActions/EditButton';
+import DeleteButton from '@/Shared/TableActions/DeleteButton';
 
 const PaymentsTable = ({ payments, onEdit, onDelete, readOnly = false }) => {
   if (!payments || payments.length === 0) {
@@ -30,18 +32,8 @@ const PaymentsTable = ({ payments, onEdit, onDelete, readOnly = false }) => {
             <td className="px-6 py-4 text-sm text-gray-900">{payment.notes || '—'}</td>
             {!readOnly && (
               <td className="px-6 py-4 text-right text-sm space-x-2">
-                <button
-                  onClick={() => onEdit(payment)}
-                  className="text-indigo-600 hover:text-indigo-900"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => onDelete(payment.id)}
-                  className="text-red-600 hover:text-red-900"
-                >
-                  Delete
-                </button>
+                <EditButton onClick={() => onEdit(payment)} />
+                <DeleteButton onClick={() => onDelete(payment.id)} />
               </td>
             )}
           </tr>

@@ -13,7 +13,7 @@ export default ({ name, label, checked, onChange, errors = [] }) => {
           className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
         />
       </div>
-      <div className="ml-3 text-sm">
+      <div className="ml-3 mr-3 text-sm">
         <label htmlFor={name} className="font-medium text-gray-700">
           {label}
         </label>

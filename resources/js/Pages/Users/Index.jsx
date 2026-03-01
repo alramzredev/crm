@@ -1,9 +1,11 @@
 import React from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router} from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import Icon from '@/Shared/Icon';
 import SearchFilter from '@/Shared/SearchFilter';
 import Pagination from '@/Shared/Pagination';
+import EditButton from '@/Shared/TableActions/EditButton';
+import { useTranslation } from 'react-i18next';
 
 const Index = () => {
   const { users, auth } = usePage().props;
@@ -11,6 +13,7 @@ const Index = () => {
     data,
     meta: { links }
   } = users;
+  const { t } = useTranslation();
 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
@@ -18,7 +21,7 @@ const Index = () => {
 
   return (
     <div>
-      <h1 className="mb-8 text-3xl font-bold">Users</h1>
+      <h1 className="mb-8 text-3xl font-bold">{t('users')}</h1>
       <div className="flex items-center justify-between mb-6">
         <SearchFilter />
         {can('users.create') && (
@@ -26,20 +29,19 @@ const Index = () => {
             className="btn-indigo focus:outline-none"
             href={route('users.create')}
           >
-            <span>Create</span>
-            <span className="hidden md:inline"> User</span>
+            <span>{t('create')}</span>
+            <span className="hidden md:inline"> {t('user')}</span>
           </Link>
         )}
       </div>
       <div className="overflow-x-auto bg-white rounded shadow">
         <table className="w-full whitespace-nowrap">
           <thead>
-            <tr className="font-bold text-left">
-              <th className="px-6 pt-5 pb-4">Name</th>
-              <th className="px-6 pt-5 pb-4">Email</th>
-              <th className="px-6 pt-5 pb-4" colSpan="2">
-                Role
-              </th>
+            <tr className="font-bold">
+              <th className="px-6 pt-5 pb-4">{t('name')}</th>
+              <th className="px-6 pt-5 pb-4">{t('email')}</th>
+              <th className="px-6 pt-5 pb-4">{t('role')}</th>
+              <th className="px-6 pt-5 pb-4">{t('actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -90,16 +92,7 @@ const Index = () => {
                   </td>
                   <td className="w-px border-t">
                     {can('users.edit') && (
-                      <Link
-                        tabIndex="-1"
-                        href={route('users.edit', id)}
-                        className="flex items-center px-4 focus:outline-none"
-                      >
-                        <Icon
-                          name="cheveron-right"
-                          className="block w-6 h-6 text-gray-400 fill-current"
-                        />
-                      </Link>
+                      <EditButton onClick={() => router.visit(route('users.edit', id))} />
                     )}
                   </td>
                 </tr>
@@ -108,7 +101,7 @@ const Index = () => {
             {data.length === 0 && (
               <tr>
                 <td className="px-6 py-4 border-t" colSpan="4">
-                  No users found.
+                  {t('no_users_found')}
                 </td>
               </tr>
             )}

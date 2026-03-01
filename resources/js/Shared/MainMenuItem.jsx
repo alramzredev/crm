@@ -6,9 +6,12 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
+import { useTranslation } from 'react-i18next';
 
 export default ({ text, link, icon, drawerOpen = true }) => {
   const { url } = usePage().props;
+  const { i18n } = useTranslation();
+  const isRTL = i18n.dir() === 'rtl';
 
   const isActive = () => {
     try {
@@ -34,7 +37,7 @@ export default ({ text, link, icon, drawerOpen = true }) => {
             px: 2,
             borderRadius: 2,
             transition: 'all 0.2s ease',
-            // Remove MUI color logic, use Tailwind below
+            
           }}
           className={
             active
@@ -45,7 +48,8 @@ export default ({ text, link, icon, drawerOpen = true }) => {
           <ListItemIcon
             sx={{
               minWidth: 0,
-              mr: drawerOpen ? 2 : 'auto',
+              mr: !isRTL && drawerOpen ? 2 : 0,
+              ml: isRTL && drawerOpen ? 2 : 0,
               justifyContent: 'center',
               color: 'inherit',
               transition: 'margin 0.3s ease',
@@ -67,6 +71,8 @@ export default ({ text, link, icon, drawerOpen = true }) => {
               transition: 'opacity 0.25s ease',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
+              direction: isRTL ? 'rtl' : 'ltr',
+              textAlign: isRTL ? 'right' : 'left',
               '& .MuiTypography-root': {
                 fontWeight: active ? 600 : 400,
                 fontSize: '0.875rem',

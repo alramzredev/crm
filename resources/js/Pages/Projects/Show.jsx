@@ -4,9 +4,11 @@ import Layout from '@/Shared/Layout';
 import TrashedMessage from '@/Shared/TrashedMessage';
 import ProjectTabs from '@/Shared/ProjectTabs';
 import PropertyList from '@/Shared/PropertyList';
+import { useTranslation } from 'react-i18next';
 
 const Show = () => {
   const { project, properties, auth } = usePage().props;
+  const { t } = useTranslation();
 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
@@ -48,20 +50,20 @@ const Show = () => {
             href={route('projects')}
             className="text-indigo-600 hover:text-indigo-700"
           >
-            Projects
+            {t('projects')}
           </Link>
           <span className="mx-2 font-medium text-indigo-600">/</span>
           {project.name}
         </h1>
         {can('projects.edit') && (
           <Link className="btn-indigo" href={route('projects.edit', project.id)}>
-            Edit
+            {t('edit')}
           </Link>
         )}
       </div>
 
       {project.deleted_at && (
-        <TrashedMessage>This project has been deleted.</TrashedMessage>
+        <TrashedMessage>{t('project_deleted')}</TrashedMessage>
       )}
 
       <ProjectTabs activeTab={activeTab} onChange={setActiveTab} />
@@ -72,52 +74,52 @@ const Show = () => {
             <div className="p-8">
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">Project Code</div>
+                  <div className="text-sm font-semibold text-gray-600">{t('project_code')}</div>
                   <div className="mt-1">{project.project_code || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">Owner</div>
+                  <div className="text-sm font-semibold text-gray-600">{t('owner')}</div>
                   <div className="mt-1">{ownerLabel || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">Owner Type</div>
+                  <div className="text-sm font-semibold text-gray-600">{t('owner_type')}</div>
                   <div className="mt-1">{ownerTypeLabel || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">Type</div>
+                  <div className="text-sm font-semibold text-gray-600">{t('type')}</div>
                   <div className="mt-1">{typeLabel || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">Status</div>
+                  <div className="text-sm font-semibold text-gray-600">{t('status')}</div>
                   <div className="mt-1">{statusLabel || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">Budget</div>
+                  <div className="text-sm font-semibold text-gray-600">{t('budget')}</div>
                   <div className="mt-1">{project.budget ? `$${project.budget}` : '—'}</div>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">City</div>
+                  <div className="text-sm font-semibold text-gray-600">{t('city')}</div>
                   <div className="mt-1">{cityLabel || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">Neighborhood</div>
+                  <div className="text-sm font-semibold text-gray-600">{t('neighborhood')}</div>
                   <div className="mt-1">{neighborhoodLabel}</div>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">Location</div>
+                  <div className="text-sm font-semibold text-gray-600">{t('location')}</div>
                   <div className="mt-1">{project.location || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">Floors</div>
+                  <div className="text-sm font-semibold text-gray-600">{t('floors')}</div>
                   <div className="mt-1">{project.no_of_floors || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">Units</div>
+                  <div className="text-sm font-semibold text-gray-600">{t('units')}</div>
                   <div className="mt-1">{project.number_of_units || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-sm font-semibold text-gray-600">Warranty</div>
-                  <div className="mt-1">{project.warranty ? 'Yes' : 'No'}</div>
+                  <div className="text-sm font-semibold text-gray-600">{t('warranty')}</div>
+                  <div className="mt-1">{project.warranty ? t('yes') : t('no')}</div>
                 </div>
               </div>
             </div>
@@ -129,13 +131,13 @@ const Show = () => {
         <div className="max-w-4xl bg-white rounded shadow">
           <div className="p-8">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-lg font-semibold">Properties</h2>
+              <h2 className="text-lg font-semibold">{t('properties')}</h2>
               {can('properties.create') && (
                 <Link
                   className="btn-indigo"
                   href={route('properties.create', { project_id: project.id })}
                 >
-                  Add Property
+                  {t('add_property')}
                 </Link>
               )}
             </div>
@@ -144,7 +146,7 @@ const Show = () => {
                 className="text-indigo-600 hover:text-indigo-800"
                 href={route('properties', { project_id: project.id })}
               >
-                View all properties
+                {t('view_all_properties')}
               </Link>
             </div>
             <PropertyList properties={properties} showButton={true} inTab={true} />

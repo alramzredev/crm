@@ -7,14 +7,16 @@ import Toolbar from '@mui/material/Toolbar';
 import MainMenu, { DRAWER_WIDTH, DRAWER_MINI_WIDTH } from '@/Shared/MainMenu';
 import TopHeader from '@/Shared/TopHeader';
 import FlashMessages from '@/Shared/FlashMessages';
+import { useTranslation } from 'react-i18next';
 
 export default function Layout({ title, children }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { i18n } = useTranslation();
 
   const [drawerWidth, setDrawerWidth] = useState(DRAWER_WIDTH);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [desktopOpen, setDesktopOpen] = useState(true); // <-- add
+  const [desktopOpen, setDesktopOpen] = useState(true);
 
   const handleToggleDesktop = () => {
     const next = !desktopOpen;
@@ -24,6 +26,17 @@ export default function Layout({ title, children }) {
 
   const isOpen = drawerWidth === DRAWER_WIDTH;
 
+  // Determine anchor based on language direction
+  const anchor = i18n.dir() === 'rtl' ? 'right' : 'left';
+
+  // Helper for dynamic margin style
+  const getMainMargin = () => {
+    if (isMobile) return {};
+    if (anchor === 'left') return { marginLeft: `${drawerWidth}px` };
+    if (anchor === 'right') return { marginRight: `${drawerWidth}px` };
+    return {};
+  };
+
   return (
     <div>
       <Helmet titleTemplate="%s | Alramz CRM" title={title} />
@@ -32,8 +45,9 @@ export default function Layout({ title, children }) {
       <TopHeader
         drawerWidth={isMobile ? 0 : drawerWidth}
         onMobileMenuOpen={() => setMobileOpen(true)}
-        onToggle={handleToggleDesktop} // <-- pass handler
-        desktopOpen={desktopOpen} // <-- pass state
+        onToggle={handleToggleDesktop}
+        desktopOpen={desktopOpen}
+        anchor={anchor}
       />
 
       {/* Sidebar — receives and controls mobileOpen */}
@@ -41,21 +55,24 @@ export default function Layout({ title, children }) {
         onToggle={setDrawerWidth}
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
-        desktopOpen={desktopOpen} // <-- pass state
-        setDesktopOpen={setDesktopOpen} // <-- pass setter
+        desktopOpen={desktopOpen}
+        setDesktopOpen={setDesktopOpen}
       />
 
       {/* Main content */}
       <Box
         component="main"
         sx={{
-          ml: isMobile ? 0 : `${drawerWidth}px`,
-          transition: theme.transitions.create('margin-left', {
-            easing: theme.transitions.easing.sharp,
-            duration: isOpen
-              ? theme.transitions.duration.enteringScreen
-              : theme.transitions.duration.leavingScreen,
-          }),
+          ...getMainMargin(),
+          transition: theme.transitions.create(
+            anchor === 'left' ? 'margin-left' : 'margin-right',
+            {
+              easing: theme.transitions.easing.sharp,
+              duration: isOpen
+                ? theme.transitions.duration.enteringScreen
+                : theme.transitions.duration.leavingScreen,
+            }
+          ),
           minHeight: '100vh',
           overflowX: 'hidden',
           display: 'flex',
@@ -75,7 +92,6 @@ export default function Layout({ title, children }) {
           © {new Date().getFullYear()} Alramz. All rights reserved.
         </footer>
       </Box>
-
     </div>
   );
 }

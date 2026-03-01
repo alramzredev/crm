@@ -1,5 +1,7 @@
 import React from 'react';
 import { router } from '@inertiajs/react';
+import EditButton from '@/Shared/TableActions/EditButton';
+import DeleteButton from '@/Shared/TableActions/DeleteButton';
 
 const DiscountRequestsTable = ({ discountRequests, canApprove = false, onEdit }) => {
   if (!discountRequests || discountRequests.length === 0) {
@@ -54,14 +56,8 @@ const DiscountRequestsTable = ({ discountRequests, canApprove = false, onEdit })
             </td>
             <td className="px-6 py-4 text-sm text-gray-900">{req.reason || '—'}</td>
             <td className="px-6 py-4 text-right text-sm space-x-2">
-              {/* Edit button only for pending/rejected requests */}
               {req.status !== 'approved' && typeof onEdit === 'function' && (
-                <button
-                  onClick={() => onEdit(req)}
-                  className="text-indigo-600 hover:text-indigo-900"
-                >
-                  Edit
-                </button>
+                <EditButton onClick={() => onEdit(req)} />
               )}
               {canApprove && req.status === 'pending' && (
                 <>

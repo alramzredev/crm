@@ -4,10 +4,12 @@ import { usePrevious } from 'react-use';
 import SelectInput from '@/Shared/SelectInput';
 import pickBy from 'lodash/pickBy';
 import logo from '../../images/logo-white-2-1-1.svg';
+import { useTranslation } from 'react-i18next';
 
 export default () => {
   const { filters, availableRoles = [] } = usePage().props;
   const [opened, setOpened] = useState(false);
+  const { t } = useTranslation();
 
   const [values, setValues] = useState({
     role: filters.role || '', // role is used only on users page
@@ -65,7 +67,7 @@ export default () => {
             {filters.hasOwnProperty('role') && (
               <SelectInput
                 className="mb-4"
-                label="Role"
+                label={t('role')}
                 name="role"
                 value={values.role}
                 onChange={handleChange}
@@ -79,14 +81,14 @@ export default () => {
               </SelectInput>
             )}
             <SelectInput
-              label="Trashed"
+              label={t('trashed')}
               name="trashed"
               value={values.trashed}
               onChange={handleChange}
             >
               <option value=""></option>
-              <option value="with">With Trashed</option>
-              <option value="only">Only Trashed</option>
+              <option value="with">{t('with_trashed')}</option>
+              <option value="only">{t('only_trashed')}</option>
             </SelectInput>
           </div>
         </div>
@@ -95,7 +97,7 @@ export default () => {
           className="px-4 border-r rounded-l md:px-6 hover:bg-gray-100 focus:outline-none focus:border-white focus:ring-2 focus:ring-indigo-400 focus:z-10"
         >
           <div className="flex items-baseline">
-            <span className="hidden text-gray-700 md:inline">Filter</span>
+            <span className="hidden text-gray-700 md:inline">{t('filter')}</span>
             <svg
               className="w-2 h-2 text-gray-700 fill-current md:ml-2"
               xmlns={logo}
@@ -112,15 +114,15 @@ export default () => {
           name="search"
           value={values.search}
           onChange={handleChange}
-          placeholder="Search…"
+          placeholder={t('search_placeholder')}
         />
       </div>
       <button
         onClick={reset}
-        className="ml-3 text-sm text-gray-600 hover:text-gray-700 focus:text-indigo-700 focus:outline-none"
+        className="m-3 text-sm text-gray-600 hover:text-gray-700 focus:text-indigo-700 focus:outline-none"
         type="button"
       >
-        Reset
+        {t('reset')}
       </button>
     </div>
   );

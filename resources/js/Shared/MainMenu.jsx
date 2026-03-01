@@ -11,6 +11,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MainMenuItem from '@/Shared/MainMenuItem';
 import Logo from '@/Shared/Logo';
+import { useTranslation } from 'react-i18next';
 
 export const DRAWER_WIDTH = 240;
 export const DRAWER_MINI_WIDTH = 64;
@@ -41,10 +42,10 @@ const StyledDrawer = styled(MuiDrawer, {
   whiteSpace: 'nowrap',
   boxSizing: 'border-box',
   '& .MuiDrawer-paper': {
-    backgroundColor: '#000',
-    color: '#fff',
     borderRight: 'none',
     boxShadow: '4px 0 24px rgba(0,0,0,0.3)',
+    backgroundColor: '#000', // <-- force black background
+    color: '#fff',           // <-- force white text
     ...(open ? openedMixin(theme) : closedMixin(theme)),
   },
 }));
@@ -62,6 +63,7 @@ export default function MainMenu({ className, onToggle, mobileOpen, setMobileOpe
   const { auth } = usePage().props;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { t, i18n } = useTranslation();
 
   const drawerOpen = isMobile ? mobileOpen : desktopOpen;
 
@@ -74,14 +76,18 @@ export default function MainMenu({ className, onToggle, mobileOpen, setMobileOpe
   const can = (permission) => auth.user?.permissions?.includes(permission) || false;
 
   const menuItems = [
-    { text: 'Dashboard', link: 'dashboard', icon: 'dashboard' },
-    { text: 'Projects', link: 'projects', icon: 'office', permission: 'projects.view' },
-    { text: 'Import Batches', link: 'import-batches', icon: 'import-batch', permission: 'projects.import' },
-    { text: 'Leads', link: 'leads', icon: 'users', permission: 'leads.view' },
-    { text: 'Reservations', link: 'reservations', icon: 'book', permission: 'reservations.view' },
-    { text: 'Owners', link: 'owners', icon: 'users', permission: 'owners.view' },
-    { text: 'Users', link: 'users', icon: 'users', permission: 'users.view' },
+    { text: t('dashboard'), link: 'dashboard', icon: 'dashboard' },
+    { text: t('projects'), link: 'projects', icon: 'office', permission: 'projects.view' },
+    { text: t('import_batches'), link: 'import-batches', icon: 'import-batch', permission: 'projects.import' },
+    { text: t('leads'), link: 'leads', icon: 'users', permission: 'leads.view' },
+    { text: t('units'), link: 'units', icon: 'store-front', permission: 'units.view' }, 
+    { text: t('reservations'), link: 'reservations', icon: 'book', permission: 'reservations.view' },
+    { text: t('owners'), link: 'owners', icon: 'users', permission: 'owners.view' },
+    { text: t('users'), link: 'users', icon: 'users', permission: 'users.view' },
   ];
+
+  // Determine anchor based on language direction
+  const anchor = i18n.dir() === 'rtl' ? 'right' : 'left';
 
   const drawerContent = (
     <>
@@ -92,12 +98,14 @@ export default function MainMenu({ className, onToggle, mobileOpen, setMobileOpe
           sx={{
             fontWeight: 700,
             letterSpacing: '-0.5px',
-            color: '#fff',
-            opacity: drawerOpen ? 1 : 0,
+            // Remove color and opacity here, handled by Tailwind below
+            // color: '#fff',
+            // opacity: drawerOpen ? 1 : 0,
             transition: 'opacity 0.2s ease',
           }}
+          className={`font-bold tracking-tight transition-opacity duration-200 ${drawerOpen ? 'opacity-100' : 'opacity-0'} text-white`}
         >
-<Logo
+          <Logo
             style={{
               height: 32,
               width: drawerOpen ? 120 : 32,
@@ -106,7 +114,8 @@ export default function MainMenu({ className, onToggle, mobileOpen, setMobileOpe
               transition: 'width 0.3s ease',
               flexShrink: 0,
             }}
-          />         </Typography>
+          />
+        </Typography>
 
         {!isMobile && (
           <IconButton
@@ -114,7 +123,10 @@ export default function MainMenu({ className, onToggle, mobileOpen, setMobileOpe
             size="small"
             sx={{ color: 'rgba(255,255,255,0.7)', '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' } }}
           >
-            {desktopOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            {desktopOpen
+              ? (anchor === 'left' ? <ChevronLeftIcon /> : <ChevronRightIcon />)
+              : (anchor === 'left' ? <ChevronRightIcon /> : <ChevronLeftIcon />)
+            }
           </IconButton>
         )}
 
@@ -124,7 +136,7 @@ export default function MainMenu({ className, onToggle, mobileOpen, setMobileOpe
             size="small"
             sx={{ color: 'rgba(255,255,255,0.7)', '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' } }}
           >
-            <ChevronLeftIcon />
+            {anchor === 'left' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         )}
       </DrawerHeader>
@@ -147,6 +159,7 @@ export default function MainMenu({ className, onToggle, mobileOpen, setMobileOpe
     <Box className={className}>
       {isMobile ? (
         <MuiDrawer
+          anchor={anchor}
           variant="temporary"
           open={mobileOpen}
           onClose={() => setMobileOpen(false)}
@@ -154,17 +167,30 @@ export default function MainMenu({ className, onToggle, mobileOpen, setMobileOpe
           sx={{
             '& .MuiDrawer-paper': {
               width: DRAWER_WIDTH,
-              backgroundColor: '#000',
-              color: '#fff',
-              borderRight: 'none',
+              borderRight: anchor === 'left' ? 'none' : undefined,
+              borderLeft: anchor === 'right' ? 'none' : undefined,
               boxShadow: '4px 0 24px rgba(0,0,0,0.3)',
+              backgroundColor: '#000', // <-- force black background
+              color: '#fff',           // <-- force white text
             },
           }}
         >
           {drawerContent}
         </MuiDrawer>
       ) : (
-        <StyledDrawer variant="permanent" open={desktopOpen}>
+        <StyledDrawer
+          anchor={anchor}
+          variant="permanent"
+          open={desktopOpen}
+          sx={{
+            '& .MuiDrawer-paper': {
+              borderRight: anchor === 'left' ? 'none' : undefined,
+              borderLeft: anchor === 'right' ? 'none' : undefined,
+              backgroundColor: '#000', // <-- force black background
+              color: '#fff',           // <-- force white text
+            },
+          }}
+        >
           {drawerContent}
         </StyledDrawer>
       )}

@@ -2,11 +2,16 @@ import React, { useState } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import Pagination from '@/Shared/Pagination';
+import { useTranslation } from 'react-i18next';
+import ShowButton from '@/Shared/TableActions/ShowButton';
+import DeleteButton from '@/Shared/TableActions/DeleteButton';
+import EditButton from '@/Shared/TableActions/EditButton';
 
 const Index = () => {
   const { batches } = usePage().props;
   const { data = [], meta: { links } = { links: [] } } = batches || {};
   const [filter, setFilter] = useState('all');
+  const { t } = useTranslation();
 
   function deleteBatch(batchId) {
     if (confirm('Delete this batch and all rows?')) {
@@ -36,9 +41,9 @@ const Index = () => {
 
   const getTypeLabel = (type) => {
     const labels = {
-      'projects': '📊 Projects',
-      'properties': '🏢 Properties',
-      'units': '🏠 Units',
+      'projects': t('projects_label'),
+      'properties': t('properties_label'),
+      'units': t('units_label'),
     };
     return labels[type] || type;
   };
@@ -47,27 +52,27 @@ const Index = () => {
     <div>
       <div className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Import Batches</h1>
-          <p className="text-gray-600 mt-2">Monitor, debug, and retry data imports.</p>
+          <h1 className="text-3xl font-bold">{t('import_batches')}</h1>
+          <p className="text-gray-600 mt-2">{t('monitor_debug_retry')}</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
           <Link
             href={route('imports.projects')}
             className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg shadow hover:bg-indigo-700 transition"
           >
-            + Import Projects
+            + {t('import_projects')}
           </Link>
           <Link
             href={route('imports.properties')}
             className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg shadow hover:bg-indigo-700 transition"
           >
-            + Import Properties
+            + {t('import_properties')}
           </Link>
           <Link
             href={route('imports.units')}
             className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg shadow hover:bg-indigo-700 transition"
           >
-            + Import Units
+            + {t('import_units')}
           </Link>
         </div>
       </div>
@@ -84,7 +89,7 @@ const Index = () => {
                 : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+            {t(status)}
           </button>
         ))}
       </div>
@@ -94,14 +99,14 @@ const Index = () => {
         <table className="w-full whitespace-nowrap">
           <thead>
             <tr className="font-bold text-left bg-gray-50 border-b">
-              <th className="px-6 pt-5 pb-4">Batch ID</th>
-              <th className="px-6 pt-5 pb-4">Type</th>
-              <th className="px-6 pt-5 pb-4">File</th>
-              <th className="px-6 pt-5 pb-4">Status</th>
-              <th className="px-6 pt-5 pb-4 text-right">Total / Failed</th>
-              <th className="px-6 pt-5 pb-4">Created By</th>
-              <th className="px-6 pt-5 pb-4">Created At</th>
-              <th className="px-6 pt-5 pb-4">Actions</th>
+              <th className="px-6 pt-5 pb-4">{t('batch_id')}</th>
+              <th className="px-6 pt-5 pb-4">{t('type')}</th>
+              <th className="px-6 pt-5 pb-4">{t('file')}</th>
+              <th className="px-6 pt-5 pb-4">{t('status')}</th>
+              <th className="px-6 pt-5 pb-4 text-right">{t('total_failed')}</th>
+              <th className="px-6 pt-5 pb-4">{t('created_by')}</th>
+              <th className="px-6 pt-5 pb-4">{t('created_at')}</th>
+              <th className="px-6 pt-5 pb-4">{t('actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -127,33 +132,20 @@ const Index = () => {
                   {new Date(batch.created_at).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4 text-sm space-x-2">
-                  <Link
-                    href={route('import-batches.show', batch.batch_uuid)}
-                    className="text-indigo-600 hover:text-indigo-800 font-medium"
-                  >
-                    View
-                  </Link>
-                  {batch.failed_rows > 0 && batch.status !== 'processing' && (
-                    <button
-                      onClick={() => retryBatch(batch.batch_uuid)}
-                      className="text-yellow-600 hover:text-yellow-800 font-medium"
-                    >
-                      Retry
-                    </button>
-                  )}
-                  <button
-                    onClick={() => deleteBatch(batch.batch_uuid)}
-                    className="text-red-600 hover:text-red-800 font-medium"
-                  >
-                    Delete
-                  </button>
+                  <div className="flex gap-2">
+                    <ShowButton onClick={() => router.visit(route('import-batches.show', batch.batch_uuid))} label={t('view')} />
+                    {batch.failed_rows > 0 && batch.status !== 'processing' && (
+                      <EditButton onClick={() => retryBatch(batch.batch_uuid)} label={t('retry')} />
+                    )}
+                    <DeleteButton onClick={() => deleteBatch(batch.batch_uuid)} label={t('delete')} />
+                  </div>
                 </td>
               </tr>
             ))}
             {filteredData.length === 0 && (
               <tr>
                 <td className="px-6 py-8 text-center text-gray-500" colSpan="8">
-                  No batches found.
+                  {t('no_batches_found')}
                 </td>
               </tr>
             )}

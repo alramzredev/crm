@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import ProjectForm from '@/Shared/Projects/ProjectForm';
+import { useTranslation } from 'react-i18next';
 
 const Create = () => {
   const { owners = [], cities = [], projectTypes = [], projectStatuses = [], municipalities = [], neighborhoods = [] } = usePage().props;
@@ -27,6 +28,7 @@ const Create = () => {
     sellable_area_factor: '',
     floor_area_ratio: '',
   });
+  const { t } = useTranslation();
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -40,9 +42,9 @@ const Create = () => {
           href={route('projects')}
           className="text-indigo-600 hover:text-indigo-700"
         >
-          Projects
+          {t('projects')}
         </Link>
-        <span className="font-medium text-indigo-600"> /</span> Create
+        <span className="font-medium text-indigo-600"> /</span> {t('create')}
       </h1>
       <div className="max-w-4xl bg-white rounded shadow">
         <ProjectForm
@@ -51,7 +53,7 @@ const Create = () => {
           errors={errors}
           processing={processing}
           onSubmit={handleSubmit}
-          submitLabel="Create Project"
+          submitLabel={t('create_project')}
           owners={owners}
           cities={cities}
           municipalities={municipalities}

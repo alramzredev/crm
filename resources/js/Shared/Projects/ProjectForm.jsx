@@ -3,6 +3,7 @@ import LoadingButton from '@/Shared/LoadingButton';
 import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
 import CityMunicipalityNeighborhoodSelector from '@/Shared/CityMunicipalityNeighborhoodSelector';
+import { useTranslation } from 'react-i18next';
 
 const ProjectForm = ({
   data,
@@ -18,15 +19,16 @@ const ProjectForm = ({
   projectTypes = [],
   projectStatuses = [],
 }) => {
+  const { t } = useTranslation();
   return (
     <form onSubmit={onSubmit}>
       {/* Basic Information */}
       <div className="p-8 border-b">
-        <h3 className="text-lg font-semibold mb-4">Basic Information</h3>
+        <h3 className="text-lg font-semibold mb-4">{t('basic_information')}</h3>
         <div className="flex flex-wrap -mb-8 -mr-6">
           <TextInput
             className="w-full pb-8 pr-6 lg:w-1/2"
-            label="Project Code"
+            label={t('project_code')}
             name="project_code"
             errors={errors.project_code}
             value={data.project_code}
@@ -34,7 +36,7 @@ const ProjectForm = ({
           />
           <TextInput
             className="w-full pb-8 pr-6 lg:w-1/2"
-            label="Name"
+            label={t('name')}
             name="name"
             errors={errors.name}
             value={data.name}
@@ -42,7 +44,7 @@ const ProjectForm = ({
           />
           <SelectInput
             className="w-full pb-8 pr-6 lg:w-1/2"
-            label="Owner"
+            label={t('owner')}
             name="owner_id"
             errors={errors.owner_id}
             value={data.owner_id}
@@ -53,7 +55,7 @@ const ProjectForm = ({
           </SelectInput>
           <TextInput
             className="w-full pb-8 pr-6 lg:w-1/2"
-            label="Reservation Period (Days)"
+            label={t('reservation_period_days')}
             name="reservation_period_days"
             type="number"
             min="1"
@@ -65,7 +67,7 @@ const ProjectForm = ({
 
           <SelectInput
             className="w-full pb-8 pr-6 lg:w-1/2"
-            label="Type"
+            label={t('type')}
             name="project_type_id"
             errors={errors.project_type_id}
             value={data.project_type_id}
@@ -77,7 +79,7 @@ const ProjectForm = ({
 
           <SelectInput
             className="w-full pb-8 pr-6 lg:w-1/2"
-            label="Status"
+            label={t('status')}
             name="status_id"
             errors={errors.status_id}
             value={data.status_id}
@@ -89,7 +91,7 @@ const ProjectForm = ({
 
           <TextInput
             className="w-full pb-8 pr-6"
-            label="Location"
+            label={t('location')}
             name="location"
             errors={errors.location}
             value={data.location}
@@ -112,11 +114,11 @@ const ProjectForm = ({
 
       {/* Financial Information */}
       <div className="p-8 border-b">
-        <h3 className="text-lg font-semibold mb-4">Financial Information</h3>
+        <h3 className="text-lg font-semibold mb-4">{t('financial_information')}</h3>
         <div className="flex flex-wrap -mb-8 -mr-6">
           <TextInput
             className="w-full pb-8 pr-6 lg:w-1/3"
-            label="Budget"
+            label={t('budget')}
             name="budget"
             errors={errors.budget}
             value={data.budget}
@@ -124,18 +126,18 @@ const ProjectForm = ({
           />
           <SelectInput
             className="w-full pb-8 pr-6 lg:w-1/3"
-            label="Warranty"
+            label={t('warranty')}
             name="warranty"
             errors={errors.warranty}
             value={data.warranty}
             onChange={e => setData('warranty', e.target.value)}
           >
-            <option value="0">No</option>
-            <option value="1">Yes</option>
+            <option value="0">{t('no')}</option>
+            <option value="1">{t('yes')}</option>
           </SelectInput>
           <TextInput
             className="w-full pb-8 pr-6 lg:w-1/3"
-            label="Status Reason"
+            label={t('status_reason')}
             name="status_reason"
             errors={errors.status_reason}
             value={data.status_reason}
@@ -146,11 +148,11 @@ const ProjectForm = ({
 
       {/* Project Specifications */}
       <div className="p-8 border-b">
-        <h3 className="text-lg font-semibold mb-4">Project Specifications</h3>
+        <h3 className="text-lg font-semibold mb-4">{t('project_specifications')}</h3>
         <div className="flex flex-wrap -mb-8 -mr-6">
           <TextInput
             className="w-full pb-8 pr-6 lg:w-1/3"
-            label="Floors"
+            label={t('floors')}
             name="no_of_floors"
             errors={errors.no_of_floors}
             value={data.no_of_floors}
@@ -158,7 +160,7 @@ const ProjectForm = ({
           />
           <TextInput
             className="w-full pb-8 pr-6 lg:w-1/3"
-            label="Total Units"
+            label={t('total_units')}
             name="number_of_units"
             errors={errors.number_of_units}
             value={data.number_of_units}
@@ -167,7 +169,7 @@ const ProjectForm = ({
 
           <TextInput
             className="w-full pb-8 pr-6 lg:w-1/3"
-            label="Land Area"
+            label={t('land_area')}
             name="land_area"
             type="number"
             step="0.01"
@@ -178,7 +180,7 @@ const ProjectForm = ({
 
           <TextInput
             className="w-full pb-8 pr-6 lg:w-1/3"
-            label="Built Up Area"
+            label={t('built_up_area')}
             name="built_up_area"
             type="number"
             step="0.01"
@@ -189,7 +191,7 @@ const ProjectForm = ({
 
           <TextInput
             className="w-full pb-8 pr-6 lg:w-1/3"
-            label="Selling Space"
+            label={t('selling_space')}
             name="selling_space"
             type="number"
             step="0.01"
@@ -200,7 +202,7 @@ const ProjectForm = ({
 
           <TextInput
             className="w-full pb-8 pr-6 lg:w-1/3"
-            label="Sellable Area Factor"
+            label={t('sellable_area_factor')}
             name="sellable_area_factor"
             type="number"
             step="0.01"
@@ -211,7 +213,7 @@ const ProjectForm = ({
 
           <TextInput
             className="w-full pb-8 pr-6 lg:w-1/3"
-            label="Floor Area Ratio"
+            label={t('floor_area_ratio')}
             name="floor_area_ratio"
             type="number"
             step="0.01"
