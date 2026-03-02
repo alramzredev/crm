@@ -41,6 +41,11 @@ class ContractService
     public function createContractForReservation(Reservation $reservation, array $attributes = [])
     {
         return DB::transaction(function () use ($reservation, $attributes) {
+            // Only allow contract generation if reservation is approved/confirmed
+            if ($reservation->status !== 'confirmed') {
+                throw new \Exception('Contract can only be generated for approved reservations.');
+            }
+
             if ($reservation->contract) {
                 throw new \Exception('Contract already exists for this reservation.');
             }

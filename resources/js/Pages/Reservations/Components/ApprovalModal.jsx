@@ -75,6 +75,21 @@ const ApprovalModal = ({
         <div className="bg-white px-8 py-6 flex flex-col items-start border-b border-gray-200">
           <h3 className="text-2xl font-bold text-black mb-1">Reservation Action</h3>
           <p className="text-black text-base opacity-80">ID: <span className="font-mono">{reservation.reservation_code}</span></p>
+          {/* Reservation status info */}
+          <div className="mt-2">
+            <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+              reservation.status === 'confirmed'
+                ? 'bg-green-100 text-green-700'
+                : 'bg-yellow-100 text-yellow-700'
+            }`}>
+              Status: {reservation.status}
+            </span>
+            {reservation.status !== 'confirmed' && (
+              <span className="ml-2 text-xs text-red-500 font-semibold">
+                Contract can only be generated after approval
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="p-8 space-y-8 bg-gray-50">

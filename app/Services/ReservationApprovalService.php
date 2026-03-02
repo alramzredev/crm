@@ -22,15 +22,15 @@ class ReservationApprovalService
         // Validate required customer documents
         $customer = $reservation->customer;
         if ($customer) {
-            $missingDocs = $customer->documents()
-                ->whereHas('documentType', function ($q) {
-                    $q->where('is_required', 1);
-                })
-                ->where(function ($q) {
-                    $q->whereNull('file_path')->orWhere('status', '!=', 'approved');
-                })
-                ->count();
-
+            // Check required document types for customer
+            $requiredTypes = \App\Models\DocumentType::where('applies_to', 'customer')->where('is_required', 1)->pluck('code');
+            $missingDocs = 0;
+            foreach ($requiredTypes as $code) {
+                $media = $customer->getMedia($code)->first();
+                if (!$media || ($media->getCustomProperty('status') !== 'approved')) {
+                    $missingDocs++;
+                }
+            }
             if ($missingDocs > 0) {
                 throw new \Exception('All required customer documents must be uploaded and approved before confirming the reservation.');
             }
