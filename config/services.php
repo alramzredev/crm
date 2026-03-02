@@ -30,4 +30,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'signit' => [
+        'base_url' => env('SIGNIT_BASE_URL', 'https://api-sandbox.signit.sa/v1'),
+        'username' => env('SIGNIT_USERNAME'),
+        'password' => env('SIGNIT_PASSWORD'),
+    ],
+
 ];

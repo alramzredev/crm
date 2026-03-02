@@ -140,12 +140,18 @@ class ReservationController extends Controller
             }
         }
 
+        // Add contract info and permission
+        $contract = $reservation->contract;
+        $canGenerateContract = true;
+
         return Inertia::render('Reservations/Show', [
             'reservation' => $this->service->getShowData($reservation),
             'cancelReasons' => ReservationCancelReason::active()->ordered()->get(),
             'canApprove' => $canApprove,
             'discountRequests' => $discountRequests,
             'customerDocuments' => $customerDocuments,
+            'contract' => $contract,
+            'canGenerateContract' => $canGenerateContract,
         ]);
     }
 

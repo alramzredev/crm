@@ -120,6 +120,9 @@ Route::middleware('auth')->group(function () {
     // Discount requests for specific reservations
     Route::post('reservations/{reservation}/discount-requests')->uses('ReservationDiscountRequestController@store')->name('reservations.discount-requests.store');
 
+    // Generate contract for reservation
+    Route::post('reservations/{reservation}/generate-contract')->uses('ContractController@generate')->name('contracts.generate');
+
     // Customer Documents CRUD
     Route::post('customers/{customer}/documents/{document}/upload')
         ->uses('CustomerDocumentController@upload')

@@ -8,9 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::table('lead_statuses', function (Blueprint $table) {
-            $table->string('code', 50)->after('name')->nullable(false);
-        });
+        
 
         // Add unique constraint after column is populated
         // (You may want to run an update before this in production)
@@ -23,7 +21,6 @@ return new class extends Migration
     {
         Schema::table('lead_statuses', function (Blueprint $table) {
             $table->dropUnique('lead_statuses_code_unique');
-            $table->dropColumn('code');
-        });
+         });
     }
 };

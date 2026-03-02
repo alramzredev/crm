@@ -9,7 +9,7 @@ import StatusPill from './Components/StatusPill';
 import ApprovalModal from './Components/ApprovalModal';
 import CustomerDocuments from './Components/CustomerDocuments';
 
-const Show = ({ reservation, cancelReasons, canApprove, discountRequests, customerDocuments = [] }) => {
+const Show = ({ reservation, cancelReasons, canApprove, discountRequests, customerDocuments = [], contract = null, canGenerateContract = false }) => {
   const { auth } = usePage().props; 
   const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [approvalAction, setApprovalAction] = useState('confirm');
@@ -139,6 +139,16 @@ const Show = ({ reservation, cancelReasons, canApprove, discountRequests, custom
       return;
     }
     setShowApprovalModal(true);
+  };
+
+  // Generate contract handler
+  const handleGenerateContract = () => {
+    if (!window.confirm('Generate contract for this reservation?')) return;
+    router.post(route('contracts.generate', reservation.id), {}, {
+      onSuccess: () => {
+        // Optionally reload or show a message
+      }
+    });
   };
 
   return (
@@ -300,6 +310,33 @@ const Show = ({ reservation, cancelReasons, canApprove, discountRequests, custom
           </button>
         </div>
       )}
+
+      {/* Contract Section */}
+      <div className="bg-white rounded shadow overflow-hidden mb-8">
+        <div className="px-8 py-6 border-b border-gray-200 flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-gray-900">Contract</h2>
+          {!reservation.contract && canGenerateContract && (
+            <button
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-medium text-sm"
+              onClick={handleGenerateContract}
+            >
+              Generate Contract
+            </button>
+          )}
+        </div>
+        {reservation.contract ? (
+          <div className="px-8 py-6">
+            <div><strong>Contract Code:</strong> {reservation.contract.contract_code || '—'}</div>
+            <div><strong>Status:</strong> {reservation.contract.status || '—'}</div>
+            <div><strong>Contract Date:</strong> {reservation.contract.contract_date ? new Date(reservation.contract.contract_date).toLocaleString() : '—'}</div>
+            <div><strong>Total Price:</strong> {reservation.contract.currency || 'SAR'} {reservation.contract.total_price || '—'}</div>
+            <div><strong>Notes:</strong> {reservation.contract.notes || '—'}</div>
+            {/* Optionally, add a link to view contract details */}
+          </div>
+        ) : (
+          <div className="px-8 py-6 text-gray-500">No contract generated yet.</div>
+        )}
+      </div>
     </div>
   );
 };

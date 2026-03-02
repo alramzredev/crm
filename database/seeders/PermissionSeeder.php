@@ -15,15 +15,6 @@ class PermissionSeeder extends Seeder
         // Reset cached roles and permissions
         app()['cache']->forget('spatie.permission.cache');
 
-        // Hard reset permissions/roles + pivots
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('role_has_permissions')->truncate();
-        DB::table('model_has_roles')->truncate();
-        DB::table('model_has_permissions')->truncate();
-        DB::table('roles')->truncate();
-        DB::table('permissions')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
         // Define permissions grouped by module
         $permissionGroups = [
             'Dashboard' => [
@@ -145,6 +136,13 @@ class PermissionSeeder extends Seeder
                 'customers.delete',
                 'customers.restore',
             ],
+
+            'Contract Management' => [
+                'contracts.view',
+                'contracts.create',
+                'contracts.edit',
+                'contracts.delete',
+            ],
         ];
 
         // Flatten the permissions array and create them
@@ -243,6 +241,8 @@ class PermissionSeeder extends Seeder
             'import-batches.retry',
             'import-batches.delete',
             // No customer permissions for project admin
+            // Contract permissions
+            'contracts.view',
         ]);
 
         // ============================================
@@ -278,6 +278,10 @@ class PermissionSeeder extends Seeder
             'customers.edit',
             'customers.delete',
             'customers.restore',
+            'contracts.view',
+            'contracts.create',
+            'contracts.edit',
+            'contracts.delete',
         ]);
 
         // ============================================
@@ -300,6 +304,10 @@ class PermissionSeeder extends Seeder
             'customers.view',
             'customers.create',
             'customers.edit',
+            'contracts.view',
+            'contracts.create',
+            'contracts.edit',
+            'contracts.delete',
         ]);
 
         // ============================================

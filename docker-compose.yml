@@ -27,6 +27,11 @@ services:
       SESSION_DRIVER: file
       SESSION_LIFETIME: 120
 
+      SIGNIT_TOKEN_URL: https://api-sandbox.signit.sa/v1/oauth/token
+      SIGNIT_BASE_URL: https://api-sandbox.signit.sa/v1
+      SIGNIT_USERNAME: ${SIGNIT_USERNAME}
+      SIGNIT_PASSWORD: ${SIGNIT_PASSWORD}
+
     depends_on:
       db:
         condition: service_healthy

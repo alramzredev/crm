@@ -38,6 +38,17 @@ class ReservationResource extends JsonResource
             'payments' => PaymentResource::collection($this->whenLoaded('payments')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'contract' => $this->whenLoaded('contract', function () {
+                return $this->contract ? [
+                    'id' => $this->contract->id,
+                    'contract_code' => $this->contract->contract_code,
+                    'status' => $this->contract->status,
+                    'contract_date' => $this->contract->contract_date,
+                    'total_price' => $this->contract->total_price,
+                    'currency' => $this->contract->currency,
+                    'notes' => $this->contract->notes,
+                ] : null;
+            }),
         ];
     }
 }
