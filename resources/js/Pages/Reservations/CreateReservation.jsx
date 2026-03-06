@@ -222,6 +222,9 @@ const CreateReservation = () => {
                       fontSize: '0.875rem',
                       fontWeight: 500,
                     },
+                      '& .MuiStepLabel-iconContainer': {
+      paddingInlineEnd: '8px',
+    },
                     '& .MuiStepIcon-root': {
                       color: '#bdbdbd', // default (inactive)
                     },
