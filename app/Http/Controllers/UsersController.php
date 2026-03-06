@@ -8,7 +8,7 @@ use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use App\Repositories\UserRepository;
+use App\Services\UserService;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -16,11 +16,11 @@ use Spatie\Permission\Models\Role;
 
 class UsersController extends Controller
 {
-    protected $repo;
+    protected $service;
 
-    public function __construct()
+    public function __construct(UserService $service)
     {
-        $this->repo = new UserRepository();
+        $this->service = $service;
     }
 
     public function index()
@@ -29,55 +29,34 @@ class UsersController extends Controller
 
         return Inertia::render('Users/Index', [
             'filters' => Request::all('search', 'role', 'trashed'),
-            'users' => $this->repo->getPaginatedUsers(Request::only('search', 'role', 'trashed')),
-            'availableRoles' => $this->repo->getAvailableRoles(),
+            'users' => $this->service->getAll(Request::only('search', 'role', 'trashed')),
+            'availableRoles' => $this->service->getAvailableRoles(),
         ]);
     }
 
     public function create()
     {
         $this->authorize('create', User::class);
-        
-        return Inertia::render('Users/Create', $this->repo->getCreateData());
+
+        return Inertia::render('Users/Create', $this->service->getCreateData());
     }
 
     public function store(UserStoreRequest $request)
     {
         $this->authorize('create', User::class);
-        
-        $user = User::create($request->validated());
-        
-        if ($request->filled('role')) {
-            $role = Role::findById($request->input('role'));
-            $user->assignRole($role);
-            
-            // Sales Employee: Assign supervisors
-            if ($role->name === 'sales_employee' && $request->filled('supervisor_ids')) {
-                $user->supervisor()->attach($request->input('supervisor_ids'));
-            }
-            
-            // Sales Supervisor: Assign projects
-            if ($role->name === 'sales_supervisor' && $request->filled('project_ids')) {
-                $this->repo->attachProjectsWithRole($user, $request->input('project_ids'), 'sales_supervisor');
-            }
 
-            // Project Admin: Assign projects
-            if ($role->name === 'project_admin' && $request->filled('project_ids')) {
-                $this->repo->attachProjectsWithRole($user, $request->input('project_ids'), 'project_admin');
-            }
-        }
-
+        $this->service->create($request);
         return Redirect::route('users')->with('success', 'User created.');
     }
 
     public function edit(User $user)
     {
         $this->authorize('update', $user);
-        
-        $data = $this->repo->getEditData($user);
-        
+
+        $data = $this->service->getEditData($user);
+
         return Inertia::render('Users/Edit', [
-            'user' => new UserResource($data['user']),
+            'user' => $data['user'],
             'roles' => $data['roles'],
             'supervisors' => $data['supervisors'],
             'projects' => $data['projects'],
@@ -87,40 +66,15 @@ class UsersController extends Controller
     public function update(User $user, UserUpdateRequest $request)
     {
         $this->authorize('update', $user);
-        
-        $user->update($request->validated());
 
-        if ($request->filled('role')) {
-            $role = Role::findById($request->input('role'));
-            $user->syncRoles($role);
-            
-            if ($role->name === 'sales_employee') {
-                $user->supervisor()->sync($request->input('supervisor_ids') ?? []);
-                // Remove only sales_employee project assignments
-                $user->projects()->wherePivot('role_in_project', 'sales_employee')->detach();
-            } 
-            else if ($role->name === 'sales_supervisor') {
-                $user->supervisor()->detach();
-                $this->repo->syncProjectsWithRole($user, $request->input('project_ids') ?? [], 'sales_supervisor');
-            }
-            else if ($role->name === 'project_admin') {
-                $user->supervisor()->detach();
-                $this->repo->syncProjectsWithRole($user, $request->input('project_ids') ?? [], 'project_admin');
-            }
-            else {
-                // Only detach if changing to a role that doesn't use projects
-                $user->supervisor()->detach();
-                $user->projects()->detach();
-            }
-        }
-
+        $this->service->update($user, $request);
         return Redirect::back()->with('success', 'User updated.');
     }
 
     public function destroy(User $user, UserDeleteRequest $request)
     {
         $this->authorize('delete', $user);
-        
+
         $user->delete();
 
         return Redirect::back()->with('success', 'User deleted.');
@@ -129,9 +83,7 @@ class UsersController extends Controller
     public function restore(User $user)
     {
         $this->authorize('restore', $user);
-        
         $user->restore();
-
         return Redirect::back()->with('success', 'User restored.');
     }
 }

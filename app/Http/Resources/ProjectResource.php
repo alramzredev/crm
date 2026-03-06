@@ -35,7 +35,7 @@ class ProjectResource extends JsonResource
             'project_type_id' => $this->project_type_id,
             'project_type' => $this->whenLoaded('projectType', $this->projectType ? $this->projectType->only('id', 'name') : null),
             'status_id' => $this->status_id,
-            'status' => $this->whenLoaded('status', $this->status ? $this->status->only('id', 'name') : null),
+            'status' => $this->whenLoaded('status', $this->status ? $this->status->only('id', 'name', 'code') : null),
             'location' => $this->location,
             'budget' => $this->budget,
             'no_of_floors' => $this->no_of_floors,

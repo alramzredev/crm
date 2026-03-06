@@ -53,7 +53,11 @@ class Lead extends Model
                         $query->where('name', 'like', '%'.$search.'%');
                     });
             });
-        })->when($filters['trashed'] ?? null, function ($query, $trashed) {
+        })
+        ->when($filters['status'] ?? null, function ($query, $status) {
+            $query->where('status_id', $status);
+        })
+        ->when($filters['trashed'] ?? null, function ($query, $trashed) {
             if ($trashed === 'with') {
                 $query->withTrashed();
             } elseif ($trashed === 'only') {

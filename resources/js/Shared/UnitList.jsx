@@ -5,10 +5,12 @@ import EditButton from '@/Shared/TableActions/EditButton';
 import DeleteButton from '@/Shared/TableActions/DeleteButton';
 import ShowButton from '@/Shared/TableActions/ShowButton';
 import { useTranslation } from 'react-i18next';
+import StatusPill from '@/Shared/StatusPill';
 
 const UnitList = ({ units, showButton = true, inTab = false }) => {
   const { auth } = usePage().props;
   const { t } = useTranslation();
+  console.log(units);
 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
@@ -51,7 +53,10 @@ const UnitList = ({ units, showButton = true, inTab = false }) => {
                 <td className="border-t px-6 py-4">{u.floor || '—'}</td>
                 <td className="border-t px-6 py-4">{u.area || '—'}</td>
                 <td className="border-t px-6 py-4">{u.rooms || '—'}</td>
-                <td className="border-t px-6 py-4">{u.status?.name || '—'}</td>
+                <td className="border-t px-6 py-4">
+                  {/* Use StatusPill for status */}
+                  <StatusPill status={u.status?.code} name={u.status?.name} />
+                </td>
                 <td className="border-t px-6 py-4">
                   <div className="flex gap-2">
                     {can('units.edit') && (

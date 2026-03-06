@@ -4,33 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\Lead;
 use App\Models\LeadSource;
+use App\Models\LeadStatus;
 use App\Models\Project;
 use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
-use App\Repositories\LeadRepository;
-use App\Http\Requests\LeadRequest;
-use App\Models\LeadAssignment;
-use App\Models\LeadStatus;
+use App\Services\LeadService;
 
 class LeadsController extends Controller
 {
-    protected $repo;
+    protected $service;
 
-    public function __construct()
+    public function __construct(LeadService $service)
     {
-        $this->repo = new LeadRepository();
+        $this->service = $service;
     }
 
     public function index()
     {
         $this->authorize('viewAny', Lead::class);
 
-        $leads = $this->repo->getPaginatedLeads(auth()->user(), Request::only('search', 'trashed'));
+        $leads = $this->service->getPaginatedLeads(auth()->user(), Request::only('status', 'search', 'trashed'));
 
-        return Inertia::render('Leads/Index', [
-            'filters' => Request::all('search', 'trashed'),
+        return \Inertia\Inertia::render('Leads/Index', [
+            'filters' => Request::all('status','search', 'trashed'),
             'leads' => $leads,
             'leadStatuses' => LeadStatus::orderBy('name')->get(),
         ]);
@@ -40,10 +38,10 @@ class LeadsController extends Controller
     {
         $this->authorize('create', Lead::class);
 
-        return Inertia::render('Leads/Create', $this->repo->getCreateData(auth()->user()));
+        return \Inertia\Inertia::render('Leads/Create', $this->service->getCreateData(auth()->user()));
     }
 
-    public function store(LeadRequest $request)
+    public function store(\App\Http\Requests\LeadRequest $request)
     {
         $this->authorize('create', Lead::class);
 
@@ -51,10 +49,10 @@ class LeadsController extends Controller
         $employeeId = $data['employee_id'] ?? null;
         unset($data['employee_id']);
 
-        $lead = Lead::create($data);
+        $lead = \App\Models\Lead::create($data);
 
         if ($employeeId) {
-            LeadAssignment::create([
+            \App\Models\LeadAssignment::create([
                 'lead_id' => $lead->id,
                 'employee_id' => $employeeId,
                 'assigned_by' => auth()->id(),
@@ -63,17 +61,17 @@ class LeadsController extends Controller
             ]);
         }
 
-        return Redirect::route('leads')->with('success', 'Lead created.');
+        return \Illuminate\Support\Facades\Redirect::route('leads')->with('success', 'Lead created.');
     }
 
     public function edit(Lead $lead)
     {
         $this->authorize('update', $lead);
 
-        return Inertia::render('Leads/Edit', $this->repo->getEditData($lead));
+        return \Inertia\Inertia::render('Leads/Edit', $this->service->getEditData($lead));
     }
 
-    public function update(Lead $lead, LeadRequest $request)
+    public function update(Lead $lead, \App\Http\Requests\LeadRequest $request)
     {
         $this->authorize('update', $lead);
 
@@ -91,7 +89,7 @@ class LeadsController extends Controller
             ]);
         }
         if ($employeeId && (!$current || (int) $current->employee_id !== (int) $employeeId)) {
-            LeadAssignment::create([
+            \App\Models\LeadAssignment::create([
                 'lead_id' => $lead->id,
                 'employee_id' => $employeeId,
                 'assigned_by' => auth()->id(),
@@ -106,7 +104,7 @@ class LeadsController extends Controller
             ]);
         }
 
-        return Redirect::back()->with('success', 'Lead updated.');
+        return \Illuminate\Support\Facades\Redirect::back()->with('success', 'Lead updated.');
     }
 
     public function destroy(Lead $lead)
@@ -115,7 +113,7 @@ class LeadsController extends Controller
 
         $lead->delete();
 
-        return Redirect::back()->with('success', 'Lead deleted.');
+        return \Illuminate\Support\Facades\Redirect::back()->with('success', 'Lead deleted.');
     }
 
     public function restore(Lead $lead)
@@ -124,6 +122,6 @@ class LeadsController extends Controller
 
         $lead->restore();
 
-        return Redirect::back()->with('success', 'Lead restored.');
+        return \Illuminate\Support\Facades\Redirect::back()->with('success', 'Lead restored.');
     }
 }

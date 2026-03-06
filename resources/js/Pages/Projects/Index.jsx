@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import ShowButton from '@/Shared/TableActions/ShowButton';
 import EditButton from '@/Shared/TableActions/EditButton';
 import DeleteButton from '@/Shared/TableActions/DeleteButton';
+import StatusPill from '@/Shared/StatusPill';
 
 const Index = () => {
   const { projects, auth, projectStatuses = [] } = usePage().props;
@@ -78,7 +79,9 @@ const Index = () => {
                 </td>
                 <td className="border-t px-6 py-4">{p.owner?.name || '—'}</td>
                 <td className="border-t px-6 py-4">{p.city?.name || '—'}</td>
-                <td className="border-t px-6 py-4">{p.status?.name || '—'}</td>
+                <td className="border-t px-6 py-4">
+                  <StatusPill status={p.status?.code || ''} name={p.status?.name || ''} />
+                </td>
                 <td className="border-t px-6 py-4">
                   <div className="flex gap-2">
                     {can('projects.edit') && (

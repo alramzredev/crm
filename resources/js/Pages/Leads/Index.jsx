@@ -11,11 +11,14 @@ import DeleteButton from '@/Shared/TableActions/DeleteButton';
 import ShowButton from '@/Shared/TableActions/ShowButton';
 import CreateReservationButton from '@/Shared/TableActions/CreateReservationButton';
 import SelectInput from '@/Shared/SelectInput';
+import StatusPill from '@/Shared/StatusPill';
 
 const Index = () => {
   const { leads = { data: [], meta: { links: [] } }, auth, leadStatuses = [] } = usePage().props;
   const { data = [], meta: { links } = { links: [] } } = leads;
   const { t } = useTranslation();
+
+  console.log('Leads data:', data);
 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
@@ -69,6 +72,7 @@ const Index = () => {
               <th className="px-6 pt-5 pb-4">{t('email')}</th>
               <th className="px-6 pt-5 pb-4">{t('phone')}</th>
               <th className="px-6 pt-5 pb-4">{t('project')}</th>
+              <th className="px-6 pt-5 pb-4">{t('status')}</th>
               <th className="px-6 pt-5 pb-4">{t('actions')}</th>
             </tr>
           </thead>
@@ -87,6 +91,9 @@ const Index = () => {
                 <td className="border-t px-6 py-4">{lead.email || '—'}</td>
                 <td className="border-t px-6 py-4">{lead.phone || '—'}</td>
                 <td className="border-t px-6 py-4">{lead.project?.name || '—'}</td>
+                <td className="border-t px-6 py-4">
+                  <StatusPill status={lead.status?.code || ''} name={lead.status?.name || ''} />
+                </td>
                 <td className="border-t px-6 py-4">
                   <div className="flex gap-2">
                     {!lead.deleted_at && can('reservations.create') && (
@@ -107,7 +114,7 @@ const Index = () => {
             ))}
             {data.length === 0 && (
               <tr>
-                <td className="px-6 py-4 border-t" colSpan="5">
+                <td className="px-6 py-4 border-t" colSpan="6">
                   {t('no_leads_found')}
                 </td>
               </tr>

@@ -3,20 +3,7 @@ import { router } from '@inertiajs/react';
 import EditButton from '@/Shared/TableActions/EditButton';
 import DeleteButton from '@/Shared/TableActions/DeleteButton';
 import { useTranslation } from 'react-i18next';
-
-const StatusPill = ({ status }) => {
-  const colors = {
-    error: 'bg-red-100 text-red-800',
-    valid: 'bg-green-100 text-green-800',
-    imported: 'bg-blue-100 text-blue-800',
-    pending: 'bg-yellow-100 text-yellow-800',
-  };
-  return (
-    <span className={`px-2 py-1 rounded text-xs font-medium ${colors[status] || 'bg-gray-100 text-gray-800'}`}>
-      {status || '—'}
-    </span>
-  );
-};
+import StatusPill from '@/Shared/StatusPill';
 
 const BatchUnitsList = ({
   data = [], 

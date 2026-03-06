@@ -5,7 +5,7 @@ import PaymentsTable from './Components/PaymentsTable';
 import DiscountRequestsTable from './Components/DiscountRequestsTable';
 import DiscountRequestModal from './Components/DiscountRequestModal';
 import PaymentFormModal from './Components/PaymentFormModal';
-import StatusPill from './Components/StatusPill';
+import StatusPill from '@/Shared/StatusPill';
 import ApprovalModal from './Components/ApprovalModal';
 import CustomerDocuments from './Components/CustomerDocuments';
 

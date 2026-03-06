@@ -3,7 +3,7 @@ import { Link, usePage, router } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import StatusFilter from '@/Shared/StatusFilter';
 import Pagination from '@/Shared/Pagination';
-import StatusPill from './Components/StatusPill';
+import StatusPill from '@/Shared/StatusPill';
 import EditButton from '@/Shared/TableActions/EditButton';
 import ShowButton from '@/Shared/TableActions/ShowButton';
 import SelectInput from '@/Shared/SelectInput';

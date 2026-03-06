@@ -10,6 +10,22 @@ use Illuminate\Support\Facades\Request;
 
 class UserRepository
 {
+    /**
+     * Return a base query for users, optionally eager loading relations.
+     */
+    public function query(array $with = [])
+    {
+        return User::with($with);
+    }
+
+    /**
+     * Find a user by ID.
+     */
+    public function find($id, array $with = [])
+    {
+        return User::with($with)->find($id);
+    }
+
     public function getPaginatedUsers(array $filters = [])
     {
         return UserResource::collection(
@@ -22,7 +38,7 @@ class UserRepository
 
     public function getAvailableRoles()
     {
-        return \Spatie\Permission\Models\Role::all(['name', 'label']);
+        return Role::all(['name', 'label']);
     }
 
     public function getCreateData(): array
@@ -30,7 +46,7 @@ class UserRepository
         return [
             'roles' => Role::all(),
             'supervisors' => User::role('sales_supervisor')->orderByName()->get(),
-            'projects' => Project::orderBy('name')->get(),
+            'projects' => Project::orderBy('created_at', 'desc')->get(),
         ];
     }
 

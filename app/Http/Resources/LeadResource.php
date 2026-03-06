@@ -29,6 +29,13 @@ class LeadResource extends JsonResource
             'project' => new ProjectResource($this->whenLoaded('project')),
             'leadSource' => new LeadSourceResource($this->whenLoaded('leadSource')),
             'activeAssignment' => new LeadAssignmentResource($this->whenLoaded('activeAssignment')),
+            'status' => $this->whenLoaded('status', function () {
+                return [
+                    'id' => $this->status?->id,
+                    'name' => $this->status?->name,
+                    'code' => $this->status?->code,
+                 ];
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,
