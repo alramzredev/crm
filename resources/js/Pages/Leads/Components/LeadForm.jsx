@@ -1,6 +1,7 @@
 import React from 'react';
 import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
+import { useTranslation } from 'react-i18next';
 
 const LeadForm = ({
   data,
@@ -13,6 +14,7 @@ const LeadForm = ({
   leadSources = [],
   leadStatuses = [],
 }) => {
+  const { t } = useTranslation();
   const handleChange = (name, value) => setData(name, value);
 
   return (
@@ -21,7 +23,7 @@ const LeadForm = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 border-b">
         <TextInput
           className="w-full"
-          label="Title"
+          label={t('title')}
           name="title"
           errors={errors.title}
           value={data.title}
@@ -29,7 +31,7 @@ const LeadForm = ({
         />
         <TextInput
           className="w-full"
-          label="National ID"
+          label={t('national_id')}
           name="national_id"
           errors={errors.national_id}
           value={data.national_id}
@@ -37,7 +39,7 @@ const LeadForm = ({
         />
         <SelectInput
           className="w-full"
-          label="Project"
+          label={t('project')}
           name="project_id"
           errors={errors.project_id}
           value={data.project_id}
@@ -48,7 +50,7 @@ const LeadForm = ({
         </SelectInput>
         <SelectInput
           className="w-full"
-          label="Lead Source"
+          label={t('lead_source')}
           name="lead_source_id"
           errors={errors.lead_source_id}
           value={data.lead_source_id}
@@ -59,7 +61,7 @@ const LeadForm = ({
         </SelectInput>
         <SelectInput
           className="w-full"
-          label="Status"
+          label={t('status')}
           name="status_id"
           errors={errors.status_id}
           value={data.status_id}
@@ -74,7 +76,7 @@ const LeadForm = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 border-b">
         <TextInput
           className="w-full"
-          label="First Name"
+          label={t('first_name')}
           name="first_name"
           errors={errors.first_name}
           value={data.first_name}
@@ -82,7 +84,7 @@ const LeadForm = ({
         />
         <TextInput
           className="w-full"
-          label="Last Name"
+          label={t('last_name')}
           name="last_name"
           errors={errors.last_name}
           value={data.last_name}
@@ -90,7 +92,7 @@ const LeadForm = ({
         />
         <TextInput
           className="w-full"
-          label="Email"
+          label={t('email')}
           name="email"
           type="email"
           errors={errors.email}
@@ -99,7 +101,7 @@ const LeadForm = ({
         />
         <TextInput
           className="w-full"
-          label="Phone"
+          label={t('phone')}
           name="phone"
           type="text"
           errors={errors.phone}
@@ -116,7 +118,7 @@ const LeadForm = ({
           className="btn-indigo"
           disabled={processing}
         >
-          {submitLabel}
+          {t(submitLabel)}
         </button>
       </div>
     </form>
