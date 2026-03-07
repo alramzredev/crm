@@ -12,8 +12,9 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
 use App\Services\LeadService;
 use Illuminate\Http\Request as IlluminateRequest;
+use App\Http\Requests\LeadRequest;
 
-class LeadsController extends Controller
+class LeadController extends Controller
 {
     protected $service;
 
@@ -43,27 +44,15 @@ class LeadsController extends Controller
         return \Inertia\Inertia::render('Leads/Create', $data);
     }
 
-    public function store(\App\Http\Requests\LeadRequest $request)
+    public function store(LeadRequest $request)
     {
         $this->authorize('create', Lead::class);
 
         $data = $request->validated();
-        $employeeId = $data['employee_id'] ?? null;
-        unset($data['employee_id']);
-
+        
         $lead = \App\Models\Lead::create($data);
 
-        if ($employeeId) {
-            \App\Models\LeadAssignment::create([
-                'lead_id' => $lead->id,
-                'employee_id' => $employeeId,
-                'assigned_by' => auth()->id(),
-                'assigned_at' => now(),
-                'is_active' => true,
-            ]);
-        }
-
-        return \Illuminate\Support\Facades\Redirect::route('leads')->with('success', 'Lead created.');
+        return Redirect::route('leads.show', $lead)->with('success', 'Lead created.');
     }
 
     public function edit(Lead $lead)
@@ -80,40 +69,15 @@ class LeadsController extends Controller
         return \Inertia\Inertia::render('Leads/Edit', $data);
     }
 
-    public function update(Lead $lead, \App\Http\Requests\LeadRequest $request)
+    public function update(Lead $lead, LeadRequest $request)
     {
         $this->authorize('update', $lead);
 
         $data = $request->validated();
-        $employeeId = $data['employee_id'] ?? null;
-        unset($data['employee_id']);
 
         $lead->update($data);
 
-        $current = $lead->activeAssignment()->first();
-        if ($current && (int) $current->employee_id !== (int) $employeeId) {
-            $current->update([
-                'is_active' => false,
-                'unassigned_at' => now(),
-            ]);
-        }
-        if ($employeeId && (!$current || (int) $current->employee_id !== (int) $employeeId)) {
-            \App\Models\LeadAssignment::create([
-                'lead_id' => $lead->id,
-                'employee_id' => $employeeId,
-                'assigned_by' => auth()->id(),
-                'assigned_at' => now(),
-                'is_active' => true,
-            ]);
-        }
-        if (!$employeeId && $current) {
-            $current->update([
-                'is_active' => false,
-                'unassigned_at' => now(),
-            ]);
-        }
-
-        return \Illuminate\Support\Facades\Redirect::back()->with('success', 'Lead updated.');
+        return Redirect::route('leads.show', $lead)->with('success', 'Lead updated.');
     }
 
     public function destroy(Lead $lead)
@@ -122,7 +86,7 @@ class LeadsController extends Controller
 
         $lead->delete();
 
-        return \Illuminate\Support\Facades\Redirect::back()->with('success', 'Lead deleted.');
+        return redirect()->back()->with('success', 'Lead deleted.');
     }
 
     public function restore(Lead $lead)
@@ -131,7 +95,7 @@ class LeadsController extends Controller
 
         $lead->restore();
 
-        return \Illuminate\Support\Facades\Redirect::back()->with('success', 'Lead restored.');
+        return redirect()->back()->with('success', 'Lead restored.');
     }
 
     // Rename this endpoint for AJAX

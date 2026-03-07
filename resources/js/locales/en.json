@@ -286,5 +286,6 @@
    "update_reservation": "Update Reservation",
    "cash": "Cash",
    "update_owner": "Update Owner",
-  "are_you_sure_unassign_lead": "Are you sure you want to unassign this lead?"
+  "are_you_sure_unassign_lead": "Are you sure you want to unassign this lead?",
+  "no_reservations_found": "No reservations found."
 }

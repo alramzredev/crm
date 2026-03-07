@@ -37,7 +37,8 @@ const UnitList = ({ units, showButton = true, inTab = false }) => {
           <thead>
             <tr className="font-bold text-left">
               <th className="px-6 pt-5 pb-4">{t('unit_list_code')}</th>
-              <th className="px-6 pt-5 pb-4">{t('unit_list_property')}</th>
+              <th className="px-6 pt-5 pb-4">{t('project')}</th>
+              <th className="px-6 pt-5 pb-4">{t('property')}</th>
               <th className="px-6 pt-5 pb-4">{t('unit_list_floor')}</th>
               <th className="px-6 pt-5 pb-4">{t('unit_list_area')}</th>
               <th className="px-6 pt-5 pb-4">{t('unit_list_rooms')}</th>
@@ -49,6 +50,7 @@ const UnitList = ({ units, showButton = true, inTab = false }) => {
             {unitData.map(u => (
               <tr key={u.id} className="hover:bg-gray-100 focus-within:bg-gray-100">
                 <td className="border-t px-6 py-4">{u.unit_code || '—'}</td>
+                <td className="border-t px-6 py-4">{u.project?.project_code || '—'}</td>
                 <td className="border-t px-6 py-4">{u.property?.property_code || '—'}</td>
                 <td className="border-t px-6 py-4">{u.floor || '—'}</td>
                 <td className="border-t px-6 py-4">{u.area || '—'}</td>

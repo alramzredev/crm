@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProjectStoreRequest;
 use App\Http\Requests\ProjectUpdateRequest;
-use App\Http\Resources\ProjectCollection;
-use App\Http\Resources\ProjectResource;
 use Inertia\Inertia;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +12,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Services\ProjectService;
 use App\Models\ProjectStatus;
 
-class ProjectsController extends Controller
+class ProjectController extends Controller
 {
     protected $service;
 

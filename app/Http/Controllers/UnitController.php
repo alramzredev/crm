@@ -10,12 +10,11 @@ use App\Models\Neighborhood;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
-use App\Repositories\UnitRepository;
 use App\Http\Requests\UnitStoreRequest;
 use App\Http\Requests\UnitUpdateRequest;
 use App\Services\UnitService;
 
-class UnitsController extends Controller
+class UnitController extends Controller
 {
      protected $service;
 

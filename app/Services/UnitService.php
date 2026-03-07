@@ -11,21 +11,27 @@ use App\Models\UnitType;
 use App\Models\Neighborhood;
 use App\Http\Resources\UnitResource;
 use App\Repositories\UnitRepository;
+use App\Repositories\ProjectRepository;
+use App\Repositories\PropertyRepository;
 
 class UnitService
 {
     protected $repo;
+    protected $projectRepo;
+    protected $propertyRepo;
 
-    public function __construct(UnitRepository $repo)
+    public function __construct(UnitRepository $repo, ProjectRepository $projectRepo, PropertyRepository $propertyRepo)
     {
         $this->repo = $repo;
+        $this->projectRepo = $projectRepo;
+        $this->propertyRepo = $propertyRepo;
     }
 
     public function getCreateData(): array
     {
         return [
-            'projects' => Project::orderBy('name')->get(),
-            'properties' => Property::orderBy('property_code')->get(),
+            'projects' => $this->projectRepo->query()->orderBy('name')->get(),
+            'properties' => $this->propertyRepo->query()->orderBy('property_code')->get(),
             'propertyTypes' => PropertyType::orderBy('name')->get(),
             'propertyStatuses' => UnitStatus::orderBy('name')->get(),
             'unitTypes' => UnitType::where('is_active', true)->orderBy('name')->get(),
@@ -44,8 +50,8 @@ class UnitService
             'unit' => new UnitResource(
                 $unit->load(['project', 'property', 'propertyType', 'status', 'neighborhood'])
             ),
-            'projects' => Project::orderBy('name')->get(),
-            'properties' => Property::orderBy('property_code')->get(),
+            'projects' => $this->projectRepo->query()->orderBy('name')->get(),
+            'properties' => $this->propertyRepo->query()->orderBy('property_code')->get(),
             'propertyTypes' => PropertyType::orderBy('name')->get(),
             'propertyStatuses' => UnitStatus::orderBy('name')->get(),
             'unitTypes' => UnitType::where('is_active', true)->orderBy('name')->get(),
@@ -69,10 +75,7 @@ class UnitService
     {
         $query = $this->repo->query(['project', 'property', 'propertyType', 'status']);
         // Filter units by the current user using the forUser scope
-        $user = auth()->user();
-        if ($user) {
-            $query->forUser($user);
-        }
+       
 
         return [
             'units' => UnitResource::collection(
@@ -83,7 +86,7 @@ class UnitService
                     ->paginate($perPage)
                     ->appends(request()->all())
             ),
-            'projects' => \App\Models\Project::orderBy('name')->get(),
+            'projects' => $this->projectRepo->query()->orderBy('name')->get(),
             'unitStatuses' => \App\Models\UnitStatus::orderBy('name')->get(),
         ];
     }

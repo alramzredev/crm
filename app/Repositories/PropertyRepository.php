@@ -8,6 +8,10 @@ class PropertyRepository
 {
     public function query(array $with = [])
     {
+        $user = auth()->user();
+        if ($user) {
+            return Property::with($with)->forUser($user);
+        }
         return Property::with($with);
     }
 

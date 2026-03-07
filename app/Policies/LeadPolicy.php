@@ -59,7 +59,7 @@ class LeadPolicy
 
         // Sales employee: Can only edit leads assigned to them
         if ($user->hasRole('sales_employee')) {
-            $isAssignedToMe = $lead->activeAssignment?->employee_id === $user->id;
+             $isAssignedToMe = $lead->activeAssignment?->employee_id === $user->id;
 
             // $isInMyProject = $user->activeProjects()
             //     ->where('projects.id', $lead->project_id)
@@ -73,7 +73,7 @@ class LeadPolicy
 
         // Supervisors and above: Can edit leads from their projects
         if ($user->hasRole('sales_supervisor')) {
-            return $user->activeProjects()
+            return $user->projects()
                 ->where('projects.id', $lead->project_id)
                 ->exists();
         }

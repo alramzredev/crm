@@ -38,7 +38,8 @@ class UserRepository
 
     public function getAvailableRoles()
     {
-        return Role::all(['name', 'label']);
+        // Return all columns to include 'id'
+        return Role::all();
     }
 
     public function getCreateData(): array

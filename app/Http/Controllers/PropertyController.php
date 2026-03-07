@@ -10,7 +10,7 @@ use App\Services\PropertyService;
 use App\Http\Requests\PropertyStoreRequest;
 use App\Http\Requests\PropertyUpdateRequest;
 
-class PropertiesController extends Controller
+class PropertyController extends Controller
 {
     protected $service;
 

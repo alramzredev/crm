@@ -10,7 +10,11 @@ class ProjectRepository
      * Return a base query for projects, optionally eager loading relations.
      */
     public function query(array $with = [])
-    {
+    { 
+        $user = auth()->user();
+        if($user){
+             return Project::with($with)->forUser($user);
+        }
         return Project::with($with);
     }
 

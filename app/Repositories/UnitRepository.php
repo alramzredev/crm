@@ -11,6 +11,10 @@ class UnitRepository
      */
     public function query(array $with = [])
     {
+        $user = auth()->user();
+        if ($user) {
+            return Unit::with($with)->forUser($user);
+        }
         return Unit::with($with);
     }
 

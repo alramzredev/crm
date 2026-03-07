@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use App\Http\Controllers\PropertiesController;
+use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ReservationDiscountRequestController;
 
 /*
@@ -28,13 +28,13 @@ Route::get('/')->name('dashboard')->uses('DashboardController')->middleware('aut
 
 // Users
 Route::middleware('auth')->group(function () {
-    Route::get('users')->name('users')->uses('UsersController@index');
-    Route::get('users/create')->name('users.create')->uses('UsersController@create');
-    Route::post('users')->name('users.store')->uses('UsersController@store');
-    Route::get('users/{user}/edit')->name('users.edit')->uses('UsersController@edit');
-    Route::put('users/{user}')->name('users.update')->uses('UsersController@update');
-    Route::delete('users/{user}')->name('users.destroy')->uses('UsersController@destroy');
-    Route::put('users/{user}/restore')->name('users.restore')->uses('UsersController@restore');
+    Route::get('users')->name('users')->uses('UserController@index');
+    Route::get('users/create')->name('users.create')->uses('UserController@create');
+    Route::post('users')->name('users.store')->uses('UserController@store');
+    Route::get('users/{user}/edit')->name('users.edit')->uses('UserController@edit');
+    Route::put('users/{user}')->name('users.update')->uses('UserController@update');
+    Route::delete('users/{user}')->name('users.destroy')->uses('UserController@destroy');
+    Route::put('users/{user}/restore')->name('users.restore')->uses('UserController@restore');
 });
 
 // Images
@@ -42,40 +42,40 @@ Route::get('/img/{path}', 'ImagesController@show')->where('path', '.*');
 
 // Projects
 Route::middleware('auth')->group(function () {
-    Route::get('projects')->name('projects')->uses('ProjectsController@index');
-    Route::get('projects/create')->name('projects.create')->uses('ProjectsController@create');
-    Route::post('projects')->name('projects.store')->uses('ProjectsController@store');
-    Route::get('projects/{project}')->name('projects.show')->uses('ProjectsController@show');
-    Route::get('projects/{project}/edit')->name('projects.edit')->uses('ProjectsController@edit');
-    Route::put('projects/{project}')->name('projects.update')->uses('ProjectsController@update');
-    Route::delete('projects/{project}')->name('projects.destroy')->uses('ProjectsController@destroy');
-    Route::put('projects/{project}/restore')->name('projects.restore')->uses('ProjectsController@restore');
+    Route::get('projects')->name('projects')->uses('ProjectController@index');
+    Route::get('projects/create')->name('projects.create')->uses('ProjectController@create');
+    Route::post('projects')->name('projects.store')->uses('ProjectController@store');
+    Route::get('projects/{project}')->name('projects.show')->uses('ProjectController@show');
+    Route::get('projects/{project}/edit')->name('projects.edit')->uses('ProjectController@edit');
+    Route::put('projects/{project}')->name('projects.update')->uses('ProjectController@update');
+    Route::delete('projects/{project}')->name('projects.destroy')->uses('ProjectController@destroy');
+    Route::put('projects/{project}/restore')->name('projects.restore')->uses('ProjectController@restore');
     Route::post('projects/import')->name('projects.import')->uses('ProjectImportController@store');
 });
 
 // Properties
 Route::middleware('auth')->group(function () {
-    Route::get('properties')->name('properties')->uses('PropertiesController@index');
-    Route::get('properties/create')->name('properties.create')->uses('PropertiesController@create');
-    Route::post('properties')->name('properties.store')->uses('PropertiesController@store');
-    Route::get('properties/{property}')->name('properties.show')->uses('PropertiesController@show');
-    Route::get('properties/{property}/edit')->name('properties.edit')->uses('PropertiesController@edit');
-    Route::put('properties/{property}')->name('properties.update')->uses('PropertiesController@update');
-    Route::delete('properties/{property}')->name('properties.destroy')->uses('PropertiesController@destroy');
-    Route::put('properties/{property}/restore')->name('properties.restore')->uses('PropertiesController@restore');
+    Route::get('properties')->name('properties')->uses('PropertyController@index');
+    Route::get('properties/create')->name('properties.create')->uses('PropertyController@create');
+    Route::post('properties')->name('properties.store')->uses('PropertyController@store');
+    Route::get('properties/{property}')->name('properties.show')->uses('PropertyController@show');
+    Route::get('properties/{property}/edit')->name('properties.edit')->uses('PropertyController@edit');
+    Route::put('properties/{property}')->name('properties.update')->uses('PropertyController@update');
+    Route::delete('properties/{property}')->name('properties.destroy')->uses('PropertyController@destroy');
+    Route::put('properties/{property}/restore')->name('properties.restore')->uses('PropertyController@restore');
     Route::post('properties/import')->name('properties.import')->uses('PropertyImportController@store');
 });
 
 // Units
 Route::middleware('auth')->group(function () {
-    Route::get('units')->name('units')->uses('UnitsController@index');
-    Route::get('units/create')->name('units.create')->uses('UnitsController@create');
-    Route::post('units')->name('units.store')->uses('UnitsController@store');
-    Route::get('units/{unit}')->name('units.show')->uses('UnitsController@show');
-    Route::get('units/{unit}/edit')->name('units.edit')->uses('UnitsController@edit');
-    Route::put('units/{unit}')->name('units.update')->uses('UnitsController@update');
-    Route::delete('units/{unit}')->name('units.destroy')->uses('UnitsController@destroy');
-    Route::put('units/{unit}/restore')->name('units.restore')->uses('UnitsController@restore');
+    Route::get('units')->name('units')->uses('UnitController@index');
+    Route::get('units/create')->name('units.create')->uses('UnitController@create');
+    Route::post('units')->name('units.store')->uses('UnitController@store');
+    Route::get('units/{unit}')->name('units.show')->uses('UnitController@show');
+    Route::get('units/{unit}/edit')->name('units.edit')->uses('UnitController@edit');
+    Route::put('units/{unit}')->name('units.update')->uses('UnitController@update');
+    Route::delete('units/{unit}')->name('units.destroy')->uses('UnitController@destroy');
+    Route::put('units/{unit}/restore')->name('units.restore')->uses('UnitController@restore');
     Route::post('units/import')->name('units.import')->uses('UnitImportController@store');
 });
 
@@ -92,17 +92,17 @@ Route::middleware('auth')->group(function () {
 
 // Leads
 Route::middleware('auth')->group(function () {
-    Route::get('leads')->name('leads')->uses('LeadsController@index');
-    Route::get('leads/create')->name('leads.create')->uses('LeadsController@create');
-    Route::post('leads')->name('leads.store')->uses('LeadsController@store');
-    Route::get('leads/{lead}/edit')->name('leads.edit')->uses('LeadsController@edit');
-    Route::put('leads/{lead}')->name('leads.update')->uses('LeadsController@update');
-    Route::delete('leads/{lead}')->name('leads.destroy')->uses('LeadsController@destroy');
-    Route::put('leads/{lead}/restore')->name('leads.restore')->uses('LeadsController@restore');
-    Route::get('leads/users-by-project', [\App\Http\Controllers\LeadsController::class, 'usersByProject'])->name('leads.users-by-project');
-    Route::get('leads/{lead}', [\App\Http\Controllers\LeadsController::class, 'show'])->name('leads.show');
-    Route::post('leads/{lead}/assign', [\App\Http\Controllers\LeadsController::class, 'assignEmployee'])->name('leads.assign-employee');
-    Route::post('leads/{lead}/unassign', [\App\Http\Controllers\LeadsController::class, 'unassignEmployee'])->name('leads.unassign-employee');
+    Route::get('leads')->name('leads')->uses('LeadController@index');
+    Route::get('leads/create')->name('leads.create')->uses('LeadController@create');
+    Route::post('leads')->name('leads.store')->uses('LeadController@store');
+    Route::get('leads/{lead}/edit')->name('leads.edit')->uses('LeadController@edit');
+    Route::put('leads/{lead}')->name('leads.update')->uses('LeadController@update');
+    Route::delete('leads/{lead}')->name('leads.destroy')->uses('LeadController@destroy');
+    Route::put('leads/{lead}/restore')->name('leads.restore')->uses('LeadController@restore');
+    Route::get('leads/users-by-project', [\App\Http\Controllers\LeadController::class, 'usersByProject'])->name('leads.users-by-project');
+    Route::get('leads/{lead}', [\App\Http\Controllers\LeadController::class, 'show'])->name('leads.show');
+    Route::post('leads/{lead}/assign', [\App\Http\Controllers\LeadController::class, 'assignEmployee'])->name('leads.assign-employee');
+    Route::post('leads/{lead}/unassign', [\App\Http\Controllers\LeadController::class, 'unassignEmployee'])->name('leads.unassign-employee');
 });
 
 // Reservations
@@ -141,7 +141,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Reports
-Route::get('reports')->name('reports')->uses('ReportsController')->middleware('auth');
+Route::get('reports')->name('reports')->uses('ReportController')->middleware('auth');
 
 // Search Routes
 Route::middleware('auth')->group(function () {

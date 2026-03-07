@@ -293,5 +293,6 @@
   "update_reservation": "تحديث الحجز",
   "cash": "نقدًا",
   "update_owner": "تحديث المالك",
-  "are_you_sure_unassign_lead": "هل أنت متأكد أنك تريد إلغاء تعيين هذا العميل المحتمل؟"
+  "are_you_sure_unassign_lead": "هل أنت متأكد أنك تريد إلغاء تعيين هذا العميل المحتمل؟",
+  "no_reservations_found": "لم يتم العثور على حجوزات."
  }

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
 use Spatie\Permission\Models\Role;
 
-class UsersController extends Controller
+class UserController extends Controller
 {
     protected $service;
 
