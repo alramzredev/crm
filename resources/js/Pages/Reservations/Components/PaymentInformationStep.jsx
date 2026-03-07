@@ -52,7 +52,7 @@ const PaymentInformationStep = ({ data, handleChange, errors = {} }) => {
         min="0"
         step="0.01"
         value={data.total_price}
-        onChange={e => handleChange('total_price', e.target.value)}
+        readOnly
         errors={errors.total_price}
       />
 
@@ -64,18 +64,18 @@ const PaymentInformationStep = ({ data, handleChange, errors = {} }) => {
         min="0"
         step="0.01"
         value={data.remaining_amount}
-        onChange={e => handleChange('remaining_amount', e.target.value)}
+        readOnly
         errors={errors.remaining_amount}
       />
 
-      <TextInput
+      {/* <TextInput
         className="w-full pb-8 pr-6 lg:w-1/2"
         label="Currency"
         name="currency"
         value={data.currency}
         onChange={e => handleChange('currency', e.target.value)}
         errors={errors.currency}
-      />
+      /> */}
 
       <TextInput
         className="w-full pb-8 pr-6 lg:w-1/2"

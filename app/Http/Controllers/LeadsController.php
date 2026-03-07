@@ -11,6 +11,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
 use App\Services\LeadService;
+use Illuminate\Http\Request as IlluminateRequest;
 
 class LeadsController extends Controller
 {
@@ -38,7 +39,8 @@ class LeadsController extends Controller
     {
         $this->authorize('create', Lead::class);
 
-        return \Inertia\Inertia::render('Leads/Create', $this->service->getCreateData(auth()->user()));
+        $data = $this->service->getCreateData(auth()->user());
+        return \Inertia\Inertia::render('Leads/Create', $data);
     }
 
     public function store(\App\Http\Requests\LeadRequest $request)
@@ -68,7 +70,14 @@ class LeadsController extends Controller
     {
         $this->authorize('update', $lead);
 
-        return \Inertia\Inertia::render('Leads/Edit', $this->service->getEditData($lead));
+        $data = $this->service->getEditData($lead);
+        // Add users for the lead's project (if any)
+        $projectId = $lead->project_id;
+        $data['employees'] = $projectId
+            ? $this->service->getUsersByProjectAndRoles($projectId)
+            : collect();
+
+        return \Inertia\Inertia::render('Leads/Edit', $data);
     }
 
     public function update(Lead $lead, \App\Http\Requests\LeadRequest $request)
@@ -123,5 +132,58 @@ class LeadsController extends Controller
         $lead->restore();
 
         return \Illuminate\Support\Facades\Redirect::back()->with('success', 'Lead restored.');
+    }
+
+    // Rename this endpoint for AJAX
+    public function usersByProject(IlluminateRequest $request)
+    {
+        $projectId = $request->input('project_id');
+        if (!$projectId) {
+            return response()->json([]);
+        }
+        $users = $this->service->getUsersByProjectAndRoles($projectId);
+        return response()->json($users);
+    }
+
+    public function show(Lead $lead)
+    {
+        $this->authorize('view', $lead);
+
+        $lead->load(['activeAssignment.employee', 'project', 'leadSource', 'status']);
+        $employees = $lead->project_id
+            ? $this->service->getUsersByProjectAndRoles($lead->project_id)
+            : collect();
+
+        // Pass canAssign to frontend
+        $canAssign = auth()->user()->can('assign', $lead);
+
+        return Inertia::render('Leads/Show', [
+            'lead' => $lead,
+            'employees' => $employees,
+            'canAssign' => $canAssign,
+        ]);
+    }
+
+    public function assignEmployee(Lead $lead, IlluminateRequest $request)
+    {
+        $this->authorize('assign', $lead);
+
+        $request->validate([
+            'employee_id' => 'required|integer|exists:users,id',
+        ]);
+
+        $employeeId = $request->input('employee_id');
+        $this->service->assignEmployee($lead, $employeeId);
+
+        return Redirect::back()->with('success', 'Lead assigned.');
+    }
+
+    public function unassignEmployee(Lead $lead)
+    {
+        $this->authorize('assign', $lead);
+
+        $this->service->unassignEmployee($lead);
+
+        return Redirect::back()->with('success', 'Lead unassigned.');
     }
 }

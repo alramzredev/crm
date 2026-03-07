@@ -129,7 +129,7 @@ class Reservation extends Model
         return $this->hasMany(ReservationDiscountRequest::class);
     }
 
-    public function scopeFilterByUserRole($query, User $user)
+    public function scopeForUser($query, User $user)
     {
         // Super Admin: No restrictions
         if ($user->hasRole('super_admin')) {
@@ -140,9 +140,7 @@ class Reservation extends Model
         if ($user->hasRole('project_admin')) {
             return $query->whereHas('unit.project', function ($q) use ($user) {
                 $q->whereHas('users', function ($q2) use ($user) {
-                    $q2->where('project_user.user_id', $user->id)
-                      ->where('project_user.role_in_project', 'project_admin')
-                      ->where('project_user.is_active', true);
+                    $q2->where('project_user.user_id', $user->id);
                 });
             });
         }

@@ -71,6 +71,14 @@
   "national_id": "National ID",
   "no_leads_found": "No leads found.",
   "show_lead": "Show Lead",
+  "assignment": "Assignment",
+  "assigned_to": "Assigned To",
+  "unassigned": "Unassigned",
+  "assign": "Assign",
+  "reassign": "Reassign",
+  "unassign": "Unassign",
+  "assign_lead": "Assign Lead",
+  "select_employee": "Select Employee",
   "update_lead": "Update Lead",
   "owners": "Owners",
   "create_owner": "Create Owner",
@@ -277,7 +285,6 @@
   "currency": "Currency",
    "update_reservation": "Update Reservation",
    "cash": "Cash",
-   "update_owner": "Update Owner"
- 
- 
+   "update_owner": "Update Owner",
+  "are_you_sure_unassign_lead": "Are you sure you want to unassign this lead?"
 }

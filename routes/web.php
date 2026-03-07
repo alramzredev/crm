@@ -99,6 +99,10 @@ Route::middleware('auth')->group(function () {
     Route::put('leads/{lead}')->name('leads.update')->uses('LeadsController@update');
     Route::delete('leads/{lead}')->name('leads.destroy')->uses('LeadsController@destroy');
     Route::put('leads/{lead}/restore')->name('leads.restore')->uses('LeadsController@restore');
+    Route::get('leads/users-by-project', [\App\Http\Controllers\LeadsController::class, 'usersByProject'])->name('leads.users-by-project');
+    Route::get('leads/{lead}', [\App\Http\Controllers\LeadsController::class, 'show'])->name('leads.show');
+    Route::post('leads/{lead}/assign', [\App\Http\Controllers\LeadsController::class, 'assignEmployee'])->name('leads.assign-employee');
+    Route::post('leads/{lead}/unassign', [\App\Http\Controllers\LeadsController::class, 'unassignEmployee'])->name('leads.unassign-employee');
 });
 
 // Reservations

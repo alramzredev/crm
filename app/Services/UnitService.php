@@ -68,6 +68,11 @@ class UnitService
     public function getPaginatedUnits(array $filters = [], int $perPage = 25)
     {
         $query = $this->repo->query(['project', 'property', 'propertyType', 'status']);
+        // Filter units by the current user using the forUser scope
+        $user = auth()->user();
+        if ($user) {
+            $query->forUser($user);
+        }
 
         return [
             'units' => UnitResource::collection(

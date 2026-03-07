@@ -62,6 +62,7 @@ class PermissionSeeder extends Seeder
                 'leads.edit',
                 'leads.delete',
                 'leads.restore',
+                'leads.assign',
             ],
 
             'Reservation Management' => [
@@ -150,7 +151,7 @@ class PermissionSeeder extends Seeder
         foreach ($permissionGroups as $group => $permissions) {
             foreach ($permissions as $permission) {
                 $allPermissions[] = $permission;
-                Permission::firstOrCreate(
+                \Spatie\Permission\Models\Permission::firstOrCreate(
                     ['name' => $permission, 'guard_name' => 'web'],
                     ['group' => $group]
                 );
@@ -282,6 +283,7 @@ class PermissionSeeder extends Seeder
             'contracts.create',
             'contracts.edit',
             'contracts.delete',
+            'leads.assign',
         ]);
 
         // ============================================

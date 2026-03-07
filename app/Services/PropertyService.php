@@ -29,6 +29,12 @@ class PropertyService
     {
         $query = $this->repo->query(['project', 'owner', 'status']);
 
+        // Use the logged-in user for user scope
+        $user = auth()->user();
+        if ($user) {
+            $query->forUser($user);
+        }
+
         return PropertyResource::collection(
             $query
                 ->orderBy('created_at', 'desc')

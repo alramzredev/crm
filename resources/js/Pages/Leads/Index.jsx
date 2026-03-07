@@ -6,10 +6,9 @@ import SearchFilter from '@/Shared/SearchFilter';
 import StatusFilter from '@/Shared/StatusFilter';
 import Pagination from '@/Shared/Pagination';
 import { useTranslation } from 'react-i18next';
-import EditButton from '@/Shared/TableActions/EditButton';
+import CreateReservationButton from '@/Shared/TableActions/CreateReservationButton';
 import DeleteButton from '@/Shared/TableActions/DeleteButton';
 import ShowButton from '@/Shared/TableActions/ShowButton';
-import CreateReservationButton from '@/Shared/TableActions/CreateReservationButton';
 import SelectInput from '@/Shared/SelectInput';
 import StatusPill from '@/Shared/StatusPill';
 
@@ -102,8 +101,8 @@ const Index = () => {
                         label={t('reserve_unit')}
                       />
                     )}
-                    {can('leads.edit') && (
-                      <EditButton onClick={() => router.visit(route('leads.edit', lead.id))} />
+                    {can('leads.view') && (
+                      <ShowButton onClick={() => router.visit(route('leads.show', lead.id))} />
                     )}
                     {!lead.deleted_at && can('leads.delete') && (
                       <DeleteButton onClick={() => destroy(lead.id)} />

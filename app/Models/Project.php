@@ -265,42 +265,16 @@ class Project extends Model
         });
     }
 
-    public function scopeFilterByUserRole($query, User $user)
+    public function scopeForUser($query, User $user)
     {
-        // Super Admin: No restrictions
-        if ($user->hasRole('super_admin')) {
+         if ($user->hasRole('super_admin')) {
             return $query;
         }
 
-        // For all other roles, filter by active project assignments
-        return $query->whereHas('users', function ($q) use ($user) {
+         return $query->whereHas('users', function ($q) use ($user) {
             $q->where('project_user.user_id', $user->id)
               ->where('project_user.is_active', true);
         });
     }
 
-    /* ===========================
-       VISIBILITY RULES
-       =========================== 
-       
-       Projects are visible by ROLE + ASSIGNMENT:
-       
-       1️⃣ Super Admin
-          Sees: ALL projects
-          SQL: No filter
-       
-       2️⃣ Project Admin
-          Sees: Projects where assigned as project_admin
-          SQL: JOIN project_user WHERE role_in_project = 'project_admin'
-       
-       3️⃣ Sales Supervisor
-          Sees: Projects where assigned as sales_supervisor
-          SQL: JOIN project_user WHERE role_in_project = 'sales_supervisor'
-       
-       4️⃣ Sales Employee
-          Sees: Projects where assigned as sales_employee
-          SQL: JOIN project_user WHERE role_in_project = 'sales_employee'
-          Note: Only for context (leads, reservations)
-       
-       === */
 }

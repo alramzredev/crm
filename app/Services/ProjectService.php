@@ -30,32 +30,8 @@ class ProjectService
     public function getPaginatedProjects(User $user, array $filters = [])
     {
         $query = $this->repo->query(['owner', 'city', 'status']);
-
         // Role-based visibility logic
-        if ($user->hasRole('super_admin')) {
-            // No restrictions
-        } else if ($user->hasRole('project_admin')) {
-            $query->whereHas('users', function ($q) use ($user) {
-                $q->where('project_user.user_id', $user->id)
-                  ->where('project_user.role_in_project', 'project_admin')
-                  ->where('project_user.is_active', true);
-            });
-        } else if ($user->hasRole('sales_supervisor')) {
-            $query->whereHas('users', function ($q) use ($user) {
-                $q->where('project_user.user_id', $user->id)
-                  ->where('project_user.role_in_project', 'sales_supervisor')
-                  ->where('project_user.is_active', true);
-            });
-        } else if ($user->hasRole('sales_employee')) {
-            $query->whereHas('users', function ($q) use ($user) {
-                $q->where('project_user.user_id', $user->id)
-                  ->where('project_user.role_in_project', 'sales_employee')
-                  ->where('project_user.is_active', true);
-            });
-        } else {
-            $query->whereRaw('1 = 0');
-        }
-
+        $query->forUser($user);
         // Filtering and resource wrapping
         return ProjectResource::collection(
             $query

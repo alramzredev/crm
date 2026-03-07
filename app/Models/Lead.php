@@ -66,17 +66,23 @@ class Lead extends Model
         });
     }
 
-    public function scopeFilterByUserRole($query, User $user)
+    public function scopeForUser($query, User $user)
     {
-        if ($user->hasRole('sales_employee')) {
-            $query->whereHas('activeAssignment', function ($q) use ($user) {
-                $q->where('employee_id', $user->id);
-            });
-        } else if ($user->hasRole('sales_supervisor')) {
-            $query->whereHas('project', function ($q) use ($user) {
-                $q->whereIn('id', $user->activeProjects()->pluck('projects.id'));
-            });
-        }
+            if ($user->hasRole('super_admin')) {
+                return $query;
+            } elseif ($user->hasRole('sales_supervisor')) {
+                $query->whereHas('project', function ($q) use ($user) {
+                    $q->whereIn('id', $user->projects()->pluck('projects.id'));
+                });
+            } elseif ($user->hasRole('sales_employee')) {
+                $query->whereHas('activeAssignment', function ($q) use ($user) {
+                    $q->where('employee_id', $user->id);
+                });
+            } else {
+                // For all other roles, return no results
+                return $query->whereRaw('1 = 0');
+            }
+            
     }
 
     public function leadSource()

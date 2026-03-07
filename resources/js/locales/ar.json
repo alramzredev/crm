@@ -94,6 +94,14 @@
   "phone": "الهاتف",
   "national_id": "الهوية الوطنية",
   "no_leads_found": "لم يتم العثور على عملاء محتملين.",
+  "assignment": "التعيين",
+  "assigned_to": "تم التعيين إلى",
+  "unassigned": "غير معين",
+  "assign": "تعيين",
+  "reassign": "إعادة تعيين",
+  "unassign": "إلغاء التعيين",
+  "assign_lead": "تعيين العميل المحتمل",
+  "select_employee": "اختر الموظف",
   "show_lead": "عرض العميل المحتمل",
   "update_lead": "تحديث العميل المحتمل",
   "owners": "المالكون",
@@ -284,6 +292,6 @@
    "notes": "ملاحظات",
   "update_reservation": "تحديث الحجز",
   "cash": "نقدًا",
-  "update_owner": "تحديث المالك"
-
+  "update_owner": "تحديث المالك",
+  "are_you_sure_unassign_lead": "هل أنت متأكد أنك تريد إلغاء تعيين هذا العميل المحتمل؟"
  }

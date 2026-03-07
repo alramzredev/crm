@@ -95,4 +95,27 @@ class LeadPolicy
     {
         return $user->hasPermissionTo('leads.delete');
     }
+
+    public function assign(User $user, Lead $lead)
+    {
+        // Permission check
+        if (!$user->hasPermissionTo('leads.assign')) {
+            return false;
+        }
+
+        // Sales supervisor: Can assign leads from their assigned projects
+        if ($user->hasRole('sales_supervisor')) {
+            return $user->activeProjects()
+                ->where('projects.id', $lead->project_id)
+                ->exists();
+        }
+
+        // Super admin: Can assign any lead
+        if ($user->hasRole('super_admin')) {
+            return true;
+        }
+
+        // Project admin and sales employee: cannot assign
+        return false;
+    }
 }

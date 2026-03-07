@@ -10,6 +10,7 @@ use App\Models\LeadSource;
 use App\Models\Project;
 use App\Models\LeadStatus;
 use App\Http\Resources\LeadResource;
+use Illuminate\Support\Facades\DB;
 
 class LeadService
 {
@@ -22,20 +23,10 @@ class LeadService
 
     public function getPaginatedLeads(User $user, array $filters = [])
     {
-         $query = $this->repo->query(['project', 'leadSource', 'activeAssignment', 'status']);
-
-         if ($user->hasRole('sales_employee')) {
-            $query->whereHas('activeAssignment', function ($q) use ($user) {
-                $q->where('employee_id', $user->id);
-            });
-        } else if ($user->hasRole('sales_supervisor')) {
-            $query->whereHas('project', function ($q) use ($user) {
-                $q->whereIn('id', $user->activeProjects()->pluck('projects.id'));
-            });
-        }
+         $query = $this->repo->query(['project', 'leadSource', 'activeAssignment', 'status'])
+             ->forUser($user);
 
          $query->orderByName()->filter($filters);
-
          if (!empty($filters['trashed'])) {
             if ($filters['trashed'] === 'with') {
                 $query->withTrashed();
@@ -51,30 +42,30 @@ class LeadService
 
     public function getCreateData(User $user): array
     {
-         $projectsQuery = Project::orderBy('name');
-        if (!$user->hasRole('super_admin')) {
-            $projectsQuery->whereHas('users', function ($q) use ($user) {
-                $q->where('project_user.user_id', $user->id)
-                  ->where('project_user.is_active', true);
-            });
-        }
+        $projectsQuery = Project::orderBy('name')->forUser($user);
 
         return [
             'leadSources' => LeadSource::orderBy('name')->get(),
             'leadStatuses' => LeadStatus::orderBy('name')->get(),
             'projects' => $projectsQuery->get(),
+            'employees' => $projectsQuery->first()
+                ? $this->getUsersByProjectAndRoles($projectsQuery->first()->id)
+                : collect(),
             'brokers' => User::role('sales_employee')->orderByName()->get(),
         ];
     }
 
     public function getEditData(Lead $lead): array
     {
-        // Logic moved from repo to here
+        // Use forUser to restrict projects for the current user
+        $user = auth()->user();
+        $projectsQuery = Project::orderBy('name')->forUser($user);
+
         return [
             'lead' => $lead->load(['activeAssignment', 'status']),
             'leadSources' => LeadSource::orderBy('name')->get(),
             'leadStatuses' => LeadStatus::orderBy('name')->get(),
-            'projects' => Project::orderBy('name')->get(),
+            'projects' => $projectsQuery->get(),
             'brokers' => User::role('sales_employee')->orderByName()->get(),
         ];
     }
@@ -140,5 +131,61 @@ class LeadService
     public function restore(Lead $lead)
     {
         return $lead->restore();
+    }
+
+   public function assignEmployee(Lead $lead, $employeeId)
+{
+   DB::transaction(function () use ($lead, $employeeId) {
+
+    $current = $lead->activeAssignment()->lockForUpdate()->first();
+
+    if ($current && $current->employee_id == $employeeId) {
+        return;
+    }
+
+    if ($current) {
+        $current->update([
+            'is_active' => false,
+            'unassigned_at' => now(),
+        ]);
+    }
+
+    if (!$employeeId) {
+        return;
+    }
+
+    $lead->assignments()->create([
+        'employee_id' => $employeeId,
+        'assigned_by' => auth()->id(),
+        'assigned_at' => now(),
+        'is_active' => true,
+    ]);
+
+});
+}
+
+    public function unassignEmployee(Lead $lead)
+    {
+        $current = $lead->activeAssignment()->first();
+        if ($current) {
+            $current->update([
+                'is_active' => false,
+                'unassigned_at' => now(),
+            ]);
+        }
+    }
+
+    public function getUsersByProjectAndRoles($projectId , $roles = ['sales_employee'])
+    {
+        return User::byProjectAndRoles($projectId, $roles)
+            ->orderBy('first_name')
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? '')) ?: $user->name,
+                    'email' => $user->email,
+                ];
+            });
     }
 }

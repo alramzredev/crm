@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +10,7 @@ class Unit extends Model
 {
     use HasFactory, SoftDeletes;
 
+   
     protected $fillable = [
         'unit_uuid',
         'unit_code',
@@ -265,4 +265,22 @@ class Unit extends Model
         $this->status_id = $status->id;
         $this->save();
     }
+
+
+     /**
+     * Scope a query to only include units related to the user's projects.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \App\Models\User $user
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForUser($query, $user)
+    {
+        if (method_exists($user, 'hasRole') && $user->hasRole('super_admin')) {
+            return $query;
+        }
+        $projectIds = method_exists($user, 'projects') ? $user->projects()->pluck('projects.id') : [];
+        return $query->whereIn('project_id', $projectIds);
+    }
+
 }

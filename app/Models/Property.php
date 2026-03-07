@@ -160,4 +160,20 @@ class Property extends Model
     {
         return $this->belongsTo(City::class);
     }
+
+    /**
+     * Scope a query to only include properties related to the user's projects.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \App\Models\User $user
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForUser($query, $user)
+    {
+        if (method_exists($user, 'hasRole') && $user->hasRole('super_admin')) {
+            return $query;
+        }
+        $projectIds = method_exists($user, 'projects') ? $user->projects()->pluck('projects.id') : [];
+        return $query->whereIn('project_id', $projectIds);
+    }
 }

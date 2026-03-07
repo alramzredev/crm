@@ -183,4 +183,13 @@ public function activeProjects()
         return $this->hasMany(LeadAssignment::class, 'assigned_by');
     }
 
+    public function scopeByProjectAndRoles($query, $projectId, $roles)
+    {
+        return $query->whereHas('projects', function ($q) use ($projectId) {
+            $q->where('projects.id', $projectId);
+         })
+        ->whereHas('roles', function ($q) use ($roles) {
+            $q->whereIn('name', $roles);
+        });
+    }
 }
