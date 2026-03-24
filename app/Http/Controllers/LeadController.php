@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Services\LeadService;
 use Illuminate\Http\Request as IlluminateRequest;
 use App\Http\Requests\LeadRequest;
+use App\Http\Resources\LeadStatusResource;
 
 class LeadController extends Controller
 {
@@ -32,7 +33,7 @@ class LeadController extends Controller
         return \Inertia\Inertia::render('Leads/Index', [
             'filters' => Request::all('status','search', 'trashed'),
             'leads' => $leads,
-            'leadStatuses' => LeadStatus::orderBy('name')->get(),
+            'leadStatuses' => LeadStatusResource::collection(LeadStatus::all()),
         ]);
     }
 

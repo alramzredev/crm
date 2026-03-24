@@ -10,8 +10,8 @@ import StatusPill from '@/Shared/StatusPill';
 const UnitList = ({ units, showButton = true, inTab = false }) => {
   const { auth } = usePage().props;
   const { t } = useTranslation();
-  console.log(units);
-
+ 
+ 
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
   };

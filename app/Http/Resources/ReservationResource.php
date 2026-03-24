@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\ContractResource;
 
 class ReservationResource extends JsonResource
 {
@@ -38,16 +39,11 @@ class ReservationResource extends JsonResource
             'payments' => PaymentResource::collection($this->whenLoaded('payments')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'contracts' => $this->whenLoaded('contracts', function () {
+                return ContractResource::collection($this->contracts);
+            }),
             'contract' => $this->whenLoaded('contract', function () {
-                return $this->contract ? [
-                    'id' => $this->contract->id,
-                    'contract_code' => $this->contract->contract_code,
-                    'status' => $this->contract->status,
-                    'contract_date' => $this->contract->contract_date,
-                    'total_price' => $this->contract->total_price,
-                    'currency' => $this->contract->currency,
-                    'notes' => $this->contract->notes,
-                ] : null;
+                return $this->contract ? new ContractResource($this->contract) : null;
             }),
         ];
     }

@@ -1,7 +1,7 @@
 import React from 'react';
 
 const StatusPill = ({ status, name = '' }) => {
-  console.log('StatusPill received status:', status);
+//   console.log('StatusPill received status:', status);
   const colors = {
     draft: 'bg-gray-100 text-gray-800',
     active: 'bg-blue-100 text-blue-800',

@@ -3,13 +3,12 @@
 namespace App\Services;
 
 use App\Models\Unit;
-use App\Models\Project;
-use App\Models\Property;
 use App\Models\PropertyType;
 use App\Models\UnitStatus;
 use App\Models\UnitType;
 use App\Models\Neighborhood;
 use App\Http\Resources\UnitResource;
+use App\Http\Resources\UnitStatusResource;
 use App\Repositories\UnitRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\PropertyRepository;
@@ -33,7 +32,7 @@ class UnitService
             'projects' => $this->projectRepo->query()->orderBy('name')->get(),
             'properties' => $this->propertyRepo->query()->orderBy('property_code')->get(),
             'propertyTypes' => PropertyType::orderBy('name')->get(),
-            'propertyStatuses' => UnitStatus::orderBy('name')->get(),
+            'propertyStatuses' => UnitStatusResource::collection(UnitStatus::orderBy('name')->get()),
             'unitTypes' => UnitType::where('is_active', true)->orderBy('name')->get(),
             'neighborhoods' => Neighborhood::orderBy('name')->get(),
             'defaults' => [
@@ -53,7 +52,7 @@ class UnitService
             'projects' => $this->projectRepo->query()->orderBy('name')->get(),
             'properties' => $this->propertyRepo->query()->orderBy('property_code')->get(),
             'propertyTypes' => PropertyType::orderBy('name')->get(),
-            'propertyStatuses' => UnitStatus::orderBy('name')->get(),
+            'propertyStatuses' => UnitStatusResource::collection(UnitStatus::orderBy('name')->get()),
             'unitTypes' => UnitType::where('is_active', true)->orderBy('name')->get(),
             'neighborhoods' => Neighborhood::orderBy('name')->get(),
             'defaults' => [
@@ -86,8 +85,10 @@ class UnitService
                     ->paginate($perPage)
                     ->appends(request()->all())
             ),
-            'projects' => $this->projectRepo->query()->orderBy('name')->get(),
-            'unitStatuses' => \App\Models\UnitStatus::orderBy('name')->get(),
+            'projects' => \App\Http\Resources\ProjectResource::collection(
+                $this->projectRepo->query()->orderBy('name')->get()
+            ),
+            'unitStatuses' => UnitStatusResource::collection(\App\Models\UnitStatus::all()),
         ];
     }
 }

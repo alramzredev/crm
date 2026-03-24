@@ -1,9 +1,10 @@
 import React from 'react';
 import LoadingButton from '@/Shared/LoadingButton';
-import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
+import TextInput from '@/Shared/TextInput';
 import CityMunicipalityNeighborhoodSelector from '@/Shared/CityMunicipalityNeighborhoodSelector';
 import { useTranslation } from 'react-i18next';
+import TranslationsTabs from '@/Shared/TranslationsTabs';
 
 const ProjectForm = ({
   data,
@@ -20,6 +21,16 @@ const ProjectForm = ({
   projectStatuses = [],
 }) => {
   const { t } = useTranslation();
+
+  // Helper for translation fields
+  const handleTranslationsChange = (translations) => {
+    setData({
+      ...data,
+      name: translations.name || data.name,
+      location: translations.location || data.location,
+    });
+  };
+
   return (
     <form onSubmit={onSubmit}>
       {/* Basic Information */}
@@ -34,14 +45,17 @@ const ProjectForm = ({
             value={data.project_code}
             onChange={e => setData('project_code', e.target.value)}
           />
-          <TextInput
-            className="w-full pb-8 pr-6 lg:w-1/2"
-            label={t('name')}
-            name="name"
-            errors={errors.name}
-            value={data.name}
-            onChange={e => setData('name', e.target.value)}
-          />
+          <div className="w-full">
+            <TranslationsTabs
+              value={{ name: data.name, location: data.location }}
+              onChange={translations => handleTranslationsChange(translations)}
+              errors={errors}
+              fields={[
+                { name: 'name', label: 'name' },
+                { name: 'location', label: 'location' }
+              ]}
+            />
+          </div>
           <SelectInput
             className="w-full pb-8 pr-6 lg:w-1/2"
             label={t('owner')}
@@ -88,15 +102,6 @@ const ProjectForm = ({
             <option value=""></option>
             {projectStatuses.map(ps => <option key={ps.id} value={ps.id}>{ps.name}</option>)}
           </SelectInput>
-
-          <TextInput
-            className="w-full pb-8 pr-6"
-            label={t('location')}
-            name="location"
-            errors={errors.location}
-            value={data.location}
-            onChange={e => setData('location', e.target.value)}
-          />
 
           <CityMunicipalityNeighborhoodSelector
             data={data}

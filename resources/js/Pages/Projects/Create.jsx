@@ -8,7 +8,8 @@ const Create = () => {
   const { owners = [], cities = [], projectTypes = [], projectStatuses = [], municipalities = [], neighborhoods = [] } = usePage().props;
   const { data, setData, errors, post, processing } = useForm({
     project_code: '',
-    name: '',
+    name: { en: '', ar: '' },
+    location: { en: '', ar: '' },
     reservation_period_days: '30',
     owner_id: '',
     city_id: '',
@@ -16,7 +17,6 @@ const Create = () => {
     neighborhood_id: '',
     project_type_id: '',
     status_id: '',
-    location: '',
     budget: '',
     no_of_floors: '',
     number_of_units: '',

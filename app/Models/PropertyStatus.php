@@ -3,10 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 
 class PropertyStatus extends Model
 {
+    use HasTranslations;
+
     protected $fillable = ['name', 'description', 'reason', 'code'];
+
+    public $translatable = ['name', 'description'];
+
+ 
+     
+   
 
     public function properties()
     {

@@ -8,6 +8,7 @@ use App\Services\ContractService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
+use App\Models\ContractType;
 
 class ContractController extends Controller
 {
@@ -22,30 +23,20 @@ class ContractController extends Controller
     {
         $this->authorize('create', Contract::class);
 
-        try {
-            $contract = $this->contractService->createContractForReservation($reservation);
+         request()->validate([
+            'contract_type_code' => ['required', 'exists:contract_types,code'],
+        ]);
+
+        $contractTypeCode = request('contract_type_code');
+        
+         try {
+            $contract = $this->contractService->createContractForReservation($reservation, [
+                'contract_type_code' => $contractTypeCode,
+            ]);
             return Redirect::back()->with('success', 'Contract generated successfully.');
         } catch (\Exception $e) {
             return Redirect::back()->with('error', $e->getMessage());
         }
     }
 
-    public function store(Request $request)
-    {
-        // ...validation and other logic...
-
-        // Example: get template_id and payload from request or build as needed
-        $templateId = $request->input('template_id');
-        $payload = $request->input('signit_payload'); // or build the payload array here
-
-        // Generate contract document via Signit
-        $signitResponse = $this->contractService->generateSignitContractDocument($templateId, $payload);
-
-        // ...handle $signitResponse as needed...
-
-        // Create contract in DB
-        $contract = $this->contractService->createContractForReservation($reservation, $request->all());
-
-        // ...return response...
-    }
 }

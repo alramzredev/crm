@@ -1,27 +1,30 @@
 import React from 'react';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { createInertiaApp } from '@inertiajs/react'
-import { createRoot } from 'react-dom/client'
-import * as Sentry from '@sentry/browser';
-import '../css/app.css';
+import { createInertiaApp, router } from '@inertiajs/react';
+import { createRoot } from 'react-dom/client';
 import { I18nextProvider } from 'react-i18next';
-import i18n from './i18n'; // <-- add this import
+import i18n from './i18n';
+import axios from 'axios';
 
-// Set language from localStorage before rendering the app
-const lang = localStorage.getItem('lang');
-if (lang && i18n.language !== lang) {
-  i18n.changeLanguage(lang);
-  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-}
+// get lang
+const lang = localStorage.getItem('lang') || i18n.language;
+
+// set initial direction
+document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+// set axios header
+axios.defaults.headers.common['lang'] = lang;
+  
+// update on language change
+i18n.on('languageChanged', (lng) => {
+  localStorage.setItem('lang', lng);
+   axios.defaults.headers.common['lang'] = lng;
+   document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
+});
 
 createInertiaApp({
-  id: 'app',
-  progress: {
-    color: '#ED8936',
-  },
   resolve: name => {
-    const pages = import.meta.glob('./Pages/**/*.jsx', { eager: true })
-    return pages[`./Pages/${name}.jsx`]
+    const pages = import.meta.glob('./Pages/**/*.jsx', { eager: true });
+    return pages[`./Pages/${name}.jsx`];
   },
   setup({ el, App, props }) {
     createRoot(el).render(
@@ -30,9 +33,4 @@ createInertiaApp({
       </I18nextProvider>
     );
   },
-})
-
-Sentry.init({
-  dsn: import.meta.env.VITE_SENTRY_LARAVEL_DSN
 });
-

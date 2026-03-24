@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class ContractType extends Model
+{
+    use HasFactory;
+
+    protected $table = 'contract_types';
+
+    protected $fillable = [
+        'name',
+        'code',
+    ];
+
+    public function contracts()
+    {
+        return $this->hasMany(Contract::class, 'contract_type_id');
+    }
+}

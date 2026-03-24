@@ -10,6 +10,7 @@ use App\Models\LeadSource;
 use App\Models\Project;
 use App\Models\LeadStatus;
 use App\Http\Resources\LeadResource;
+use App\Http\Resources\LeadStatusResource;
 use Illuminate\Support\Facades\DB;
 
 class LeadService
@@ -46,7 +47,7 @@ class LeadService
 
         return [
             'leadSources' => LeadSource::orderBy('name')->get(),
-            'leadStatuses' => LeadStatus::orderBy('name')->get(),
+            'leadStatuses' => LeadStatusResource::collection(LeadStatus::orderBy('name')->get()),
             'projects' => $projectsQuery->get(),
             'employees' => $projectsQuery->first()
                 ? $this->getUsersByProjectAndRoles($projectsQuery->first()->id)
@@ -64,7 +65,7 @@ class LeadService
         return [
             'lead' => $lead->load(['activeAssignment', 'status']),
             'leadSources' => LeadSource::orderBy('name')->get(),
-            'leadStatuses' => LeadStatus::orderBy('name')->get(),
+            'leadStatuses' => LeadStatusResource::collection(LeadStatus::orderBy('name')->get()),
             'projects' => $projectsQuery->get(),
             'brokers' => User::role('sales_employee')->orderByName()->get(),
         ];

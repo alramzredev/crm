@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\UnitStatusResource;
 
 class UnitResource extends JsonResource
 {
@@ -13,10 +14,10 @@ class UnitResource extends JsonResource
             'unit_uuid' => $this->unit_uuid,
             'unit_code' => $this->unit_code,
             'unit_external_id' => $this->unit_external_id,
-            'project' => $this->whenLoaded('project', $this->project ? $this->project->only('id', 'name', 'project_code') : null),
-            'property' => $this->whenLoaded('property', $this->property ? $this->property->only('id', 'property_code') : null),
+            'project' => $this->whenLoaded('project', new ProjectResource($this->project)),
+            'property' => $this->whenLoaded('property', new PropertyResource($this->property)),
             'property_type' => $this->whenLoaded('propertyType', $this->propertyType ? $this->propertyType->only('id', 'name') : null),
-            'status' => $this->whenLoaded('status', $this->status ? $this->status->only('id', 'name', 'code') : null),
+            'status' => $this->whenLoaded('status', $this->status ? new UnitStatusResource($this->status) : null),
             'neighborhood' => $this->neighborhood,
             'status_reason' => $this->status_reason,
             'floor' => $this->floor,

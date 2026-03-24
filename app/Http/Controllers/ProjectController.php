@@ -7,10 +7,11 @@ use App\Http\Requests\ProjectUpdateRequest;
 use Inertia\Inertia;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Redirect;
+ use Illuminate\Support\Facades\Redirect;
 use App\Services\ProjectService;
 use App\Models\ProjectStatus;
+use Illuminate\Http\Request;
+use App\Http\Resources\ProjectStatusResource;
 
 class ProjectController extends Controller
 {
@@ -29,17 +30,17 @@ class ProjectController extends Controller
      * ✅ Sales Supervisor → Only assigned projects
      * ✅ Sales Employee → Only assigned projects
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Project::class);
 
         return Inertia::render('Projects/Index', [
-            'filters' => Request::all('search', 'trashed', 'status'),
+            'filters' => $request->all('search', 'trashed', 'status'),
             'projects' => $this->service->getPaginatedProjects(
                 Auth::user(),
-                Request::only('search', 'trashed', 'status')
+                $request->only('search', 'trashed', 'status')
             ),
-            'projectStatuses' => ProjectStatus::orderBy('name')->get(),
+            'projectStatuses' => ProjectStatusResource::collection(ProjectStatus::orderBy('name')->get()),
         ]);
     }
 
@@ -56,11 +57,20 @@ class ProjectController extends Controller
     /**
      * Store new project
      */
-    public function store(ProjectStoreRequest $request)
+    public function store(Request $request)
     {
         $this->authorize('create', Project::class);
 
-        Project::create($request->validated());
+        $data = $request->all();
+        $project = new Project();
+        $project->fill($data);
+        if ($request->has('name')) {
+            $project->setTranslations('name', $request->input('name'));
+        }
+        if ($request->has('location')) {
+            $project->setTranslations('location', $request->input('location'));
+        }
+        $project->save();
 
         return Redirect::route('projects')->with('success', 'Project created.');
     }
@@ -83,15 +93,23 @@ class ProjectController extends Controller
     /**
      * Update project
      */
-    public function update(Project $project, ProjectUpdateRequest $request)
+    public function update(Request $request, Project $project)
     {
         $this->authorize('update', $project);
-
+ 
         if (!$this->service->canAccessProject(Auth::user(), $project)) {
             return Redirect::back()->with('error', 'You do not have access to this project.');
         }
 
-        $project->update($request->validated());
+        $data = $request->all();
+        $project->fill($data);
+        if ($request->has('name')) {
+            $project->setTranslations('name', $request->input('name'));
+        }
+        if ($request->has('location')) {
+            $project->setTranslations('location', $request->input('location'));
+        }
+        $project->save();
 
         return Redirect::back()->with('success', 'Project updated.');
     }

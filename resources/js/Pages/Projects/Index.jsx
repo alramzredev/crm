@@ -16,6 +16,8 @@ const Index = () => {
   const { data, meta: { links } } = projects;
   const { t } = useTranslation();
 
+  console.log('Projects data:', data);
+
   const can = (permission) => {
     return auth.user?.permissions?.includes(permission) || false;
   };

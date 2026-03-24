@@ -6,6 +6,7 @@ use App\Models\Reservation;
 use App\Models\Lead;
 use App\Models\Customer;
 use App\Models\ReservationCancelReason;
+use App\Models\DocumentType;
 use App\Repositories\ReservationRepository;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,8 @@ use App\Http\Requests\ReservationApprovalRequest;
 use App\Services\ReservationApprovalService;
 use App\Services\ReservationService;
 use App\Events\Reservation\ReservationConfirmed;
+use App\Models\ContractType;
+use App\Http\Resources\ContractResource;
 
 class ReservationController extends Controller
 {
@@ -117,8 +120,7 @@ class ReservationController extends Controller
         $customer = $reservation->customer;
         $customerDocuments = [];
         if ($customer) {
-            // Assume you have a list of required document types
-            $requiredTypes = \App\Models\DocumentType::where('applies_to', 'customer')->get();
+            $requiredTypes = DocumentType::where('applies_to', 'customer')->get();
             foreach ($requiredTypes as $type) {
                 $media = $customer->getMedia($type->code)->first();
                 $customerDocuments[] = [
@@ -140,9 +142,12 @@ class ReservationController extends Controller
             }
         }
 
-        // Add contract info and permission
-        $contract = $reservation->contract;
-        $canGenerateContract = true;
+         $contractDocuments = ContractResource::collection($reservation->contracts ?? []);
+
+         $canGenerateContract = true;
+
+        // Add contract types for frontend
+        $contractTypes = ContractType::all();
 
         return Inertia::render('Reservations/Show', [
             'reservation' => $this->service->getShowData($reservation),
@@ -150,8 +155,9 @@ class ReservationController extends Controller
             'canApprove' => $canApprove,
             'discountRequests' => $discountRequests,
             'customerDocuments' => $customerDocuments,
-            'contract' => $contract,
             'canGenerateContract' => $canGenerateContract,
+            'contractDocuments' => $contractDocuments,
+            'contractTypes' => $contractTypes,
         ]);
     }
 
@@ -184,8 +190,7 @@ class ReservationController extends Controller
             $service->confirmReservation($reservation, $validated['notes'] ?? null);
 
             // Fire ReservationConfirmed event
-            event(new ReservationConfirmed($reservation, Auth::user()));
-
+ 
             return Redirect::back()->with('success', 'Reservation approved successfully.');
         } catch (\Exception $e) {
             return Redirect::back()->with('error', $e->getMessage());

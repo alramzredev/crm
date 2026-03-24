@@ -14,6 +14,7 @@ use App\Models\Property;
 use App\Repositories\PropertyRepository;
 use App\Http\Resources\PropertyResource;
 use App\Http\Resources\UnitResource;
+use App\Http\Resources\PropertyStatusResource;
 use Illuminate\Support\Facades\Request;
 
 class PropertyService
@@ -52,7 +53,7 @@ class PropertyService
             'cities' => City::orderBy('name')->get(),
             'municipalities' => Municipality::with('city')->orderBy('name')->get(),
             'neighborhoods' => Neighborhood::orderBy('name')->get(),
-            'propertyStatuses' => PropertyStatus::orderBy('name')->get(),
+            'propertyStatuses' => PropertyStatusResource::collection(PropertyStatus::orderBy('name')->get()),
             'propertyTypes' => PropertyType::orderBy('name')->get(),
             'propertyClasses' => PropertyClass::orderBy('name')->get(),
             'defaults' => [
@@ -79,7 +80,7 @@ class PropertyService
             'cities' => City::orderBy('name')->get(),
             'municipalities' => Municipality::with('city')->orderBy('name')->get(),
             'neighborhoods' => Neighborhood::orderBy('name')->get(),
-            'propertyStatuses' => PropertyStatus::orderBy('name')->get(),
+            'propertyStatuses' => PropertyStatusResource::collection(PropertyStatus::orderBy('name')->get()),
             'propertyTypes' => PropertyType::orderBy('name')->get(),
             'propertyClasses' => PropertyClass::orderBy('name')->get(),
             'defaults' => [

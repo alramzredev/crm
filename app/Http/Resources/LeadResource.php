@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\LeadStatusResource;
 
 class LeadResource extends JsonResource
 {
@@ -29,13 +30,7 @@ class LeadResource extends JsonResource
             'project' => new ProjectResource($this->whenLoaded('project')),
             'leadSource' => new LeadSourceResource($this->whenLoaded('leadSource')),
             'activeAssignment' => new LeadAssignmentResource($this->whenLoaded('activeAssignment')),
-            'status' => $this->whenLoaded('status', function () {
-                return [
-                    'id' => $this->status?->id,
-                    'name' => $this->status?->name,
-                    'code' => $this->status?->code,
-                 ];
-            }),
+            'status' => $this->whenLoaded('status', $this->status ? new LeadStatusResource($this->status) : null),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,

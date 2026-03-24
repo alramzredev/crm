@@ -13,6 +13,7 @@ use App\Models\Neighborhood;
 use App\Repositories\ProjectRepository;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\PropertyResource;
+use App\Http\Resources\ProjectStatusResource;
 use Illuminate\Support\Facades\Request;
 
 class ProjectService
@@ -33,7 +34,7 @@ class ProjectService
         // Role-based visibility logic
         $query->forUser($user);
         // Filtering and resource wrapping
-        return ProjectResource::collection(
+        $data = ProjectResource::collection(
             $query
                 ->when(Request::get('search'), fn ($q, $search) =>
                     $q->where(function ($q2) use ($search) {
@@ -51,6 +52,7 @@ class ProjectService
                 ->paginate()
                 ->appends(Request::all())
         );
+         return $data;
     }
 
     /**
@@ -64,7 +66,7 @@ class ProjectService
             'municipalities' => Municipality::orderBy('name')->get(),
             'neighborhoods' => Neighborhood::orderBy('name')->get(),
             'projectTypes' => ProjectType::orderBy('name')->get(),
-            'projectStatuses' => ProjectStatus::orderBy('name')->get(),
+            'projectStatuses' => ProjectStatusResource::collection(ProjectStatus::orderBy('name')->get()),
         ];
     }
 
@@ -89,7 +91,7 @@ class ProjectService
             'municipalities' => Municipality::orderBy('name')->get(),
             'neighborhoods' => Neighborhood::orderBy('name')->get(),
             'projectTypes' => ProjectType::orderBy('name')->get(),
-            'projectStatuses' => ProjectStatus::orderBy('name')->get(),
+            'projectStatuses' => ProjectStatusResource::collection(ProjectStatus::orderBy('name')->get()),
         ];
     }
 

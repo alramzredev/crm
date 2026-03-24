@@ -11,7 +11,8 @@ const Edit = () => {
   const { project = {}, owners = [], cities = [], municipalities = [], neighborhoods = [], projectTypes = [], projectStatuses = [] } = usePage().props;
   const { data, setData, errors, put, processing } = useForm({
     project_code: project.project_code || '',
-    name: project.name || '',
+    name: project.name_translations || { en: '', ar: '' },
+    location: project.location_translations || { en: '', ar: '' },
     reservation_period_days: project.reservation_period_days || '30',
     owner_id: project.owner?.id || '',
     city_id: project.city?.id || '',
@@ -19,7 +20,6 @@ const Edit = () => {
     neighborhood_id: project.neighborhood?.id || '',
     project_type_id: project.project_type?.id || '',
     status_id: project.status?.id || '',
-    location: project.location || '',
     budget: project.budget || '',
     no_of_floors: project.no_of_floors || '',
     number_of_units: project.number_of_units || '',

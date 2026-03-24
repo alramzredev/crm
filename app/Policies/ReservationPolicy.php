@@ -25,13 +25,13 @@ class ReservationPolicy
 
     public function update(User $user, Reservation $reservation)
     {
-        if ($user->hasPermissionTo('reservations.edit')) {
-            return true;
-        }
-
         if ($user->hasRole('sales_employee')) {
             return $reservation->created_by === $user->id
                 && $reservation->status === ReservationStatus::ACTIVE;
+        }
+
+        if ($user->hasPermissionTo('reservations.edit')) {
+            return true;
         }
 
         return false;
@@ -39,13 +39,14 @@ class ReservationPolicy
 
     public function addPayment(User $user, Reservation $reservation)
     {
-        if ($user->hasPermissionTo('payments.create')) {
-            return true;
-        }
 
         if ($user->hasRole('sales_employee')) {
             return $reservation->created_by === $user->id
                 && $reservation->status === ReservationStatus::ACTIVE;
+        }
+
+         if ($user->hasPermissionTo('payments.create')) {
+            return true;
         }
 
         return false;

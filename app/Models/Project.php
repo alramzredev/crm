@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Spatie\Translatable\HasTranslations;
 
 class Project extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasTranslations;
 
     protected $table = 'projects';
 
@@ -47,6 +48,9 @@ class Project extends Model
         'floor_area_ratio' => 'decimal:2',
         'warranty' => 'boolean',
     ];
+
+    public $translatable = ['name', 'location'];
+
 
     protected static function booted()
     {
@@ -276,5 +280,6 @@ class Project extends Model
               ->where('project_user.is_active', true);
         });
     }
+
 
 }

@@ -54,14 +54,15 @@ class ProjectsExport implements FromCollection, WithHeadings, WithMapping
 
     public function map($project): array
     {
+        $locale = app()->getLocale();
         return [
             $project->project_code,
-            $project->name,
+            $project->getTranslation('name', $locale),
             $project->reservation_period_days,
             $project->owner->name ?? '',
             $project->city->name ?? '',
             $project->neighborhood->name ?? '',
-            $project->location,
+            $project->getTranslation('location', $locale),
             $project->projectType->name ?? '',
             $project->status->name ?? '',
             $project->status_reason,

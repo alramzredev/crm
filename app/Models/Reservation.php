@@ -99,9 +99,17 @@ class Reservation extends Model
         return $this->belongsTo(ReservationCancelReason::class, 'cancel_reason_id');
     }
 
+    public function contracts()
+    {
+        return $this->hasMany(Contract::class);
+    }
+
+    /**
+     * Shortcut: get the latest contract (if any)
+     */
     public function contract()
     {
-        return $this->hasOne(Contract::class);
+        return $this->hasOne(Contract::class)->latestOfMany();
     }
 
     public function createdBy()

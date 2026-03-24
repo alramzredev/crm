@@ -8,9 +8,22 @@ import PaymentFormModal from './Components/PaymentFormModal';
 import StatusPill from '@/Shared/StatusPill';
 import ApprovalModal from './Components/ApprovalModal';
 import CustomerDocuments from './Components/CustomerDocuments';
+import Contracts from './Components/Contracts';
+import { useTranslation } from 'react-i18next';
+import ReservationInfoCard from './Components/ReservationInfoCard';
 
-const Show = ({ reservation, cancelReasons, canApprove, discountRequests, customerDocuments = [], contract = null, canGenerateContract = false }) => {
+const Show = ({
+  reservation,
+  cancelReasons,
+  canApprove,
+  discountRequests,
+  customerDocuments = [],
+  canGenerateContract = false,
+  contractDocuments = [],
+  contractTypes = [],
+}) => {
   const { auth } = usePage().props; 
+  const { t } = useTranslation();
   const [showApprovalModal, setShowApprovalModal] = useState(false);
   const [approvalAction, setApprovalAction] = useState('confirm');
   const [selectedReason, setSelectedReason] = useState('');
@@ -141,69 +154,38 @@ const Show = ({ reservation, cancelReasons, canApprove, discountRequests, custom
     setShowApprovalModal(true);
   };
 
-  // Generate contract handler
-  const handleGenerateContract = () => {
+  // Generate contract handler with contract type
+  const handleGenerateContract = (contractTypeCode) => {
     if (!window.confirm('Generate contract for this reservation?')) return;
-    router.post(route('contracts.generate', reservation.id), {}, {
-      onSuccess: () => {
-        // Optionally reload or show a message
+    router.post(
+      route('contracts.generate', {
+        reservation: reservation.id,
+        contract_type_code: contractTypeCode,
+      }),
+      {},
+      {
+        onSuccess: () => {
+          // Optionally reload or show a message
+        }
       }
-    });
+    );
   };
 
   return (
     <div>
       <h1 className="mb-8 text-3xl font-bold">
         <Link href={route('reservations')} className="text-indigo-600 hover:text-indigo-700">
-          Reservations
+          {t('reservations')}
         </Link>
         <span className="mx-2 font-medium text-indigo-600">/</span>
-        {reservation.reservation_code || 'Reservation'}
+        {reservation.reservation_code || t('reservation')}
       </h1>
-
-      <div className="max-w-3xl bg-white rounded shadow mb-8">
-        <div className="p-8 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <strong>Status:</strong>
-              <div className="mt-2">
-                <StatusPill status={reservation.status} />
-              </div>
-            </div>
-          </div>
-
-          <div><strong>Started At:</strong> {reservation.started_at ? new Date(reservation.started_at).toLocaleString() : '—'}</div>
-          <div><strong>Expires At:</strong> {reservation.expires_at ? new Date(reservation.expires_at).toLocaleString() : '—'}</div>
-          <div><strong>Lead:</strong> {reservation.lead ? `${reservation.lead.first_name} ${reservation.lead.last_name}` : '—'}</div>
-          <div><strong>Unit:</strong> {reservation.unit?.unit_code || '—'}</div>
-          <div>
-            <strong>Base Price:</strong> {reservation.currency || 'SAR'} {reservation.base_price || reservation.total_price || '—'}
-          </div>
-          <div>
-            <strong>Discount:</strong>{' '}
-            {reservation.approved_discount_amount
-              ? `${reservation.currency || 'SAR'} ${reservation.approved_discount_amount} (${reservation.approved_discount_percentage || 0}%)`
-              : '—'}
-          </div>
-          <div>
-            <strong>Total (After Discount):</strong> {reservation.currency || 'SAR'} {reservation.total_price || '—'}
-          </div>
-          <div>
-            <strong>Down Payment:</strong> {reservation.currency || 'SAR'} {reservation.down_payment || '—'}
-          </div>
-          <div>
-            <strong>Remaining Amount:</strong> {reservation.currency || 'SAR'} {reservation.remaining_amount || '—'}
-          </div>
-          <div><strong>Notes:</strong> {reservation.notes || '—'}</div>
-          <div><strong>Payment Method:</strong> {reservation.payment_method || '—'}</div>
-          <div><strong>Payment Plan:</strong> {reservation.payment_plan || '—'}</div>
-        </div>
-      </div>
+      <ReservationInfoCard reservation={reservation} />
 
       {/* Payments Section */}
       <div className="bg-white rounded shadow overflow-hidden mb-8">
         <div className="px-8 py-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Payment History</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t('payment_history')}</h2>
         </div>
         <PaymentsTable
           payments={reservation.payments || []}
@@ -217,7 +199,7 @@ const Show = ({ reservation, cancelReasons, canApprove, discountRequests, custom
               onClick={() => setShowPaymentModal(true)}
               className="inline-block px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm"
             >
-              Record Payment
+              {t('record_payment')}
             </button>
           </div>
         )}
@@ -226,7 +208,7 @@ const Show = ({ reservation, cancelReasons, canApprove, discountRequests, custom
       {/* Discount Requests Section */}
       <div className="bg-white rounded shadow overflow-hidden mb-8">
         <div className="px-8 py-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Discount Requests</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t('discount_requests')}</h2>
         </div>
         <DiscountRequestsTable
           discountRequests={discountRequests}
@@ -244,7 +226,7 @@ const Show = ({ reservation, cancelReasons, canApprove, discountRequests, custom
                 setShowDiscountModal(true);
               }}
             >
-              Request Discount
+              {t('request_discount')}
             </button>
           </div>
         )}
@@ -295,8 +277,16 @@ const Show = ({ reservation, cancelReasons, canApprove, discountRequests, custom
         isSubmitting={isSubmitting}
       />
 
-      {/* Elegant Approval Button at the bottom (not sticky) */}
-      {isApprovalAllowed && (
+        <Contracts
+        contractDocuments={contractDocuments}
+        canGenerateContract={canGenerateContract}
+        reservation={reservation}
+        contractTypes={contractTypes}
+        handleGenerateContract={handleGenerateContract}
+      />
+
+
+       {isApprovalAllowed && (
         <div className="flex justify-center mt-8">
           <button
             onClick={handleApprove}
@@ -312,31 +302,8 @@ const Show = ({ reservation, cancelReasons, canApprove, discountRequests, custom
       )}
 
       {/* Contract Section */}
-      <div className="bg-white rounded shadow overflow-hidden mb-8">
-        <div className="px-8 py-6 border-b border-gray-200 flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-900">Contract</h2>
-          {!reservation.contract && canGenerateContract && (
-            <button
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-medium text-sm"
-              onClick={handleGenerateContract}
-            >
-              Generate Contract
-            </button>
-          )}
-        </div>
-        {reservation.contract ? (
-          <div className="px-8 py-6">
-            <div><strong>Contract Code:</strong> {reservation.contract.contract_code || '—'}</div>
-            <div><strong>Status:</strong> {reservation.contract.status || '—'}</div>
-            <div><strong>Contract Date:</strong> {reservation.contract.contract_date ? new Date(reservation.contract.contract_date).toLocaleString() : '—'}</div>
-            <div><strong>Total Price:</strong> {reservation.contract.currency || 'SAR'} {reservation.contract.total_price || '—'}</div>
-            <div><strong>Notes:</strong> {reservation.contract.notes || '—'}</div>
-            {/* Optionally, add a link to view contract details */}
-          </div>
-        ) : (
-          <div className="px-8 py-6 text-gray-500">No contract generated yet.</div>
-        )}
-      </div>
+    
+      
     </div>
   );
 };

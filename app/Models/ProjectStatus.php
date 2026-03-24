@@ -4,13 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Translatable\HasTranslations;
 
 class ProjectStatus extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
 
     protected $fillable = ['name', 'code'];
 
+    public $translatable = ['name'];
+
+    protected $appends = ['name_translations'];
+
+   
     public function projects()
     {
         return $this->hasMany(Project::class, 'status_id');

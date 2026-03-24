@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Reservation;
+use App\Models\DocumentType;
 use App\Enums\ReservationStatus;
 use Illuminate\Support\Facades\Auth;
 use App\Events\Reservation\ReservationConfirmed;
@@ -23,7 +24,7 @@ class ReservationApprovalService
         $customer = $reservation->customer;
         if ($customer) {
             // Check required document types for customer
-            $requiredTypes = \App\Models\DocumentType::where('applies_to', 'customer')->where('is_required', 1)->pluck('code');
+            $requiredTypes = DocumentType::where('applies_to', 'customer')->where('is_required', 1)->pluck('code');
             $missingDocs = 0;
             foreach ($requiredTypes as $code) {
                 $media = $customer->getMedia($code)->first();
@@ -42,8 +43,7 @@ class ReservationApprovalService
             'updated_by' => Auth::id(),
         ]);
 
-        event(new ReservationConfirmed($reservation, Auth::user()));
-
+ 
         return $reservation;
     }
 
@@ -63,8 +63,7 @@ class ReservationApprovalService
             'updated_by' => Auth::id(),
         ]);
 
-        event(new ReservationCancelled($reservation, Auth::user()));
-
+ 
         return $reservation;
     }
 
@@ -80,8 +79,7 @@ class ReservationApprovalService
             return true;
         }
 
-        // Sales supervisor can approve reservations created by their team members
-        if ($user->hasRole('sales_supervisor')) {
+         if ($user->hasRole('sales_supervisor')) {
             $creator = $reservation->creator;
             return $creator && $user->id === $creator->supervisor_id;
         }

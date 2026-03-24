@@ -6,20 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('document_types', function (Blueprint $table) {
+        Schema::create('contract_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('code')->unique();
-            $table->string('applies_to')->nullable();
-            $table->boolean('is_required')->default(false);
+            $table->string('template_id')->nullable();
             $table->timestamps();
         });
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('document_types');
+        Schema::dropIfExists('contract_types');
     }
 };

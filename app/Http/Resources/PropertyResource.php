@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\PropertyStatusResource;
 
 class PropertyResource extends JsonResource
 {
@@ -25,7 +26,7 @@ class PropertyResource extends JsonResource
             'neighborhood_id' => $this->neighborhood_id,
             'neighborhood' => $this->whenLoaded('neighborhood', $this->neighborhood ? $this->neighborhood->only('id', 'name', 'municipality_id') : null),
             'status_id' => $this->status_id,
-            'status' => $this->whenLoaded('status', $this->status ? $this->status->only('id', 'name') : null),
+            'status' => $this->whenLoaded('status', $this->status ? new PropertyStatusResource($this->status) : null),
             'property_type_id' => $this->property_type_id,
             'propertyType' => $this->whenLoaded('propertyType', $this->propertyType ? $this->propertyType->only('id', 'name') : null),
             'property_class_id' => $this->property_class_id,

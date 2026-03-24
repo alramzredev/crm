@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\ProjectStatusResource;
 
 class ProjectResource extends JsonResource
 {
@@ -14,11 +15,14 @@ class ProjectResource extends JsonResource
      */
     public function toArray($request)
     {
+        $locale = $request->header('lang', app()->getLocale());
+
         return [
             'id' => $this->id,
             'uuid' => $this->uuid,
             'project_code' => $this->project_code,
-            'name' => $this->name,
+            'name' => $this->getTranslation('name', $locale),
+            'name_translations' => $this->getTranslations('name'),
             'reservation_period_days' => $this->reservation_period_days,
             'owner_id' => $this->owner_id,
             'owner' => $this->whenLoaded('owner', $this->owner ? [
@@ -35,8 +39,9 @@ class ProjectResource extends JsonResource
             'project_type_id' => $this->project_type_id,
             'project_type' => $this->whenLoaded('projectType', $this->projectType ? $this->projectType->only('id', 'name') : null),
             'status_id' => $this->status_id,
-            'status' => $this->whenLoaded('status', $this->status ? $this->status->only('id', 'name', 'code') : null),
-            'location' => $this->location,
+            'status' => $this->whenLoaded('status', $this->status ? new ProjectStatusResource($this->status) : null),
+            'location' => $this->getTranslation('location', $locale),
+            'location_translations' => $this->getTranslations('location'),
             'budget' => $this->budget,
             'no_of_floors' => $this->no_of_floors,
             'number_of_units' => $this->number_of_units,

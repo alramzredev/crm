@@ -41,7 +41,7 @@ class ContractRepository
     /**
      * Get contracts for a reservation.
      */
-    public function getReservationContracts($reservationId, array $with = [])
+    public function getContractsForReservation($reservationId, array $with = [])
     {
         return Contract::with($with)->where('reservation_id', $reservationId)->get();
     }

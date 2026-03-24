@@ -21,6 +21,7 @@
         "spatie/laravel-activitylog": "^4.12",
         "spatie/laravel-medialibrary": "^11.21",
         "spatie/laravel-permission": "^6.24",
+        "spatie/laravel-translatable": "^6.11",
         "tightenco/ziggy": "^1.5.0"
     },
     "require-dev": {
