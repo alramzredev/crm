@@ -9,7 +9,7 @@ class Locale
 {
     public function handle($request, Closure $next)
     {
-        $locale = 'ar';
+        $locale = 'en';
          $available = config('app.available_languages', ['en', 'ar']);
 
         if ($locale && in_array($locale, $available)) {
