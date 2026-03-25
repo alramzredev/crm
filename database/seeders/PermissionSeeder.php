@@ -144,6 +144,15 @@ class PermissionSeeder extends Seeder
                 'contracts.edit',
                 'contracts.delete',
             ],
+
+            // Country Management
+            'Country Management' => [
+                'countries.view',
+                'countries.create',
+                'countries.edit',
+                'countries.delete',
+                'countries.restore',
+            ],
         ];
 
         // Flatten the permissions array and create them

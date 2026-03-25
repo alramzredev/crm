@@ -84,6 +84,7 @@ export default function MainMenu({ className, onToggle, mobileOpen, setMobileOpe
     { text: t('reservations'), link: 'reservations', icon: 'book', permission: 'reservations.view' },
     { text: t('owners'), link: 'owners', icon: 'users', permission: 'owners.view' },
     { text: t('users'), link: 'users', icon: 'users', permission: 'users.view' },
+    { text: t('countries'), link: 'countries', icon: 'globe', permission: 'countries.view' },
   ];
 
   // Determine anchor based on language direction

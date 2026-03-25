@@ -328,8 +328,15 @@
   "generate_contract": "إنشاء عقد",
   "upload_signed": "رفع العقد الموقع",
   "upload_document": "رفع المستند",
-   "uploading": "جارٍ الرفع...",
+  "uploading": "جارٍ الرفع...",
   "save": "حفظ",
   "record_payment": "تسجيل دفعة",
-  "request_discount": "طلب خصم"
- }
+  "request_discount": "طلب خصم", 
+  "municipality": "البلدية",
+  "countries": "الدول",
+  "create_country": "إضافة دولة",
+   "cities": "المدن",
+     "create_city": "إضافة مدينة",
+   "municipalities": "البلديات",
+   "no_cities_found": "لا توجد مدن."
+  }

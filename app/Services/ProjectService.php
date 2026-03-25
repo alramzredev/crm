@@ -14,6 +14,9 @@ use App\Repositories\ProjectRepository;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\PropertyResource;
 use App\Http\Resources\ProjectStatusResource;
+use App\Http\Resources\CityResource;
+use App\Http\Resources\MunicipalityResource;
+use App\Http\Resources\NeighborhoodResource;
 use Illuminate\Support\Facades\Request;
 
 class ProjectService
@@ -62,9 +65,9 @@ class ProjectService
     {
         return [
             'owners' => Owner::orderBy('name')->get(),
-            'cities' => City::orderBy('name')->get(),
-            'municipalities' => Municipality::orderBy('name')->get(),
-            'neighborhoods' => Neighborhood::orderBy('name')->get(),
+            'cities' => CityResource::collection(City::all()),
+            'municipalities' => MunicipalityResource::collection(Municipality::all()),
+            'neighborhoods' => NeighborhoodResource::collection(Neighborhood::all()),
             'projectTypes' => ProjectType::orderBy('name')->get(),
             'projectStatuses' => ProjectStatusResource::collection(ProjectStatus::orderBy('name')->get()),
         ];
@@ -87,9 +90,9 @@ class ProjectService
                 ])
             ),
             'owners' => Owner::orderBy('name')->get(),
-            'cities' => City::orderBy('name')->get(),
-            'municipalities' => Municipality::orderBy('name')->get(),
-            'neighborhoods' => Neighborhood::orderBy('name')->get(),
+            'cities' => CityResource::collection(City::orderBy('name')->get()),
+            'municipalities' => MunicipalityResource::collection(Municipality::orderBy('name')->get()),
+            'neighborhoods' => NeighborhoodResource::collection(Neighborhood::orderBy('name')->get()),
             'projectTypes' => ProjectType::orderBy('name')->get(),
             'projectStatuses' => ProjectStatusResource::collection(ProjectStatus::orderBy('name')->get()),
         ];

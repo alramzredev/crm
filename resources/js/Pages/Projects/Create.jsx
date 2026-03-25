@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 const Create = () => {
   const { owners = [], cities = [], projectTypes = [], projectStatuses = [], municipalities = [], neighborhoods = [] } = usePage().props;
   const { data, setData, errors, post, processing } = useForm({
-    project_code: '',
     name: { en: '', ar: '' },
     location: { en: '', ar: '' },
     reservation_period_days: '30',

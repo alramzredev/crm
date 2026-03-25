@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next';
 const Edit = () => {
   const { project = {}, owners = [], cities = [], municipalities = [], neighborhoods = [], projectTypes = [], projectStatuses = [] } = usePage().props;
   const { data, setData, errors, put, processing } = useForm({
-    project_code: project.project_code || '',
     name: project.name_translations || { en: '', ar: '' },
     location: project.location_translations || { en: '', ar: '' },
     reservation_period_days: project.reservation_period_days || '30',

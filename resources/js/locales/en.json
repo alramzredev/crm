@@ -325,5 +325,13 @@
   "generate_contract": "Generate Contract",
   "upload_signed": "Upload Signed",
   "record_payment": "Record Payment",
-  "request_discount": "Request Discount"
- }
+  "request_discount": "Request Discount",
+  "municipality": "Municipality",
+  "countries": "Countries",
+  "create_country": "Create Country",
+   "code": "Code",
+  "cities": "Cities",
+     "create_city": "Create City",
+   "municipalities": "Municipalities",
+   "no_cities_found": "No cities found."
+  }

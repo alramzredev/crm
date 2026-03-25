@@ -3,13 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Translatable\HasTranslations;
 
 class Country extends Model
 {
-    use HasFactory;
+    use HasTranslations;
 
-    protected $fillable = ['name', 'iso_code'];
+    protected $fillable = [
+        'name',
+        'iso_code',
+    ];
+
+    public $translatable = ['name'];
+
+    protected $casts = [
+        'name' => 'array',
+    ];
 
     public function cities()
     {

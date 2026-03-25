@@ -9,8 +9,11 @@ class Locale
 {
     public function handle($request, Closure $next)
     {
-        $locale = 'en';
-         $available = config('app.available_languages', ['en', 'ar']);
+
+        $locale = $request->header('X-App-Locale');
+ 
+          $available = config('app.available_languages', ['en', 'ar']);
+          logger($locale);
 
         if ($locale && in_array($locale, $available)) {
             App::setLocale($locale);

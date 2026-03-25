@@ -1,30 +1,32 @@
 import React from 'react';
-import { createInertiaApp, router } from '@inertiajs/react';
-import { createRoot } from 'react-dom/client';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { createInertiaApp, router } from '@inertiajs/react'  // 👈 import router
+import { createRoot } from 'react-dom/client'
+import * as Sentry from '@sentry/browser';
+import '../css/app.css';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
-import axios from 'axios';
 
-// get lang
-const lang = localStorage.getItem('lang') || i18n.language;
+const lang = localStorage.getItem('lang');
+if (lang && i18n.language !== lang) {
+  i18n.changeLanguage(lang);
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+}
 
-// set initial direction
-document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-
-// set axios header
-axios.defaults.headers.common['lang'] = lang;
-  
-// update on language change
-i18n.on('languageChanged', (lng) => {
-  localStorage.setItem('lang', lng);
-   axios.defaults.headers.common['lang'] = lng;
-   document.documentElement.dir = lng === 'ar' ? 'rtl' : 'ltr';
+// 👇 Add your global header here — runs before every Inertia request
+router.on('before', (event) => {
+  console.log('Setting X-App-Locale header to:', localStorage.getItem('lang') ?? 'en');
+   event.detail.visit.headers['X-App-Locale'] = localStorage.getItem('lang') ?? 'en';
 });
 
 createInertiaApp({
+  id: 'app',
+  progress: {
+    color: '#ED8936',
+  },
   resolve: name => {
-    const pages = import.meta.glob('./Pages/**/*.jsx', { eager: true });
-    return pages[`./Pages/${name}.jsx`];
+    const pages = import.meta.glob('./Pages/**/*.jsx', { eager: true })
+    return pages[`./Pages/${name}.jsx`]
   },
   setup({ el, App, props }) {
     createRoot(el).render(
@@ -33,4 +35,8 @@ createInertiaApp({
       </I18nextProvider>
     );
   },
+})
+
+Sentry.init({
+  dsn: import.meta.env.VITE_SENTRY_LARAVEL_DSN
 });

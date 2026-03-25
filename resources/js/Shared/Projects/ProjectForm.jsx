@@ -37,14 +37,6 @@ const ProjectForm = ({
       <div className="p-8 border-b">
         <h3 className="text-lg font-semibold mb-4">{t('basic_information')}</h3>
         <div className="flex flex-wrap -mb-8 -mr-6">
-          <TextInput
-            className="w-full pb-8 pr-6 lg:w-1/2"
-            label={t('project_code')}
-            name="project_code"
-            errors={errors.project_code}
-            value={data.project_code}
-            onChange={e => setData('project_code', e.target.value)}
-          />
           <div className="w-full">
             <TranslationsTabs
               value={{ name: data.name, location: data.location }}

@@ -227,3 +227,47 @@ Route::middleware('auth')->group(function () {
     Route::post('discount-requests/{discountRequest}/approve')->name('discount-requests.approve')->uses('ReservationDiscountRequestController@approve');
     Route::post('discount-requests/{discountRequest}/reject')->name('discount-requests.reject')->uses('ReservationDiscountRequestController@reject');
 });
+
+// Countries (Top Level)
+Route::middleware('auth')->group(function () {
+    Route::get('countries')->name('countries')->uses('CountryController@index');
+    Route::get('countries/create')->name('countries.create')->uses('CountryController@create');
+    Route::post('countries')->name('countries.store')->uses('CountryController@store');
+    Route::get('countries/{country}')->name('countries.show')->uses('CountryController@show');
+    Route::get('countries/{country}/edit')->name('countries.edit')->uses('CountryController@edit');
+    Route::put('countries/{country}')->name('countries.update')->uses('CountryController@update');
+    Route::delete('countries/{country}')->name('countries.destroy')->uses('CountryController@destroy');
+});
+
+// Cities (Scoped by Country)
+Route::middleware('auth')->group(function () {
+    Route::get('countries/{country}/cities')->name('countries.cities')->uses('CityController@index');
+    Route::get('countries/{country}/cities/create')->name('countries.cities.create')->uses('CityController@create');
+    Route::post('countries/{country}/cities')->name('countries.cities.store')->uses('CityController@store');
+    Route::get('countries/{country}/cities/{city}')->name('countries.cities.show')->uses('CityController@show');
+    Route::get('countries/{country}/cities/{city}/edit')->name('countries.cities.edit')->uses('CityController@edit');
+    Route::put('countries/{country}/cities/{city}')->name('countries.cities.update')->uses('CityController@update');
+    Route::delete('countries/{country}/cities/{city}')->name('countries.cities.destroy')->uses('CityController@destroy');
+});
+
+// Municipalities (Scoped by City)
+Route::middleware('auth')->group(function () {
+    Route::get('countries/{country}/cities/{city}/municipalities')->name('countries.cities.municipalities')->uses('MunicipalityController@index');
+    Route::get('countries/{country}/cities/{city}/municipalities/create')->name('countries.cities.municipalities.create')->uses('MunicipalityController@create');
+    Route::post('countries/{country}/cities/{city}/municipalities')->name('countries.cities.municipalities.store')->uses('MunicipalityController@store');
+    Route::get('countries/{country}/cities/{city}/municipalities/{municipality}')->name('countries.cities.municipalities.show')->uses('MunicipalityController@show');
+    Route::get('countries/{country}/cities/{city}/municipalities/{municipality}/edit')->name('countries.cities.municipalities.edit')->uses('MunicipalityController@edit');
+    Route::put('countries/{country}/cities/{city}/municipalities/{municipality}')->name('countries.cities.municipalities.update')->uses('MunicipalityController@update');
+    Route::delete('countries/{country}/cities/{city}/municipalities/{municipality}')->name('countries.cities.municipalities.destroy')->uses('MunicipalityController@destroy');
+});
+
+// Neighborhoods (Scoped by Municipality)
+Route::middleware('auth')->group(function () {
+    Route::get('countries/{country}/cities/{city}/municipalities/{municipality}/neighborhoods')->name('countries.cities.municipalities.neighborhoods')->uses('NeighborhoodController@index');
+    Route::get('countries/{country}/cities/{city}/municipalities/{municipality}/neighborhoods/create')->name('countries.cities.municipalities.neighborhoods.create')->uses('NeighborhoodController@create');
+    Route::post('countries/{country}/cities/{city}/municipalities/{municipality}/neighborhoods')->name('countries.cities.municipalities.neighborhoods.store')->uses('NeighborhoodController@store');
+    Route::get('countries/{country}/cities/{city}/municipalities/{municipality}/neighborhoods/{neighborhood}')->name('countries.cities.municipalities.neighborhoods.show')->uses('NeighborhoodController@show');
+    Route::get('countries/{country}/cities/{city}/municipalities/{municipality}/neighborhoods/{neighborhood}/edit')->name('countries.cities.municipalities.neighborhoods.edit')->uses('NeighborhoodController@edit');
+    Route::put('countries/{country}/cities/{city}/municipalities/{municipality}/neighborhoods/{neighborhood}')->name('countries.cities.municipalities.neighborhoods.update')->uses('NeighborhoodController@update');
+    Route::delete('countries/{country}/cities/{city}/municipalities/{municipality}/neighborhoods/{neighborhood}')->name('countries.cities.municipalities.neighborhoods.destroy')->uses('NeighborhoodController@destroy');
+});

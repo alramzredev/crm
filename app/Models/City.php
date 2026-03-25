@@ -3,13 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Translatable\HasTranslations;
 
 class City extends Model
 {
-    use HasFactory;
+    use HasTranslations;
 
     protected $fillable = ['name', 'country_id'];
+
+    public $translatable = ['name'];
 
     public function country()
     {
@@ -19,5 +21,9 @@ class City extends Model
     public function projects()
     {
         return $this->hasMany(Project::class);
+    }
+    public function municipalities()
+    {
+        return $this->hasMany(Municipality::class);
     }
 }

@@ -10,7 +10,15 @@ class CountrySeeder extends Seeder
     public function run()
     {
         $countries = [
-            ['name' => 'Saudi Arabia', 'iso_code' => 'SA'],
+            [
+                'name' => json_encode(['en' => 'Saudi Arabia', 'ar' => 'المملكة العربية السعودية']),
+            ],
+            [
+                'name' => json_encode(['en' => 'United States', 'ar' => 'الولايات المتحدة']),
+            ],
+            [
+                'name' => json_encode(['en' => 'United Kingdom', 'ar' => 'المملكة المتحدة']),
+            ],
         ];
 
         DB::table('countries')->insert($countries);

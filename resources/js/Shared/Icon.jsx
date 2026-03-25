@@ -200,5 +200,19 @@ export default ({ name, className }) => {
     );
   }
 
+  if (name === 'globe') {
+    return (
+      <svg
+        className={className}
+        xmlns={logo}
+        viewBox="0 0 20 20"
+      >
+        <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="2" fill="none" />
+        <ellipse cx="10" cy="10" rx="7" ry="9" stroke="currentColor" strokeWidth="2" fill="none" />
+        <ellipse cx="10" cy="10" rx="9" ry="4" stroke="currentColor" strokeWidth="2" fill="none" />
+      </svg>
+    );
+  }
+
   return null;
 };
