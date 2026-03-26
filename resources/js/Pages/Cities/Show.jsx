@@ -17,12 +17,12 @@ const Show = () => {
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">
           <Link href={route('countries.show', city.country_id)} className="text-indigo-600 hover:text-indigo-700">
-            {t('countries')}
+            {city.country?.name || t('countries')}
           </Link>
           <span className="mx-2 font-medium text-indigo-600">/</span>
           {city.name}
         </h1>
-        {can('cities.edit') && (
+        {can('countries.edit') && (
           <Link className="btn-indigo" href={route('countries.cities.edit', [city.country_id, city.id])}>
             {t('edit')}
           </Link>
@@ -46,7 +46,7 @@ const Show = () => {
         <div className="p-8">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-lg font-semibold">{t('municipalities')}</h2>
-            {can('municipalities.create') && (
+            {can('countries.create') && (
               <Link
                 className="btn-indigo"
                 href={route('countries.cities.municipalities.create', [city.country_id, city.id])}
@@ -84,14 +84,14 @@ const Show = () => {
                             window.location = route('countries.cities.municipalities.show', [city.country_id, city.id, m.id])
                           }
                         />
-                        {can('municipalities.edit') && (
+                        {can('countries.edit') && (
                           <EditButton
                             onClick={() =>
                               window.location = route('countries.cities.municipalities.edit', [city.country_id, city.id, m.id])
                             }
                           />
                         )}
-                        {can('municipalities.delete') && (
+                        {can('countries.delete') && (
                           <DeleteButton
                             onClick={() => {
                               if (confirm(t('delete') + '?')) {

@@ -12,6 +12,7 @@ class NeighborhoodResource extends JsonResource
             'id' => $this->id,
             'municipality_id' => $this->municipality_id,
             'name' => $this->getTranslation('name', app()->getLocale()),
+            'municipality' => new MunicipalityResource($this->whenLoaded('municipality')),
             'name_translations' => $this->getTranslations('name'),
         ];
     }

@@ -13,6 +13,8 @@ class MunicipalityResource extends JsonResource
             'name' => $this->getTranslation('name', app()->getLocale()),
             'name_translations' => $this->getTranslations('name'),
             'neighborhoods_count' => $this->neighborhoods()->count(),
+            'neighborhoods' => NeighborhoodResource::collection($this->whenLoaded('neighborhoods')),
+            'city' => new CityResource($this->whenLoaded('city')),
             'city_id' => $this->city_id,
         ];
     }

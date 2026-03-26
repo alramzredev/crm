@@ -6,26 +6,28 @@ import TrashedMessage from '@/Shared/TrashedMessage';
 import { useTranslation } from 'react-i18next';
 
 const Edit = () => {
-  const { municipality } = usePage().props;
+  const { neighborhood } = usePage().props;
   const { t } = useTranslation();
 
-  // Get city and country from municipality resource
-  const city = municipality.city;
+  // Get municipality, city, country from neighborhood resource
+  const municipality = neighborhood.municipality;
+  const city = municipality?.city;
   const country = city?.country;
 
   const { data, setData, errors, put, processing } = useForm({
-    name: municipality.name_translations || { en: '', ar: '' },
+    name: neighborhood.name_translations || { en: '', ar: '' },
   });
 
   function handleSubmit(e) {
     e.preventDefault();
-    put(route('countries.cities.municipalities.update', [country.id, city.id, municipality.id]));
-  }
-
-  function restore() {
-    if (confirm(t('restore_municipality') || 'Restore municipality?')) {
-      router.put(route('countries.cities.municipalities.restore', [country.id, city.id, municipality.id]));
-    }
+    put(
+      route('countries.cities.municipalities.neighborhoods.update', [
+        country.id,
+        city.id,
+        municipality.id,
+        neighborhood.id,
+      ])
+    );
   }
 
   return (
@@ -35,13 +37,10 @@ const Edit = () => {
         <span className="mx-2 font-medium text-indigo-600">/</span>
         <Link href={route('countries.cities.show', [country.id, city.id])} className="text-indigo-600 hover:text-indigo-700">{city.name}</Link>
         <span className="mx-2 font-medium text-indigo-600">/</span>
-        {t('edit')} {t('municipality')}
+        <Link href={route('countries.cities.municipalities.show', [country.id, city.id, municipality.id])} className="text-indigo-600 hover:text-indigo-700">{municipality.name}</Link>
+        <span className="mx-2 font-medium text-indigo-600">/</span>
+        {t('edit')} {t('neighborhood')}
       </h1>
-      {municipality.deleted_at && (
-        <TrashedMessage onRestore={restore}>
-          {t('municipality_deleted')}
-        </TrashedMessage>
-      )}
       <div className="max-w-2xl bg-white rounded shadow p-8">
         <form onSubmit={handleSubmit}>
           <TranslationsTabs
@@ -67,6 +66,6 @@ const Edit = () => {
   );
 };
 
-Edit.layout = page => <Layout title="Edit Municipality" children={page} />;
+Edit.layout = page => <Layout title="Edit Neighborhood" children={page} />;
 
 export default Edit;

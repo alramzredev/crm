@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage , router } from '@inertiajs/react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -14,6 +14,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { DRAWER_WIDTH } from '@/Shared/MainMenu';
 import { DRAWER_MINI_WIDTH } from '@/Shared/MainMenu';
 import { useTranslation } from 'react-i18next';
+
 
 export default ({ drawerWidth = DRAWER_WIDTH, onMobileMenuOpen, onToggle, desktopOpen, anchor = 'left' }) => {
   const { auth } = usePage().props;
@@ -32,14 +33,15 @@ export default ({ drawerWidth = DRAWER_WIDTH, onMobileMenuOpen, onToggle, deskto
   const { i18n, t } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
 
-  // Restore the language toggle handler
   const handleLangToggle = () => {
-    const nextLang = i18n.language === 'en' ? 'ar' : 'en';
-    i18n.changeLanguage(nextLang);
-    document.documentElement.dir = nextLang === 'ar' ? 'rtl' : 'ltr';
-    localStorage.setItem('lang', nextLang); // Store language in localStorage
-  };
-
+  const nextLang = i18n.language === 'en' ? 'ar' : 'en';
+  
+  localStorage.setItem('lang', nextLang);          // 1. Save FIRST
+  i18n.changeLanguage(nextLang);                   // 2. Update i18n
+  document.documentElement.dir = nextLang === 'ar' ? 'rtl' : 'ltr';
+  
+  router.reload({ preserveScroll: true });         // 3. Re-fetch page with new header
+};
   // Compute dynamic style for AppBar based on anchor
   const getAppBarStyle = () => {
     if (isMobile) return { width: '100%' };

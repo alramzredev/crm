@@ -13,10 +13,8 @@ if (lang && i18n.language !== lang) {
   document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
 }
 
-// 👇 Add your global header here — runs before every Inertia request
-router.on('before', (event) => {
-  console.log('Setting X-App-Locale header to:', localStorage.getItem('lang') ?? 'en');
-   event.detail.visit.headers['X-App-Locale'] = localStorage.getItem('lang') ?? 'en';
+ router.on('before', (event) => {
+    event.detail.visit.headers['X-App-Locale'] = localStorage.getItem('lang') ?? 'en';
 });
 
 createInertiaApp({

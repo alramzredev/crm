@@ -6,9 +6,11 @@ import ShowButton from '@/Shared/TableActions/ShowButton';
 import EditButton from '@/Shared/TableActions/EditButton';
 
 const Index = () => {
-  const { countries = [] } = usePage().props;
+  const { countries } = usePage().props;       
   const { t } = useTranslation();
- 
+
+  const rows = countries?.data ?? [];
+
   return (
     <div>
       <h1 className="mb-8 text-3xl font-bold">{t('countries')}</h1>
@@ -28,7 +30,7 @@ const Index = () => {
             </tr>
           </thead>
           <tbody>
-            {countries.data.map(country => (
+            {rows.map(country => (
               <tr key={country.id} className="hover:bg-gray-100">
                 <td className="border-t px-6 py-4">{country.name}</td>
                 <td className="border-t px-6 py-4">{country.code || '—'}</td>
