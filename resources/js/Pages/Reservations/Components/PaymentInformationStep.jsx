@@ -1,27 +1,30 @@
 import React from 'react';
 import SelectInput from '@/Shared/SelectInput';
 import TextInput from '@/Shared/TextInput';
+import { useTranslation } from 'react-i18next'; // Add this
 
 const PaymentInformationStep = ({ data, handleChange, errors = {} }) => {
+  const { t } = useTranslation(); // Add this
+
   return (
     <div className="flex flex-wrap p-8 -mb-8 -mr-6">
       <SelectInput
         className="w-full pb-8 pr-6 lg:w-1/2"
-        label="Payment Method"
+        label={t('payment_method')}
         name="payment_method"
         value={data.payment_method}
         onChange={e => handleChange('payment_method', e.target.value)}
         errors={errors.payment_method}
       >
-        <option value="">Select Payment Method</option>
-        <option value="cash">Cash</option>
-        <option value="bank_transfer">Bank Transfer</option>
-        <option value="check">Check</option>
+        <option value="">{t('select_payment_method')}</option>
+        <option value="cash">{t('cash')}</option>
+        <option value="bank_transfer">{t('bank_transfer')}</option>
+        <option value="check">{t('check')}</option>
       </SelectInput>
 
       <TextInput
         className="w-full pb-8 pr-6 lg:w-1/2"
-        label="Down Payment"
+        label={t('down_payment')}
         name="down_payment"
         type="number"
         min="0"
@@ -33,20 +36,20 @@ const PaymentInformationStep = ({ data, handleChange, errors = {} }) => {
 
       <SelectInput
         className="w-full pb-8 pr-6 lg:w-1/2"
-        label="Payment Plan"
+        label={t('payment_plan')}
         name="payment_plan"
         value={data.payment_plan}
         onChange={e => handleChange('payment_plan', e.target.value)}
         errors={errors.payment_plan}
       >
-        <option value="cash">Cash</option>
-        <option value="installment">Installment</option>
-        <option value="mortgage">Mortgage</option>
+        <option value="cash">{t('cash')}</option>
+        <option value="installment">{t('installment')}</option>
+        <option value="mortgage">{t('mortgage')}</option>
       </SelectInput>
 
       <TextInput
         className="w-full pb-8 pr-6 lg:w-1/2"
-        label="Total Price"
+        label={t('total_price')}
         name="total_price"
         type="number"
         min="0"
@@ -58,7 +61,7 @@ const PaymentInformationStep = ({ data, handleChange, errors = {} }) => {
 
       <TextInput
         className="w-full pb-8 pr-6 lg:w-1/2"
-        label="Remaining Amount"
+        label={t('remaining_amount')}
         name="remaining_amount"
         type="number"
         min="0"
@@ -70,7 +73,7 @@ const PaymentInformationStep = ({ data, handleChange, errors = {} }) => {
 
       {/* <TextInput
         className="w-full pb-8 pr-6 lg:w-1/2"
-        label="Currency"
+        label={t('currency')}
         name="currency"
         value={data.currency}
         onChange={e => handleChange('currency', e.target.value)}
@@ -79,7 +82,7 @@ const PaymentInformationStep = ({ data, handleChange, errors = {} }) => {
 
       <TextInput
         className="w-full pb-8 pr-6 lg:w-1/2"
-        label="Notes"
+        label={t('notes')}
         name="notes"
         value={data.notes}
         onChange={e => handleChange('notes', e.target.value)}

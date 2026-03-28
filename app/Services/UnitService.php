@@ -9,6 +9,9 @@ use App\Models\UnitType;
 use App\Models\Neighborhood;
 use App\Http\Resources\UnitResource;
 use App\Http\Resources\UnitStatusResource;
+use App\Http\Resources\ProjectResource;
+use App\Http\Resources\PropertyResource;
+use App\Http\Resources\NeighborhoodResource;
 use App\Repositories\UnitRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\PropertyRepository;
@@ -29,12 +32,10 @@ class UnitService
     public function getCreateData(): array
     {
         return [
-            'projects' => $this->projectRepo->query()->orderBy('name')->get(),
-            'properties' => $this->propertyRepo->query()->orderBy('property_code')->get(),
             'propertyTypes' => PropertyType::orderBy('name')->get(),
             'propertyStatuses' => UnitStatusResource::collection(UnitStatus::orderBy('name')->get()),
             'unitTypes' => UnitType::where('is_active', true)->orderBy('name')->get(),
-            'neighborhoods' => Neighborhood::orderBy('name')->get(),
+            'neighborhoods' => NeighborhoodResource::collection(Neighborhood::orderBy('name')->get()),
             'defaults' => [
                 'project_id' => request()->get('project_id'),
                 'property_id' => request()->get('property_id'),
@@ -49,12 +50,10 @@ class UnitService
             'unit' => new UnitResource(
                 $unit->load(['project', 'property', 'propertyType', 'status', 'neighborhood'])
             ),
-            'projects' => $this->projectRepo->query()->orderBy('name')->get(),
-            'properties' => $this->propertyRepo->query()->orderBy('property_code')->get(),
             'propertyTypes' => PropertyType::orderBy('name')->get(),
             'propertyStatuses' => UnitStatusResource::collection(UnitStatus::orderBy('name')->get()),
             'unitTypes' => UnitType::where('is_active', true)->orderBy('name')->get(),
-            'neighborhoods' => Neighborhood::orderBy('name')->get(),
+            'neighborhoods' => NeighborhoodResource::collection(Neighborhood::orderBy('name')->get()),
             'defaults' => [
                 'project_id' => $unit->project_id,
                 'property_id' => $unit->property_id,

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Country extends Model
 {
-    use HasTranslations;
+    use HasTranslations, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -19,6 +20,8 @@ class Country extends Model
     protected $casts = [
         'name' => 'array',
     ];
+
+    protected $dates = ['deleted_at'];
 
     public function cities()
     {

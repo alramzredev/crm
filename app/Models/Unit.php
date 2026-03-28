@@ -279,6 +279,7 @@ class Unit extends Model
         if (method_exists($user, 'hasRole') && $user->hasRole('super_admin')) {
             return $query;
         }
+        
         $projectIds = method_exists($user, 'projects') ? $user->projects()->pluck('projects.id') : [];
         return $query->whereIn('project_id', $projectIds);
     }

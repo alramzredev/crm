@@ -1,13 +1,15 @@
 import React from 'react';
 import TextInput from '@/Shared/TextInput';
 import FileInput from '@/Shared/FileInput';
+import { useTranslation } from 'react-i18next';
 
 const LeadInformationStep = ({ data, handleChange, errors = {} }) => {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-wrap p-8 -mb-8 -mr-6">
       <TextInput
         className="w-full pb-8 pr-6 lg:w-1/2"
-        label="First Name"
+        label={t('first_name')}
         name="first_name"
         value={data.first_name}
         onChange={e => handleChange('first_name', e.target.value)}
@@ -17,7 +19,7 @@ const LeadInformationStep = ({ data, handleChange, errors = {} }) => {
 
       <TextInput
         className="w-full pb-8 pr-6 lg:w-1/2"
-        label="Last Name"
+        label={t('last_name')}
         name="last_name"
         value={data.last_name}
         onChange={e => handleChange('last_name', e.target.value)}
@@ -27,7 +29,7 @@ const LeadInformationStep = ({ data, handleChange, errors = {} }) => {
 
       <TextInput
         className="w-full pb-8 pr-6 lg:w-1/2"
-        label="Email"
+        label={t('email')}
         name="email"
         type="email"
         value={data.email}
@@ -37,7 +39,7 @@ const LeadInformationStep = ({ data, handleChange, errors = {} }) => {
 
       <TextInput
         className="w-full pb-8 pr-6 lg:w-1/2"
-        label="Phone"
+        label={t('phone')}
         name="phone"
         value={data.phone}
         onChange={e => handleChange('phone', e.target.value)}
@@ -46,7 +48,7 @@ const LeadInformationStep = ({ data, handleChange, errors = {} }) => {
 
       <TextInput
         className="w-full pb-8 pr-6"
-        label="National ID"
+        label={t('national_id')}
         name="national_id"
         value={data.national_id}
         onChange={e => handleChange('national_id', e.target.value)}

@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import axios from 'axios';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -15,98 +16,162 @@ export default function ApiSearchableSelectInput({
   searchParam = 'search',
   minChars = 0,
   initialOptions = [],
-  fetchOnMount = true,
-  ...props
+  fetchOnMount = false,
 }) {
   const [query, setQuery] = useState('');
   const [options, setOptions] = useState(initialOptions);
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [style, setStyle] = useState({});
 
-  const fetchData = (searchQuery) => {
-    if (!apiUrl) {
-      setOptions(initialOptions);
-      setLoading(false);
-      return;
-    }
+  const inputRef = useRef(null);
+  const containerRef = useRef(null);
 
-    if (searchQuery.length > 0 && searchQuery.length < minChars) {
+  // ─── Selected label ─────────────────────────────
+  const selected = [...options, ...initialOptions].find(
+    o => String(o.value) === String(value)
+  );
+
+  // ─── Fetch ─────────────────────────────────────
+  const fetchData = async (q = '') => {
+    if (!apiUrl || (q && q.length < minChars)) {
       setOptions(initialOptions);
-      setLoading(false);
       return;
     }
 
     setLoading(true);
-    axios
-      .get(apiUrl, {
-        params: { [searchParam]: searchQuery },
-      })
-      .then((response) => {
-        setOptions(response.data || []);
-      })
-      .catch((error) => {
-        console.error('Search error:', error);
-        setOptions([]);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const res = await axios.get(apiUrl, { params: { [searchParam]: q } });
+      setOptions(res.data || []);
+    } catch {
+      setOptions([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const debouncedSearch = useDebouncedCallback(fetchData, 300);
+  const debouncedFetch = useDebouncedCallback(fetchData, 300);
 
-  useEffect(() => {
-    if (fetchOnMount && apiUrl) {
-      fetchData('');
-    }
-  }, [apiUrl, fetchOnMount]);
+  // ─── Effects ───────────────────────────────────
 
+  // initial load
   useEffect(() => {
-    if (query.length === 0 && !fetchOnMount) {
+    if (fetchOnMount) fetchData();
+  }, []);
+
+  // close on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (!containerRef.current?.contains(e.target)) {
+        setOpen(false);
+        setQuery('');
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  // position dropdown
+  useEffect(() => {
+    if (!open) return;
+
+    const update = () => {
+      const rect = inputRef.current?.getBoundingClientRect();
+      if (rect) {
+        setStyle({
+          position: 'fixed',
+          top: rect.bottom + 4,
+          left: rect.left,
+          width: rect.width,
+          zIndex: 9999,
+        });
+      }
+    };
+
+    update();
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+
+    return () => {
+      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', update);
+    };
+  }, [open]);
+
+  // ─── Handlers ──────────────────────────────────
+
+  const handleChange = (e) => {
+    const q = e.target.value;
+    setQuery(q);
+    setOpen(true);
+
+    if (!q) {
       setOptions(initialOptions);
-      return;
+    } else {
+      debouncedFetch(q);
     }
-    debouncedSearch(query);
-  }, [query]);
+  };
+
+  const handleSelect = (option) => {
+    onChange({ target: { name, value: option.value } });
+    setOpen(false);
+    setQuery('');
+  };
+
+  const handleClear = () => {
+    onChange({ target: { name, value: '' } });
+    setQuery('');
+    setOptions(initialOptions);
+  };
+
+  // ─── Render ────────────────────────────────────
 
   return (
-    <div className={className}>
-      {label && (
-        <label className="form-label" htmlFor={name}>
-          {label}:
-        </label>
-      )}
+    <div className={className} ref={containerRef}>
+      {label && <label className="form-label">{label}:</label>}
+
       <div className="relative">
         <input
+          ref={inputRef}
           type="text"
-          className="form-input mb-2"
-          placeholder={placeholder}
-          value={query}
-          onChange={e => setQuery(e.target.value)}
           disabled={disabled}
+          autoComplete="off"
+          placeholder={placeholder}
+          value={open ? query : (selected?.label || '')}
+          onFocus={() => setOpen(true)}
+          onChange={handleChange}
+          className={`form-input w-full pr-8 ${errors.length ? 'error' : ''}`}
         />
-        {loading && (
-          <div className="absolute right-3 top-3">
-            <div className="animate-spin h-4 w-4 border-2 border-indigo-500 border-t-transparent rounded-full"></div>
-          </div>
-        )}
+
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+          {loading && <div className="animate-spin h-4 w-4 border-2 border-indigo-500 border-t-transparent rounded-full" />}
+          {value && !disabled && (
+            <button onClick={handleClear}>✕</button>
+          )}
+        </div>
       </div>
-      <select
-        id={name}
-        name={name}
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        {...props}
-        className={`form-select ${errors.length ? 'error' : ''}`}
-      >
-        <option value="">Select an option</option>
-        {options.map(o => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-      {errors && <div className="form-error">{errors}</div>}
+
+      <input type="hidden" name={name} value={value || ''} />
+
+      {open && createPortal(
+        <ul style={style} className="bg-white border rounded shadow max-h-56 overflow-y-auto">
+          {!loading && options.length === 0 && (
+            <li className="px-4 py-2 text-gray-400">No results</li>
+          )}
+
+          {options.map(o => (
+            <li
+              key={o.value}
+              onMouseDown={() => handleSelect(o)}
+              className={`px-4 py-2 cursor-pointer hover:bg-indigo-50
+                ${String(o.value) === String(value) ? 'bg-indigo-50 font-semibold' : ''}`}
+            >
+              {o.label}
+            </li>
+          ))}
+        </ul>,
+        document.body
+      )}
     </div>
   );
 }

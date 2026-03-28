@@ -84,4 +84,26 @@ class CityController extends Controller
         return redirect()->route('countries.cities.show', [$country->id, $city->id])
             ->with('success', __('City created.'));
     }
+
+    public function destroy(Country $country, City $city)
+    {
+        $this->authorize('delete', $city->country);
+
+        // Eager load municipalities and neighborhoods
+        $city->load('municipalities.neighborhoods');
+
+        // Delete all neighborhoods for each municipality
+        foreach ($city->municipalities as $municipality) {
+            $municipality->neighborhoods()->delete();
+        }
+
+        // Delete all municipalities for the city
+        $city->municipalities()->delete();
+
+        // Delete the city itself
+        $city->delete();
+
+        return redirect()->route('countries.show', $country->id)
+            ->with('success', __('City deleted.'));
+    }
 }

@@ -15,6 +15,17 @@ class ReservationResource extends JsonResource
             'lead_id' => $this->lead_id,
             'customer_id' => $this->customer_id,
             'unit_id' => $this->unit_id,
+            'project_id' => $this->when(
+                $this->relationLoaded('unit') && $this->unit,
+                fn () => $this->unit->project_id
+            ),
+            'project' => $this->whenLoaded('unit.project', function () {
+                return $this->unit && $this->unit->project ? new ProjectResource($this->unit->project) : null;
+            }),
+            'property_id' => $this->when(
+                $this->relationLoaded('unit') && $this->unit,
+                fn () => $this->unit->property_id
+            ),
             'status' => $this->status,
             'started_at' => $this->started_at,
             'expires_at' => $this->expires_at,

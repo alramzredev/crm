@@ -26,7 +26,9 @@ class UserResource extends JsonResource
             'deleted_at' => $this->deleted_at,
             'roles' => $this->whenLoaded('roles', $this->roles),
             'supervisor' => $this->whenLoaded('supervisor', $this->supervisor),
-            'projects' => $this->whenLoaded('projects', $this->projects),
+            'projects' => $this->whenLoaded('projects', function () {
+                return ProjectResource::collection($this->projects);
+            }),
         ];
     }
 }

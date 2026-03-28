@@ -112,17 +112,17 @@ class ReservationService
     {
         return new ReservationResource(
             $reservation->load([
-                'lead', 'unit', 'customer', 'payments.receipts', 'cancelReason',
+                'lead', 'unit.project', 'customer', 'payments.receipts', 'cancelReason',
                 'contracts', 'contract'
             ])
-        );
+        );   
     }
 
     public function getEditData(Reservation $reservation): ReservationResource
     {
         return new ReservationResource(
             $reservation->load([
-                'lead', 'unit', 'customer', 'payments.receipts', 'cancelReason',
+                'lead', 'unit.project', 'customer', 'payments.receipts', 'cancelReason',
                 'contracts', 'contract'
             ])
         );

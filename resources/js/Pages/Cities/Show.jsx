@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import { useTranslation } from 'react-i18next';
 import EditButton from '@/Shared/TableActions/EditButton';
@@ -95,7 +95,10 @@ const Show = () => {
                           <DeleteButton
                             onClick={() => {
                               if (confirm(t('delete') + '?')) {
-                                window.location = route('countries.cities.municipalities.destroy', [city.country_id, city.id, m.id]);
+                                router.delete(
+                                  route('countries.cities.municipalities.destroy', [city.country_id, city.id, m.id]),
+                                  { preserveScroll: true }
+                                );
                               }
                             }}
                           />

@@ -176,7 +176,7 @@ class ReservationController extends Controller
 
         $reservation->update($request->validated());
 
-        return Redirect::back()->with('success', 'Reservation updated.');
+        return Redirect::route('reservations.show', $reservation->id)->with('success', 'Reservation updated.');
     }
 
     public function approveReservation(Reservation $reservation, ReservationApprovalRequest $request)

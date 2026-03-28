@@ -72,7 +72,18 @@ class CountryController extends Controller
     {
         $this->authorize('delete', $country);
 
-        $country->delete();
+       $country->load('cities.municipalities.neighborhoods');
+
+       $country->cities->each(function ($city) {
+       $city->municipalities->each(function ($municipality) {
+        $municipality->neighborhoods()->delete();
+      });
+
+       $city->municipalities()->delete();
+      });
+
+     $country->cities()->delete();
+     $country->delete();
 
         return Redirect::back()->with('success', 'Country deleted.');
     }

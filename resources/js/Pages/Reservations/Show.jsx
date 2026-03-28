@@ -11,6 +11,7 @@ import CustomerDocuments from './Components/CustomerDocuments';
 import Contracts from './Components/Contracts';
 import { useTranslation } from 'react-i18next';
 import ReservationInfoCard from './Components/ReservationInfoCard';
+import EditButton from '@/Shared/TableActions/EditButton'; // <-- Add this import
 
 const Show = ({
   reservation,
@@ -171,15 +172,24 @@ const Show = ({
     );
   };
 
+  const canEditReservation = can('reservations.edit');
+
   return (
     <div>
-      <h1 className="mb-8 text-3xl font-bold">
-        <Link href={route('reservations')} className="text-indigo-600 hover:text-indigo-700">
-          {t('reservations')}
-        </Link>
-        <span className="mx-2 font-medium text-indigo-600">/</span>
-        {reservation.reservation_code || t('reservation')}
-      </h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold">
+          <Link href={route('reservations')} className="text-indigo-600 hover:text-indigo-700">
+            {t('reservations')}
+          </Link>
+          <span className="mx-2 font-medium text-indigo-600">/</span>
+          {reservation.reservation_code || t('reservation')}
+        </h1>
+        {canEditReservation && (
+          <Link className="btn-indigo" href={route('reservations.edit', reservation.id)}>
+            {t('edit')}
+          </Link>
+        )}
+      </div>
       <ReservationInfoCard reservation={reservation} />
 
       {/* Payments Section */}
@@ -286,7 +296,7 @@ const Show = ({
       />
 
 
-       {isApprovalAllowed && (
+       {/* {isApprovalAllowed && (
         <div className="flex justify-center mt-8">
           <button
             onClick={handleApprove}
@@ -299,7 +309,7 @@ const Show = ({
             Approve / Reject Reservation
           </button>
         </div>
-      )}
+      )} */}
 
       {/* Contract Section */}
     

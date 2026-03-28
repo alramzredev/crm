@@ -69,6 +69,8 @@
   "email": "Email",
   "phone": "Phone",
   "national_id": "National ID",
+  "national_address_file": "National Address File",
+  "national_id_file": "National ID File",
   "no_leads_found": "No leads found.",
   "show_lead": "Show Lead",
   "assignment": "Assignment",
@@ -333,5 +335,25 @@
   "cities": "Cities",
      "create_city": "Create City",
    "municipalities": "Municipalities",
-   "no_cities_found": "No cities found."
-  }
+   "no_cities_found": "No cities found.",
+  "draft": "Draft",
+  "active": "Active",
+  "confirmed": "Confirmed",
+  "expired": "Expired",
+  "cancelled": "Cancelled",
+  "iso_code": "ISO Code",
+  "search_property": "Search property",
+  "search_project": "Search project",
+  "search_unit": "Search unit",
+  "create_reservation": "Create Reservation",
+  "create_a_new_reservation_for": "Create a new reservation for",
+  "there_were_errors_with_your_submission": "There were errors with your submission",
+  "back": "Back",
+  "submit": "Submit",
+  "next": "Next",
+  "select_unit": "Select Unit",
+  "payment_information": "Payment Information",
+  "contract_and_sign": "Contract & Sign",
+   "select_payment_method": "Select Payment Method"
+   
+}

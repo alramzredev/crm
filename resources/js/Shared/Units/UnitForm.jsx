@@ -5,6 +5,7 @@ import SelectInput from '@/Shared/SelectInput';
 import CheckboxInput from '@/Shared/CheckboxInput';
 import CityMunicipalityNeighborhoodSelector from '@/Shared/CityMunicipalityNeighborhoodSelector';
 import { useTranslation } from 'react-i18next';
+import ApiSearchableSelectInput from '@/Shared/ApiSearchableSelectInput';
 
 const UnitForm = ({
   data,
@@ -13,9 +14,6 @@ const UnitForm = ({
   processing,
   onSubmit,
   submitLabel,
-  projects = [],
-  properties = [],
-  propertyTypes = [],
   propertyStatuses = [],
   unitTypes = [],
   cities = [],
@@ -25,10 +23,7 @@ const UnitForm = ({
   predefinedProperty = null,
 }) => {
   const { t } = useTranslation();
-  const filteredProperties = useMemo(() => {
-    if (!data.project_id) return properties;
-    return properties.filter(p => String(p.project_id) === String(data.project_id));
-  }, [data.project_id, properties]);
+   
 
   return (
     <form onSubmit={onSubmit}>
@@ -68,36 +63,38 @@ const UnitForm = ({
             </>
           ) : (
             <>
-              <SelectInput
+              <ApiSearchableSelectInput
                 className="w-full pb-8 pr-6 lg:w-1/2"
                 label={t('project')}
                 name="project_id"
-                errors={errors.project_id}
                 value={data.project_id}
                 onChange={e => {
                   setData('project_id', e.target.value);
                   setData('property_id', '');
                 }}
-              >
-                <option value=""></option>
-                {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-              </SelectInput>
+                errors={errors.project_id}
+                apiUrl={route('search.projects')}
+                placeholder={t('search_project')}
+                fetchOnMount={true}
+              />
 
-              <SelectInput
+              <ApiSearchableSelectInput
                 className="w-full pb-8 pr-6 lg:w-1/2"
                 label={t('property')}
                 name="property_id"
-                errors={errors.property_id}
                 value={data.property_id}
                 onChange={e => setData('property_id', e.target.value)}
-              >
-                <option value=""></option>
-                {filteredProperties.map(p => <option key={p.id} value={p.id}>{p.property_code}</option>)}
-              </SelectInput>
+                errors={errors.property_id}
+                disabled={!data.project_id}
+                apiUrl={data.project_id ? route('search.properties') + `?project_id=${data.project_id}` : ''}
+                placeholder={t('search_property')}
+                key={`property-${data.project_id}`}
+                fetchOnMount={!!data.project_id}
+              />
             </>
           )}
 
-           <SelectInput
+          <SelectInput
             className="w-full pb-8 pr-6 lg:w-1/2"
             label={t('unit_type')}
             name="unit_type"

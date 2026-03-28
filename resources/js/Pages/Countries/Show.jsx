@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage,  router } from '@inertiajs/react';
 import Layout from '@/Shared/Layout';
 import { useTranslation } from 'react-i18next';
 import EditButton from '@/Shared/TableActions/EditButton';
 import ShowButton from '@/Shared/TableActions/ShowButton';
+import DeleteButton from '@/Shared/TableActions/DeleteButton';
 
 const Show = () => {
   const { country } = usePage().props;
@@ -93,6 +94,13 @@ const Show = () => {
                       <div className="flex gap-2">
                         <EditButton onClick={() => window.location = route('countries.cities.edit', [country.id, city.id])} />
                         <ShowButton onClick={() => window.location = route('countries.cities.show', [country.id, city.id])} />
+                        <DeleteButton
+                          onClick={() => {
+                            if (confirm(t('delete') + '?')) {
+                              router.delete(route('countries.cities.destroy', [country.id, city.id]), { preserveScroll: true });
+                            }
+                          }}
+                        />
                       </div>
                     </td>
                   </tr>

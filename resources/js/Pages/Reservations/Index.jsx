@@ -64,7 +64,7 @@ const Index = () => {
         <table className="w-full whitespace-nowrap">
           <thead>
             <tr className="font-bold text-left">
-              <th className="px-6 pt-5 pb-4">{t('reservation_code') || 'Code'}</th>
+              <th className="px-6 pt-5 pb-4">{t('reservation_code')}</th>
               <th className="px-6 pt-5 pb-4">{t('lead')}</th>
               <th className="px-6 pt-5 pb-4">{t('unit')}</th>
               <th className="px-6 pt-5 pb-4">{t('status')}</th>
@@ -81,7 +81,7 @@ const Index = () => {
                 </td>
                 <td className="border-t px-6 py-4">{r.unit?.unit_code || '—'}</td>
                 <td className="border-t px-6 py-4">
-                  <StatusPill status={r.status} />
+                  <StatusPill status={r.status} name={t(r.status)} />
                 </td>
                 <td className="border-t px-6 py-4">
                   {r.expires_at ? new Date(r.expires_at).toLocaleDateString() : '—'}
@@ -101,7 +101,7 @@ const Index = () => {
             {data.length === 0 && (
               <tr>
                 <td className="px-6 py-4 border-t" colSpan="6">
-                  {t('no_reservations_found') || 'No reservations found.'}
+                  {t('no_reservations_found')}
                 </td>
               </tr>
             )}

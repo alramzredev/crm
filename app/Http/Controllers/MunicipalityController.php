@@ -102,10 +102,22 @@ class MunicipalityController extends Controller
 
     // Optionally: restore, destroy, etc.
 
-    // Edit Neighborhood (show edit form)
-    public function editNeighborhood($countryId, $cityId, $municipalityId, $neighborhoodId)
+    public function destroy(Country $country, City $city, Municipality $municipality)
     {
-        $neighborhood = Neighborhood::with(['municipality.city.country'])->findOrFail($neighborhoodId);
+        $this->authorize('delete', $country);
+         // Delete all neighborhoods for this municipality
+        $municipality->neighborhoods()->delete();
+
+        $municipality->delete();
+
+        return redirect()->route('countries.cities.show', [$country->id, $city->id])
+            ->with('success', __('Municipality deleted.'));
+    }
+
+    // Edit Neighborhood (show edit form)
+    public function editNeighborhood(Country $country, City $city, Municipality $municipality, Neighborhood $neighborhood)
+    {
+        $neighborhood->load(['municipality.city.country']);
 
         return Inertia::render('Neighborhoods/Edit', [
             'neighborhood' => new NeighborhoodResource($neighborhood),
@@ -155,5 +167,15 @@ class MunicipalityController extends Controller
 
         return redirect()->route('countries.cities.municipalities.show', [$country->id, $city->id, $municipality->id])
             ->with('success', __('Neighborhood created.'));
+    }
+
+    // Destroy a neighborhood
+    public function destroyNeighborhood(Country $country, City $city, Municipality $municipality, Neighborhood $neighborhood)
+    {
+        $this->authorize('delete', $country);
+         $neighborhood->delete();
+
+        return redirect()->route('countries.cities.municipalities.show', [$country->id, $city->id, $municipality->id])
+            ->with('success', __('Neighborhood deleted.'));
     }
 }

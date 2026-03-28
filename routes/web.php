@@ -269,5 +269,5 @@ Route::middleware('auth')->group(function () {
     Route::get('countries/{country}/cities/{city}/municipalities/{municipality}/neighborhoods/{neighborhood}')->name('countries.cities.municipalities.neighborhoods.show')->uses('NeighborhoodController@show');
     Route::get('countries/{country}/cities/{city}/municipalities/{municipality}/neighborhoods/{neighborhood}/edit')->name('countries.cities.municipalities.neighborhoods.edit')->uses('MunicipalityController@editNeighborhood');
     Route::put('countries/{country}/cities/{city}/municipalities/{municipality}/neighborhoods/{neighborhood}')->name('countries.cities.municipalities.neighborhoods.update')->uses('MunicipalityController@updateNeighborhood');
-    Route::delete('countries/{country}/cities/{city}/municipalities/{municipality}/neighborhoods/{neighborhood}')->name('countries.cities.municipalities.neighborhoods.destroy')->uses('NeighborhoodController@destroy');
+    Route::delete('countries/{country}/cities/{city}/municipalities/{municipality}/neighborhoods/{neighborhood}')->name('countries.cities.municipalities.neighborhoods.destroy')->uses('MunicipalityController@destroyNeighborhood');
 });

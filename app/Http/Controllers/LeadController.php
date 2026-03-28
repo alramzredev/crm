@@ -123,7 +123,7 @@ class LeadController extends Controller
         $canAssign = auth()->user()->can('assign', $lead);
 
         return Inertia::render('Leads/Show', [
-            'lead' => $lead,
+            'lead' => new \App\Http\Resources\LeadResource($lead),
             'employees' => $employees,
             'canAssign' => $canAssign,
         ]);
