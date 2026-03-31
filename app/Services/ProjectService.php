@@ -18,6 +18,7 @@ use App\Http\Resources\CityResource;
 use App\Http\Resources\MunicipalityResource;
 use App\Http\Resources\NeighborhoodResource;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProjectService
 {
@@ -150,5 +151,50 @@ class ProjectService
                 ->exists();
         }
         return false;
+    }
+
+    public function storeProject(array $data)
+    {
+        return DB::transaction(function () use ($data) {
+            $project = new Project();
+            $project->fill($data);
+            if (isset($data['name'])) {
+                $project->setTranslations('name', $data['name']);
+            }
+            if (isset($data['location'])) {
+                $project->setTranslations('location', $data['location']);
+            }
+            $project->save();
+            return $project;
+        });
+    }
+
+    public function updateProject(Project $project, array $data)
+    {
+        return DB::transaction(function () use ($project, $data) {
+            $project->fill($data);
+            if (isset($data['name'])) {
+                $project->setTranslations('name', $data['name']);
+            }
+            if (isset($data['location'])) {
+                $project->setTranslations('location', $data['location']);
+            }
+            $project->save();
+            return $project;
+        });
+    }
+
+    public function deleteProject(Project $project)
+    {
+        return DB::transaction(function () use ($project) {
+            $project->delete();
+        });
+    }
+
+    public function restoreProject(Project $project)
+    {
+        return DB::transaction(function () use ($project) {
+            $project->restore();
+        });
     }
 }

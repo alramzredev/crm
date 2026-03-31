@@ -1,25 +1,35 @@
 import React from 'react';
 import SelectInput from '@/Shared/SelectInput';
 import TextInput from '@/Shared/TextInput';
-import { useTranslation } from 'react-i18next'; // Add this
+import { useTranslation } from 'react-i18next';
 
-const PaymentInformationStep = ({ data, handleChange, errors = {} }) => {
-  const { t } = useTranslation(); // Add this
+const PaymentInformationStep = ({
+  data,
+  handleChange,
+  errors = {},
+  paymentMethods = [],
+  paymentPlans = [],
+}) => {
+  const { t, i18n } = useTranslation();
+
+  console.log('PaymentInformationStep data:', paymentMethods, paymentPlans);
 
   return (
     <div className="flex flex-wrap p-8 -mb-8 -mr-6">
       <SelectInput
         className="w-full pb-8 pr-6 lg:w-1/2"
         label={t('payment_method')}
-        name="payment_method"
-        value={data.payment_method}
-        onChange={e => handleChange('payment_method', e.target.value)}
-        errors={errors.payment_method}
+        name="payment_method_id"
+        value={data.payment_method_id}
+        onChange={e => handleChange('payment_method_id', e.target.value)}
+        errors={errors.payment_method_id}
       >
         <option value="">{t('select_payment_method')}</option>
-        <option value="cash">{t('cash')}</option>
-        <option value="bank_transfer">{t('bank_transfer')}</option>
-        <option value="check">{t('check')}</option>
+        {paymentMethods.map(pm => (
+          <option key={pm.id} value={pm.id}>
+            {pm.name || pm.code}
+          </option>
+        ))}
       </SelectInput>
 
       <TextInput
@@ -37,14 +47,17 @@ const PaymentInformationStep = ({ data, handleChange, errors = {} }) => {
       <SelectInput
         className="w-full pb-8 pr-6 lg:w-1/2"
         label={t('payment_plan')}
-        name="payment_plan"
-        value={data.payment_plan}
-        onChange={e => handleChange('payment_plan', e.target.value)}
-        errors={errors.payment_plan}
+        name="payment_plan_id"
+        value={data.payment_plan_id}
+        onChange={e => handleChange('payment_plan_id', e.target.value)}
+        errors={errors.payment_plan_id}
       >
-        <option value="cash">{t('cash')}</option>
-        <option value="installment">{t('installment')}</option>
-        <option value="mortgage">{t('mortgage')}</option>
+        <option value="">{t('payment_plan')}</option>
+        {paymentPlans.map(pp => (
+          <option key={pp.id} value={pp.id}>
+            {pp.name || pp.code}
+          </option>
+        ))}
       </SelectInput>
 
       <TextInput
@@ -70,15 +83,6 @@ const PaymentInformationStep = ({ data, handleChange, errors = {} }) => {
         readOnly
         errors={errors.remaining_amount}
       />
-
-      {/* <TextInput
-        className="w-full pb-8 pr-6 lg:w-1/2"
-        label={t('currency')}
-        name="currency"
-        value={data.currency}
-        onChange={e => handleChange('currency', e.target.value)}
-        errors={errors.currency}
-      /> */}
 
       <TextInput
         className="w-full pb-8 pr-6 lg:w-1/2"

@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 export default function Layout({ title, children }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [drawerWidth, setDrawerWidth] = useState(DRAWER_WIDTH);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -39,7 +39,7 @@ export default function Layout({ title, children }) {
 
   return (
     <div>
-      <Helmet titleTemplate="%s | Alramz CRM" title={title} />
+      <Helmet titleTemplate="%s | Alramz CRM" title={title ? t(title) : undefined} />
 
       {/* Navbar — burger icon calls setMobileOpen(true) */}
       <TopHeader

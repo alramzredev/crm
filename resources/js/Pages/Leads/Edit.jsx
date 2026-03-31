@@ -9,7 +9,7 @@ import LeadForm from './Components/LeadForm';
 import { useTranslation } from 'react-i18next';
 
 const Edit = () => {
-  const { lead, leadSources = [], leadStatuses = [], brokers = [], projects = [], auth } = usePage().props;
+  const { lead, leadSources = [], leadStatuses = [], brokers = [], auth } = usePage().props;
   const { data, setData, errors, put, processing } = useForm({
     title: lead.title || '',
     first_name: lead.first_name || '',
@@ -70,7 +70,6 @@ const Edit = () => {
           processing={processing}
           onSubmit={handleSubmit}
           submitLabel={t('update_lead')}
-          projects={projects}
           leadSources={leadSources}
           leadStatuses={leadStatuses}
         />

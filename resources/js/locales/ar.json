@@ -356,9 +356,10 @@
   "back": "عودة",
   "submit": "إرسال",
   "next": "التالي",
-   "select_unit": "اختر وحدة",
+  "select_unit": "اختر وحدة",
   "payment_information": "معلومات الدفع",
   "contract_and_sign": "العقد والتوقيع",
-   "select_payment_method": "اختر طريقة الدفع"
+  "select_payment_method": "اختر طريقة الدفع", 
+  "customer": "العميل"
  
 }

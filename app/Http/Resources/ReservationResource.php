@@ -29,8 +29,14 @@ class ReservationResource extends JsonResource
             'status' => $this->status,
             'started_at' => $this->started_at,
             'expires_at' => $this->expires_at,
-            'payment_method' => $this->payment_method?->value ?? $this->payment_method,
-            'payment_plan' => $this->payment_plan?->value ?? $this->payment_plan,
+            'payment_method_id' => $this->payment_method_id,
+            'payment_plan_id' => $this->payment_plan_id,
+            'payment_method' => $this->whenLoaded('paymentMethod', function () {
+                return $this->paymentMethod->name;
+            }),
+            'payment_plan' => $this->whenLoaded('paymentPlan', function () {
+                return $this->paymentPlan->name;
+            }),
             'total_price' => $this->total_price,
             'base_price' => $this->base_price,
             'approved_discount_amount' => $this->approved_discount_amount,

@@ -24,12 +24,45 @@ class ProjectPolicy
 
     public function update(User $user, Project $project)
     {
-        return $user->hasPermissionTo('projects.edit');
+        if(!$user->hasPermissionTo('projects.edit')) {
+            return false;
+        }
+        if ($user->hasRole('super_admin')) {
+            return true;
+        }
+
+        if ($user->hasRole('project_admin')) {
+            return $project->users()
+                ->where('project_user.user_id', $user->id)
+                ->where('project_user.role_in_project', 'project_admin')
+                ->where('project_user.is_active', true)
+                ->exists();
+        }
+
+        return false;
     }
 
     public function delete(User $user, Project $project)
     {
-        return $user->hasPermissionTo('projects.delete');
+        if(!$user->hasPermissionTo('projects.delete')) {
+            return false;
+        }
+
+        if ($user->hasRole('super_admin')) {
+            return true;
+        }
+
+        if ($user->hasRole('project_admin')) {
+            return $project->users()
+                ->where('project_user.user_id', $user->id)
+                ->where('project_user.role_in_project', 'project_admin')
+                ->where('project_user.is_active', true)
+                ->exists();
+        }
+
+         return false;
+
+
     }
 
     public function restore(User $user, Project $project)

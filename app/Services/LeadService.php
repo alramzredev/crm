@@ -11,6 +11,7 @@ use App\Models\Project;
 use App\Models\LeadStatus;
 use App\Http\Resources\LeadResource;
 use App\Http\Resources\LeadStatusResource;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\DB;
 
 class LeadService
@@ -59,15 +60,12 @@ class LeadService
     public function getEditData(Lead $lead): array
     {
         // Use forUser to restrict projects for the current user
-        $user = auth()->user();
-        $projectsQuery = Project::orderBy('name')->forUser($user);
-
+  
         return [
-            'lead' => $lead->load(['activeAssignment', 'status']),
+            'lead' =>  new LeadResource($lead->load(['activeAssignment', 'status', 'project',  'leadSource'])),
             'leadSources' => LeadSource::orderBy('name')->get(),
             'leadStatuses' => LeadStatusResource::collection(LeadStatus::orderBy('name')->get()),
-            'projects' => $projectsQuery->get(),
-            'brokers' => User::role('sales_employee')->orderByName()->get(),
+            'brokers' => UserResource::collection(User::role('sales_employee')->orderByName()->get()),
         ];
     }
 
@@ -139,7 +137,7 @@ class LeadService
    DB::transaction(function () use ($lead, $employeeId) {
 
     $current = $lead->activeAssignment()->lockForUpdate()->first();
-
+ 
     if ($current && $current->employee_id == $employeeId) {
         return;
     }

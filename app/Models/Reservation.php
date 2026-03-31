@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\PaymentMethod;
-use App\Enums\PaymentPlan;
 use App\Enums\ReservationStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,10 +18,8 @@ class Reservation extends Model
         'lead_id',
         'unit_id',
         'customer_id',
-        'payment_method',
-        'down_payment',
-        'payment_plan',
-        'terms_accepted',
+         'down_payment',
+         'terms_accepted',
         'privacy_accepted',
         'status',
         'started_at',
@@ -40,11 +36,11 @@ class Reservation extends Model
         'national_id_file',
         'approved_discount_amount',
         'approved_discount_percentage',
+        'payment_method_id',
+         'payment_plan_id', 
     ];
 
     protected $casts = [
-        'payment_method' => PaymentMethod::class,
-        'payment_plan' => PaymentPlan::class,
         'status' => ReservationStatus::class,
         'terms_accepted' => 'boolean',
         'privacy_accepted' => 'boolean',
@@ -135,6 +131,16 @@ class Reservation extends Model
     public function discountRequests()
     {
         return $this->hasMany(ReservationDiscountRequest::class);
+    }
+
+    public function paymentMethod()
+    {
+        return $this->belongsTo(PaymentMethod::class, 'payment_method_id');
+    }
+
+    public function paymentPlan()
+    {
+        return $this->belongsTo(PaymentPlan::class, 'payment_plan_id');
     }
 
     public function scopeForUser($query, User $user)

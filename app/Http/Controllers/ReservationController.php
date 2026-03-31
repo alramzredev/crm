@@ -55,46 +55,9 @@ class ReservationController extends Controller
 
         $validated = $request->validated();
         $leadData = $request->only('first_name', 'last_name', 'email', 'phone', 'national_id');
-        
-        $lead = Lead::findOrFail($validated['lead_id']);
-        $lead->update($leadData);
 
-        // Create or update customer with lead data
-        $customer = Customer::firstOrCreate(
-            ['lead_id' => $lead->id],
-            [
-                'first_name' => $lead->first_name,
-                'last_name' => $lead->last_name,
-                'email' => $lead->email,
-                'phone' => $lead->phone,
-            ]
-        );
-
-        // Update customer if needed
-        if ($customer->wasRecentlyCreated === false) {
-            $customer->update([
-                'first_name' => $lead->first_name,
-                'last_name' => $lead->last_name,
-                'email' => $lead->email,
-                'phone' => $lead->phone,
-            ]);
-        }
-
-        // Create required documents for customer
-        if ($customer->wasRecentlyCreated) {
-            $requiredTypes = \App\Models\DocumentType::where('applies_to', 'customer')->get();
-            foreach ($requiredTypes as $type) {
-                // Optionally, you can initialize empty media collections if needed,
-                // but Spatie Media Library will handle collections automatically.
-                // No need to create separate document records.
-                // If you want to ensure a collection exists, you can call:
-                // $customer->getMedia($type->code);
-            }
-        }
-
-        $validated['customer_id'] = $customer?->id;
-
-        $reservation = $this->service->createReservation($validated, $leadData, $request);
+        // Move customer/lead logic to service
+        $reservation = $this->service->storeReservation($validated, $leadData, $request);
 
         // Update unit status to Reserved (status_id = 2)
         if ($reservation->unit) {
@@ -110,55 +73,9 @@ class ReservationController extends Controller
     {
         $this->authorize('view', $reservation);
 
-        $approvalService = new ReservationApprovalService();
-        $canApprove = $approvalService->canApproveReservation($reservation);
+        $showData = $this->service->getShowPageData($reservation);
 
-        // Fetch discount requests for this reservation
-        $discountRequests = $reservation->discountRequests()->with('requester')->orderByDesc('created_at')->get();
-
-        // Fetch customer documents using Spatie Media Library
-        $customer = $reservation->customer;
-        $customerDocuments = [];
-        if ($customer) {
-            $requiredTypes = DocumentType::where('applies_to', 'customer')->get();
-            foreach ($requiredTypes as $type) {
-                $media = $customer->getMedia($type->code)->first();
-                $customerDocuments[] = [
-                    'type' => $type->code,
-                    'type_name' => $type->name,
-                    'is_required' => $type->is_required,
-                    'status' => $media ? ($media->getCustomProperty('status') ?? 'approved') : 'pending',
-                    'media' => $media ? [
-                        'id' => $media->id,
-                        'file_name' => $media->file_name,
-                        'mime_type' => $media->mime_type,
-                        'size' => $media->size,
-                        'url' => $media->getFullUrl(),
-                        'created_at' => $media->created_at,
-                    ] : null,
-                    'expires_at' => $media ? $media->getCustomProperty('expires_at') : null,
-                    'rejection_reason' => $media ? $media->getCustomProperty('rejection_reason') : null,
-                ];
-            }
-        }
-
-         $contractDocuments = ContractResource::collection($reservation->contracts ?? []);
-
-         $canGenerateContract = true;
-
-        // Add contract types for frontend
-        $contractTypes = ContractType::all();
-
-        return Inertia::render('Reservations/Show', [
-            'reservation' => $this->service->getShowData($reservation),
-            'cancelReasons' => ReservationCancelReason::active()->ordered()->get(),
-            'canApprove' => $canApprove,
-            'discountRequests' => $discountRequests,
-            'customerDocuments' => $customerDocuments,
-            'canGenerateContract' => $canGenerateContract,
-            'contractDocuments' => $contractDocuments,
-            'contractTypes' => $contractTypes,
-        ]);
+        return Inertia::render('Reservations/Show', $showData);
     }
 
     public function edit(Reservation $reservation)
@@ -167,6 +84,8 @@ class ReservationController extends Controller
 
         return Inertia::render('Reservations/Edit', [
             'reservation' => $this->service->getEditData($reservation),
+            'paymentMethods' => \App\Models\PaymentMethod::where('is_active', 1)->get(),
+            'paymentPlans' => \App\Models\PaymentPlan::where('is_active', 1)->get(),
         ]);
     }
 
@@ -174,7 +93,7 @@ class ReservationController extends Controller
     {
         $this->authorize('update', $reservation);
 
-        $reservation->update($request->validated());
+        $this->service->updateReservation($reservation, $request->validated());
 
         return Redirect::route('reservations.show', $reservation->id)->with('success', 'Reservation updated.');
     }

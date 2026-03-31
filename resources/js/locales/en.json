@@ -354,6 +354,7 @@
   "select_unit": "Select Unit",
   "payment_information": "Payment Information",
   "contract_and_sign": "Contract & Sign",
-   "select_payment_method": "Select Payment Method"
+  "select_payment_method": "Select Payment Method",
+  "customer" : "Customer"
    
 }

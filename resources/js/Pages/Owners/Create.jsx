@@ -46,6 +46,6 @@ const Create = () => {
   );
 };
 
-Create.layout = page => <Layout title={t('create_owner')} children={page} />;
+Create.layout = page => <Layout title={'create_owner'} children={page} />;
 
 export default Create;

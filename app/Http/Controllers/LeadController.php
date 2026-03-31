@@ -3,10 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lead;
-use App\Models\LeadSource;
 use App\Models\LeadStatus;
-use App\Models\Project;
-use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -67,7 +64,7 @@ class LeadController extends Controller
             ? $this->service->getUsersByProjectAndRoles($projectId)
             : collect();
 
-        return \Inertia\Inertia::render('Leads/Edit', $data);
+        return Inertia::render('Leads/Edit', $data);
     }
 
     public function update(Lead $lead, LeadRequest $request)
@@ -116,12 +113,12 @@ class LeadController extends Controller
 
         $lead->load(['activeAssignment.employee', 'project', 'leadSource', 'status']);
         $employees = $lead->project_id
-            ? $this->service->getUsersByProjectAndRoles($lead->project_id)
+            ? $this->service->getUsersByProjectAndRoles($lead->project_id , ['sales_employee', 'sales_supervisor'])
             : collect();
 
         // Pass canAssign to frontend
         $canAssign = auth()->user()->can('assign', $lead);
-
+ 
         return Inertia::render('Leads/Show', [
             'lead' => new \App\Http\Resources\LeadResource($lead),
             'employees' => $employees,
@@ -139,6 +136,7 @@ class LeadController extends Controller
 
         $employeeId = $request->input('employee_id');
         $this->service->assignEmployee($lead, $employeeId);
+
 
         return Redirect::back()->with('success', 'Lead assigned.');
     }

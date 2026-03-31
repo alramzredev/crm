@@ -105,6 +105,6 @@ const Edit = () => {
   );
 };
 
-Edit.layout = page => <Layout children={page} />;
+Edit.layout = page => <Layout children={page} title={'edit_owner'} />;
 
 export default Edit;

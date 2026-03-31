@@ -2,6 +2,7 @@ import React from 'react';
 import TextInput from '@/Shared/TextInput';
 import SelectInput from '@/Shared/SelectInput';
 import { useTranslation } from 'react-i18next';
+import ApiSearchableSelectInput from '@/Shared/ApiSearchableSelectInput';
 
 const LeadForm = ({
   data,
@@ -10,7 +11,6 @@ const LeadForm = ({
   processing,
   onSubmit,
   submitLabel,
-  projects = [],
   leadSources = [],
   leadStatuses = [],
 }) => {
@@ -37,17 +37,17 @@ const LeadForm = ({
           value={data.national_id}
           onChange={e => handleChange('national_id', e.target.value)}
         />
-        <SelectInput
+        <ApiSearchableSelectInput
           className="w-full"
           label={t('project')}
           name="project_id"
-          errors={errors.project_id}
           value={data.project_id}
           onChange={e => handleChange('project_id', e.target.value)}
-        >
-          <option value=""></option>
-          {projects?.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </SelectInput>
+          errors={errors.project_id}
+          apiUrl={route('search.projects')}
+          placeholder={t('search_project')}
+          fetchOnMount={true}
+        />
         <SelectInput
           className="w-full"
           label={t('lead_source')}

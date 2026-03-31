@@ -42,25 +42,6 @@ class UserRepository
         return Role::all();
     }
 
-    public function getCreateData(): array
-    {
-        return [
-            'roles' => Role::all(),
-            'supervisors' => User::role('sales_supervisor')->orderByName()->get(),
-            'projects' => Project::orderBy('created_at', 'desc')->get(),
-        ];
-    }
-
-    public function getEditData(User $user): array
-    {
-        return [
-            'user' => $user->load(['roles', 'supervisor', 'projects']),
-            'roles' => Role::all(),
-            'supervisors' => User::role('sales_supervisor')->orderByName()->get(),
-            'projects' => Project::orderBy('name')->get(),
-        ];
-    }
-
     public function attachProjectsWithRole(User $user, array $projectIds, string $role): void
     {
         $attachData = [];

@@ -18,7 +18,7 @@ const ReservationInfoCard = ({ reservation }) => {
         </div>
         <div><strong>{t('started_at')}:</strong> {reservation.started_at ? new Date(reservation.started_at).toLocaleString() : '-'}</div>
         <div><strong>{t('expires_at')}:</strong> {reservation.expires_at ? new Date(reservation.expires_at).toLocaleString() : '-'}</div>
-        <div><strong>{t('lead')}:</strong> {reservation.lead ? `${reservation.lead.first_name} ${reservation.lead.last_name}` : '-'}</div>
+        <div><strong>{t('customer')}:</strong> {reservation.customer ? `${reservation.customer.first_name} ${reservation.customer.last_name}` : '-'}</div>
         <div><strong>{t('unit')}:</strong> {reservation.unit?.unit_code || '-'}</div>
         <div>
           <strong>{t('base_price')}:</strong> {reservation.currency || t('sar')} {reservation.base_price || reservation.total_price || '-'}

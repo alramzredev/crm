@@ -28,9 +28,10 @@ const Show = () => {
       onSuccess: () => setAssignOpen(false),
     });
   }
+  console.log('Lead details:', lead);
 
-  const assignedEmployee = lead.active_assignment?.employee?.first_name
-    ? `${lead.active_assignment.employee.first_name} ${lead.active_assignment.employee.last_name}`
+  const assignedEmployee = lead.activeAssignment?.employee?.first_name
+    ? `${lead.activeAssignment.employee.first_name} ${lead.activeAssignment.employee.last_name}`
     : null;
 
   return (
@@ -76,7 +77,7 @@ const Show = () => {
             </div>
             <div>
               <div className="text-sm text-gray-600">{t('lead_source')}</div>
-              <div className="font-medium">{lead.lead_source?.name || '—'}</div>
+              <div className="font-medium">{lead.leadSource?.name || '—'}</div>
             </div>
           </div>
         </div>

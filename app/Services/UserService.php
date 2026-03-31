@@ -6,6 +6,7 @@ use App\Repositories\UserRepository;
 use App\Models\User;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Http\Resources\ProjectResource;
 use Spatie\Permission\Models\Role;
 use App\Http\Resources\UserResource;
 
@@ -38,17 +39,21 @@ class UserService
 
     public function getCreateData(): array
     {
-        return $this->userRepository->getCreateData();
+        return [
+            'roles' => \Spatie\Permission\Models\Role::all(),
+            'supervisors' => UserResource::collection(\App\Models\User::role('sales_supervisor')->orderByName()->get()),
+            'projects' => ProjectResource::collection(\App\Models\Project::orderBy('created_at', 'desc')->get()),
+        ];
     }
 
     public function getEditData(User $user): array
     {
         $userLoaded = $this->userRepository->find($user->id, ['roles', 'supervisor', 'projects']);
         return [
-            'user' => $userLoaded,
-            'roles' => $this->userRepository->getAvailableRoles(),
-            'supervisors' => $this->userRepository->query()->role('sales_supervisor')->orderByName()->get(),
-            'projects' => \App\Models\Project::orderBy('name')->get(),
+            'user' => new UserResource($userLoaded),
+            'roles' => \Spatie\Permission\Models\Role::all(),
+            'supervisors' => UserResource::collection(\App\Models\User::role('sales_supervisor')->orderByName()->get()),
+            'projects' => ProjectResource::collection(\App\Models\Project::orderBy('name')->get()),
         ];
     }
 

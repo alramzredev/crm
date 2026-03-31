@@ -14,8 +14,7 @@ class ProjectStatus extends Model
 
     public $translatable = ['name'];
 
-    protected $appends = ['name_translations'];
-
+ 
    
     public function projects()
     {

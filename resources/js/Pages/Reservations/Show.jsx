@@ -11,8 +11,7 @@ import CustomerDocuments from './Components/CustomerDocuments';
 import Contracts from './Components/Contracts';
 import { useTranslation } from 'react-i18next';
 import ReservationInfoCard from './Components/ReservationInfoCard';
-import EditButton from '@/Shared/TableActions/EditButton'; // <-- Add this import
-
+ 
 const Show = ({
   reservation,
   cancelReasons,

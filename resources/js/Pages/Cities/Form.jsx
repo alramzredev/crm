@@ -1,5 +1,4 @@
 import React from 'react';
-import TextInput from '@/Shared/TextInput';
 import LoadingButton from '@/Shared/LoadingButton';
 import TranslationsTabs from '@/Shared/TranslationsTabs';
 import { useTranslation } from 'react-i18next';

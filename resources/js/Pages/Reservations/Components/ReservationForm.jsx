@@ -22,24 +22,28 @@ const ReservationForm = ({ mode = 'create', reservation }) => {
     mode === 'edit' && reservation?.unit ? reservation.unit : null
   );
 
+  const { paymentMethods = [], paymentPlans = [] } = usePage().props;
+
   // Initial form data
   const initialData = mode === 'edit' && reservation
     ? {
         status: reservation.status || '',
         lead_id: reservation.lead_id || '',
-        first_name: reservation.lead?.first_name || '',
-        last_name: reservation.lead?.last_name || '',
-        email: reservation.lead?.email || '',
-        phone: reservation.lead?.phone || '',
-        national_id: reservation.lead?.national_id || '',
+        first_name: reservation.customer?.first_name || '',
+        last_name: reservation.customer?.last_name || '',
+        email: reservation.customer?.email || '',
+        phone: reservation.customer?.phone || '',
+        national_id: reservation.customer?.national_id || '',
         national_address_file: '',
         national_id_file: '',
         project_id: reservation.project_id || '',
         property_id: reservation.property_id || '',
         unit_id: reservation.unit_id || '',
         payment_method: reservation.payment_method || '',
-        down_payment: reservation.down_payment || '',
+        payment_method_id: reservation.payment_method_id || '',
         payment_plan: reservation.payment_plan || 'installment',
+        payment_plan_id: reservation.payment_plan_id || '',
+        down_payment: reservation.down_payment || '',
         total_price: reservation.total_price || '',
         remaining_amount: reservation.remaining_amount || '',
         currency: reservation.currency || 'SAR',
@@ -60,8 +64,10 @@ const ReservationForm = ({ mode = 'create', reservation }) => {
         property_id: '',
         unit_id: '',
         payment_method: '',
-        down_payment: '',
+        payment_method_id: '',
         payment_plan: 'installment',
+        payment_plan_id: '',
+        down_payment: '',
         total_price: '',
         remaining_amount: '',
         currency: 'SAR',
@@ -178,7 +184,13 @@ const ReservationForm = ({ mode = 'create', reservation }) => {
       case 2:
         return (
           <>
-            <PaymentInformationStep data={data} handleChange={handleChange} errors={errors} />
+            <PaymentInformationStep
+              data={data}
+              handleChange={handleChange}
+              errors={errors}
+              paymentMethods={paymentMethods}
+              paymentPlans={paymentPlans}
+            />
             <PaymentSummaryCard data={data} />
           </>
         );
@@ -196,7 +208,7 @@ const ReservationForm = ({ mode = 'create', reservation }) => {
       case 1:
         return data.unit_id;
       case 2:
-        return data.payment_method && data.payment_plan;
+          return data.payment_method_id && data.payment_plan_id;
       case 3:
         return data.terms_accepted && data.privacy_accepted;
       default:
